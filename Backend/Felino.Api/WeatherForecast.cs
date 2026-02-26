@@ -1,4 +1,4 @@
-namespace FreakyFashion.Api
+namespace Felino.Api
 {
     public class WeatherForecast
     {

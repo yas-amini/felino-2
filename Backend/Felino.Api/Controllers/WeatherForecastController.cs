@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace FreakyFashion.Api.Controllers
+namespace Felino.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]

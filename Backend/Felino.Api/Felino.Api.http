@@ -1,0 +1,6 @@
+@Felino.Api_HostAddress = http://localhost:8000
+
+GET {{Felino.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
