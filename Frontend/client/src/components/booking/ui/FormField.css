@@ -1,0 +1,10 @@
+.form-field input {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid #e7dede;
+    box-sizing: border-box;
+    font-size: 1rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+
+}

@@ -2,6 +2,7 @@ import Page from "../../components/layout/Page";
 import Booking from "../../components/booking/Booking";
 import Button from "../../components/common/Button/Button";
 import Modal from "../../components/common/Modal/Modal";
+import ChangeBooking from "../../components/booking/ChangeBooking";
 import { useState } from "react";
 
 
@@ -31,6 +32,7 @@ export default function TableBooking() {
         </div>
       </section>
       <Booking />
+      <ChangeBooking />
 
 
 
