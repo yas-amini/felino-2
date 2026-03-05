@@ -44,45 +44,52 @@ export default function Booking() {
     return (
         <div className="booking-container">
             <h1>Boka bord</h1>
-            <div className="booking-fields">
-                <BookingField
-                    label="Datum"
-                    value={date}
-                    type="date"
-                    placeholder="Välj Datum"
-                    onChange={setDate}
-                    icon={<FontAwesomeIcon icon={faCalendarDays} />}
+            <div className="booking-container-two">
+                <div className="booking-fields">
+                    <BookingField
+                        label="Datum"
+                        value={date}
+                        type="date"
+                        placeholder="Välj Datum"
+                        onChange={setDate}
+                        icon={<FontAwesomeIcon icon={faCalendarDays} />}
 
-                />
-                <BookingField
-                    label="Tid"
-                    value={time}
-                    type="select"
-                    placeholder="Välj tid"
-                    onChange={setTime}
-                    options={timeOptions}
-                    icon={<FontAwesomeIcon icon={faClock} />}
-                />
-                <BookingField
-                    label="Gäster"
-                    value={guests}
-                    type="select"
-                    placeholder="Antal gäster"
-                    onChange={setGuests}
-                    options={guestOptions}
-                    icon={<FontAwesomeIcon icon={faUsers} />} />
+                    />
+                    <BookingField
+                        label="Tid"
+                        value={time}
+                        type="select"
+                        placeholder="Välj tid"
+                        onChange={setTime}
+                        options={timeOptions}
+                        icon={<FontAwesomeIcon icon={faClock} />}
+                    />
+                    <BookingField
+                        label="Gäster"
+                        value={guests}
+                        type="select"
+                        placeholder="Antal gäster"
+                        onChange={setGuests}
+                        options={guestOptions}
+                        icon={<FontAwesomeIcon icon={faUsers} />} />
 
-                <BookingField
-                    label="Uteservering"
-                    value={seating}
-                    type="select"
-                    placeholder="Uteservering"
-                    onChange={setSeating}
-                    options={seatingOptions}
-                    icon={<FontAwesomeIcon icon={faChair} />} />
+                    <BookingField
+                        label="Uteservering"
+                        value={seating}
+                        type="select"
+                        placeholder="Uteservering"
+                        onChange={setSeating}
+                        options={seatingOptions}
+                        icon={<FontAwesomeIcon icon={faChair} />} />
 
-                <Button>Boka bord</Button>
+                    <Button>Boka bord</Button>
+                </div>
+                <div className="image-container">
+                    <img src="/images/table-booking-hero.jpg" alt="Bild på bord i restaurangen" />
+                </div>
             </div>
+
         </div>
+
     );
 }
