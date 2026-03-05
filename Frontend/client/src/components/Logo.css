@@ -1,0 +1,35 @@
+.logo-wrapper {
+  display: inline-block;  
+  position: relative;
+  z-index: 20;
+  text-decoration: none;
+  line-height: 0;        
+}
+
+.logo-image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.logo-wrapper:hover {
+  transform: scale(1.04);
+  transition: transform 0.25s ease;
+}
+
+@media (max-width: 768px) {
+  .logo-wrapper:hover {
+    transform: none;
+    filter: none;
+    opacity: 1;
+  }
+
+    .logo-wrapper a:hover,
+  .logo-wrapper img:hover {
+    transform: none;
+    filter: none;
+    opacity: 1;
+  }
+}

@@ -3,21 +3,23 @@ import Button from "../../components/common/Button/Button";
 import Modal from "../../components/common/Modal/Modal";
 import { useState } from "react";
 
-export default function CartPage() {
+export default function OrderPage() {
   const [open, setOpen] = useState(false);
 
   return (
     <Page>
-      <h1>Varukorg</h1>
-      <p>Här ser du dina valda produkter innan du går vidare till kassan.</p>
+      <h1>Meny & Beställ</h1>
+      <p>Välj din pizza och lägg till i varukorgen.</p>
 
+      {/* KNAPP */}
       <div style={{ marginTop: "1.5rem" }}>
         <Button onClick={() => setOpen(true)}>Öppna modal</Button>
       </div>
 
+      {/* MODAL */}
       <Modal isOpen={open} onClose={() => setOpen(false)}>
         <h2>Info</h2>
-        <p>Detta är en test-modal på Varukorg-sidan.</p>
+        <p>Din text här.</p>
 
         <div style={{ marginTop: "1rem" }}>
           <Button onClick={() => setOpen(false)}>Stäng</Button>

@@ -1,11 +1,10 @@
+import type { ReactNode } from "react";
+import "./Container.css";
+
 type ContainerProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export default function Container({ children }: ContainerProps) {
-  return (
-    <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "1rem" }}>
-      {children}
-    </div>
-  );
+  return <div className="fpContainer">{children}</div>;
 }
