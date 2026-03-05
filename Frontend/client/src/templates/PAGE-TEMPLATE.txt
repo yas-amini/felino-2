@@ -1,0 +1,35 @@
+/* =========================================================
+   PAGE TEMPLATE (KOPIERA DETTA NÄR DU SKAPAR EN NY SIDA)
+   ========================================================= */
+OBS: ta bort Button + Modal om du inte behöver dem
+
+import Page from "../../components/layout/Page";
+import Button from "../../components/common/Button/Button";
+import Modal from "../../components/common/Modal/Modal"; 
+import { useState } from "react";
+
+export default function ExamplePage() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Page>
+      <h1>Sidrubrik</h1>
+      <p>Beskrivning här.</p>
+
+      {/* KNAPP (valfri – ta bort om du inte behöver) */}
+      <div style={{ marginTop: "1.5rem" }}>
+        <Button onClick={() => setOpen(true)}>Öppna modal</Button>
+      </div>
+
+      {/* MODAL (valfri – ta bort om du inte behöver) */}
+      <Modal isOpen={open} onClose={() => setOpen(false)}>
+        <h2>Rubrik</h2>
+        <p>Din text här.</p>
+
+        <div style={{ marginTop: "1rem" }}>
+          <Button onClick={() => setOpen(false)}>Stäng</Button>
+        </div>
+      </Modal>
+    </Page>
+  );
+}

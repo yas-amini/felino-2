@@ -1,0 +1,11 @@
+.fpPage {
+  padding-top: 2.5rem;
+  padding-bottom: 2rem;
+  min-height: 60vh;
+}
+
+@media (max-width: 768px) {
+  .fpPage {
+    padding-top: 4rem;
+  }
+}
