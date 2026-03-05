@@ -1,0 +1,54 @@
+.fpAdminBtn {
+  appearance: none;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fpAdminBtn--md {
+  font-size: 0.95rem;
+}
+
+.fpAdminBtn--sm {
+  font-size: 0.9rem;
+  padding: 8px 10px;
+  border-radius: 9px;
+}
+
+.fpAdminBtn--primary {
+  background: #386642;
+  border-color: #386642;
+  color: #fff;
+}
+
+.fpAdminBtn--primary:hover {
+  background: #2f5b39;
+  border-color: #2f5b39;
+  transform: translateY(-1px);
+}
+
+.fpAdminBtn--ghost {
+  background: transparent;
+  color: #111;
+}
+
+.fpAdminBtn--ghost:hover {
+  background: rgba(56, 102, 66, 0.08);
+  transform: translateY(-1px);
+}
+
+.fpAdminBtn--danger {
+  background: #b91c1c;
+  border-color: #b91c1c;
+  color: #fff;
+}
+
+.fpAdminBtn--danger:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}

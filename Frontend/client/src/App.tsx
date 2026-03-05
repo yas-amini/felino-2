@@ -1,17 +1,26 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-// Layout
-import Navbar from "./components/layout/Navbar";
-import Footer from "./components/layout/Footer";
+// Layouts
+import SiteLayout from "./layouts/SiteLayout";
+import AdminLayout from "./layouts/AdminLayout";
+
+// Layout helper
 import Container from "./components/layout/Container";
 
-// Pages
+// Pages (site)
 import HomePage from "./pages/homepage/HomePage";
 import OrderPage from "./pages/orderpage/OrderPage";
 import TableBooking from "./pages/tablebooking/TableBooking";
 import CartPage from "./pages/cartpage/CartPage";
 import CheckoutPage from "./pages/checkoutpage/CheckoutPage";
+
+// Pages (admin)
+import AdminHomePage from "./pages/admin/AdminHomePage";
+import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
+import AdminProductsPage from "./pages/admin/AdminProductsPage";
+import AdminBookingPage from "./pages/admin/AdminBookingPage";
+import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 
 function NotFound() {
   return (
@@ -25,33 +34,34 @@ function NotFound() {
 export default function App() {
   return (
     <BrowserRouter>
-      <Navbar />
-
-      <main>
-        <Routes>
-          {/* Startsida */}
+      <Routes>
+        {/* SITE */}
+        <Route element={<SiteLayout />}>
           <Route path="/" element={<HomePage />} />
 
-          {/* Meny / Beställ */}
           <Route path="/meny" element={<OrderPage />} />
           <Route path="/bestall" element={<OrderPage />} />
 
-          {/* Boka bord */}
           <Route path="/boka-bord" element={<TableBooking />} />
 
-          {/* Varukorg & Checkout */}
           <Route path="/varukorg" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
 
-          {/* Redirect gammal route */}
           <Route path="/order" element={<Navigate to="/bestall" replace />} />
 
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
+        </Route>
 
-      <Footer />
+        {/* ADMIN */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="" element={<AdminHomePage />} />
+          <Route path="orders" element={<AdminOrdersPage />} />
+          <Route path="booking" element={<AdminBookingPage />} />
+          <Route path="products" element={<AdminProductsPage />} />
+          <Route path="settings" element={<AdminSettingsPage />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }

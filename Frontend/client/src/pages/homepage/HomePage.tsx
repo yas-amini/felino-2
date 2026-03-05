@@ -25,6 +25,9 @@ export default function HomePage() {
           <Button onClick={() => setOpen(false)}>Stäng</Button>
         </div>
       </Modal>
+      <Button>Klicka här</Button>
+      <Button type="submit">Spara</Button>
+      <Button to="/varukorg">Till varukorg</Button>
     </Page>
   );
 }
