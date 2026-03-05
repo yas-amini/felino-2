@@ -10,8 +10,7 @@ export default function TableBooking() {
   return (
     <Page>
       <BookingHero />
-      <h1>Meny & Beställ</h1>
-      <p>Välj din pizza och lägg till i varukorgen.</p>
+      
 
       {/* KNAPP */}
       <div style={{ marginTop: "1.5rem" }}>
