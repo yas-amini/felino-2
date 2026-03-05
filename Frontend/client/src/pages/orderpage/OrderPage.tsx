@@ -1,3 +1,11 @@
+import MenuPage from "../../components/booking/MenuPage";
+import Container from "../../components/layout/Container";
+
 export default function OrderPage() {
-  return <h1>Order Page</h1>;
+  return (
+    <Container>
+      <h1>Meny</h1>
+      <MenuPage />
+    </Container>
+  );
 }
