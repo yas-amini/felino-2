@@ -1,4 +1,5 @@
-import "./BookingField.css"
+import "./BookingField.css";
+import { useRef } from "react";
 
 interface Option {
     value: string;
@@ -20,12 +21,25 @@ interface BookingFieldProps {
 export default function BookingField(props: BookingFieldProps) {
     const { label, icon, value, type, onChange, options = [], placeholder = "Välj", displayValue } = props;
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const dateRef = useRef<HTMLInputElement>(null);
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
         onChange?.(e.target.value);
     };
 
+    const handleClick = () => {
+        if (type === "date" && dateRef.current) {
+            dateRef.current.showPicker?.();
+            dateRef.current.focus();
+        }
+    };
+
+    const today = new Date().toISOString().split("T")[0];
+
     return (
-        <label className="field" >
+        <label className="field" onClick={handleClick}>
             {icon && <div className="field-icon">{icon}</div>}
             <div className="field-text">
                 <div className="field-label">{label}</div>
@@ -47,11 +61,13 @@ export default function BookingField(props: BookingFieldProps) {
                 </select>
             ) : (
                 <input
+                    ref={dateRef}
                     className="field-control"
                     type="date"
                     value={value}
                     onChange={handleChange}
                     aria-label={label}
+                    min={today}
                 />
             )}
         </label>
