@@ -18,10 +18,20 @@ export default function AdminLayout() {
       <aside className="admin-sidebar" aria-label="Sidomeny">
         <div className="admin-sidebar-scroll">
           <nav className="admin-menu">
+             <NavLink
+              to="/admin/profile"
+              data-tip="Användare"
+              aria-label="Användare"
+              className={({ isActive }) =>
+                ["admin-tile", "admin-tile--profile", isActive ? "is-active" : ""].join(" ")
+              }
+            >
+              <img className="admin-tile-img" src="/images/icons/profilepic.png" alt="Användare" />
+            </NavLink>
             <NavLink
               to="/admin"
               end
-              data-tip="Hem"
+              data-tip="Översikt"
               aria-label="Hem"
               className={({ isActive }) =>
                 ["admin-tile", "admin-tile--home", isActive ? "is-active" : ""].join(" ")

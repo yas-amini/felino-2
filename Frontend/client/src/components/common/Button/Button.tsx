@@ -1,21 +1,4 @@
-/**
- * =========================================================
- * HUR DU ANVÄNDER BUTTON
- * =========================================================
- *
- * Lägg till högst upp i filen: import { Button } from "@/components";
- * Skriv in detta där knappar ska vara..
- * EXEMPEL:
- * 
- * <Button>Klicka här</Button>
- *
- * SUBMIT:
- * <Button type="submit">Spara</Button>
- *
- * LÄNK:
- * <Button to="/varukorg">Till varukorg</Button>
- * =========================================================
- */
+/* KNAPPGUIDE MED FÄRDIGA KODSNUTTAR FINNS I templates/SiteButtons.txt */
 
 import React from "react";
 import { Link } from "react-router-dom";
@@ -83,9 +66,9 @@ export default function Button(props: ButtonProps) {
     </>
   );
 
-  // Link-variant (react-router)
   if ("to" in props && props.to) {
     const { to, onClick, ...linkRest } = rest as ButtonAsLink;
+
     return (
       <Link
         to={to}
@@ -105,10 +88,11 @@ export default function Button(props: ButtonProps) {
     );
   }
 
-  // Native button (submit/click)
   const btnRest = rest as ButtonAsButton;
+
   return (
     <button
+      type={btnRest.type ?? "button"}
       className={classes}
       disabled={btnRest.disabled || isLoading}
       {...btnRest}

@@ -84,56 +84,85 @@
     border-radius: 10px;
 }
 
-/* Hover (endast när inte aktiv) */
+/* HOVER */
+
+/* HOME */
 .admin-tile--home:not(.is-active):hover {
-    background: #e35e22;
-    color: #fff;
+  background: linear-gradient(135deg, #ff7a40 0%, #e35e22 60%, #b94616 100%);
+  color: #fff;
 }
 
+/* ORDERS */
 .admin-tile--orders:not(.is-active):hover {
-    background: #eea01e;
-    color: #000;
+  background: linear-gradient(135deg, #ffc04a 0%, #eea01e 55%, #c9830f 100%);
+  color: #000;
 }
 
+/* BOOKING */
 .admin-tile--booking:not(.is-active):hover {
-    background: #bcdbd8;
-    color: #000;
+  background: linear-gradient(135deg, #d6eeeb 0%, #bcdbd8 55%, #94c7c1 100%);
+  color: #000;
 }
 
+/* PRODUCTS */
 .admin-tile--products:not(.is-active):hover {
-    background: #2c5238;
-    color: #fff;
+  background: linear-gradient(135deg, #4f8562 0%, #2c5238 55%, #1c3a27 100%);
+  color: #fff;
 }
 
+/* SETTINGS */
 .admin-tile--settings:not(.is-active):hover {
-    background: #6da640;
-    color: #000;
+  background: linear-gradient(135deg, #8cc65e 0%, #6da640 55%, #2e7d32 100%);
+  color: #000;
 }
 
-/* Active */
+/* PROFILE */
+.admin-tile--profile:not(.is-active):hover {
+  background: linear-gradient(135deg, #5561c9 0%, #6874cf 55%, #212e80 100%);
+  color: #fff;
+}
+
+
+/* ACTIVE */
+
+/* HOME */
 .admin-tile--home.is-active {
-    background: #e35e22;
-    color: #fff;
+  background: linear-gradient(135deg, #ff7a40 0%, #e35e22 65%);
+  color: #fff;
 }
 
+/* ORDERS */
 .admin-tile--orders.is-active {
-    background: #eea01e;
-    color: #000;
+  background: linear-gradient(135deg, #ffc04a 0%, #eea01e 65%);
+  color: #000;
 }
 
+/* BOOKING */
 .admin-tile--booking.is-active {
-    background: #bcdbd8;
-    color: #000;
+  background: linear-gradient(135deg, #d6eeeb 0%, #bcdbd8 65%);
+  color: #000;
 }
 
+/* PRODUCTS */
 .admin-tile--products.is-active {
-    background: #2c5238;
-    color: #fff;
+  background: linear-gradient(135deg, #4f8562 0%, #2c5238 65%);
+  color: #fff;
 }
 
+/* SETTINGS */
 .admin-tile--settings.is-active {
-    background: #6da640;
-    color: #000;
+  background: linear-gradient(135deg, #8cc65e 0%, #6da640 65%);
+  color: #000;
+}
+
+.admin-tile--profile.is-active {
+  background: linear-gradient(135deg, #5561c9 0%, #6874cf 55%, #212e80 100%);
+  color: #fff;
+}
+
+.admin-tile:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,.12);
 }
 
 /* Subbar */
@@ -204,7 +233,7 @@
     }
 
     .admin-menu {
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(6, 1fr);
         gap: 20px;
         align-items: start;
     }

@@ -1,0 +1,116 @@
+FELINO – ADMIN KNAPPGUIDE
+
+LÄGG TILL IMPORTERNA HÖGST UPP I TSX-FIL FÖR ATT FÅ MED DESSA KNAPPAR OCH "MODALEN":
+
+import AdminButton from "../../components/admin/AdminButton";
+import AdminModal from "../../components/admin/AdminModal";
+--------------------------
+
+SNABBREGEL
+Primary   = spara/bekräfta
+Ghost     = sekundär handling
+Cancel    = avbryt
+Penna     = redigera i lista
+Soptunna  = ta bort i lista
+
+
+--------------------------
+FORMULÄRKNAPPAR
+--------------------------
+
+Används i formulär och modaler.
+
+Kod:
+
+<AdminButton preset="save" />
+
+<AdminButton variant="ghost" type="button">
+  Välj bild
+</AdminButton>
+
+<AdminButton variant="cancel" type="button">
+  Avbryt
+</AdminButton>
+
+
+--------------------------
+LISTKNAPPAR (TABELLER)
+--------------------------
+
+Används i listor och tabeller.
+Endast ikon – ingen bakgrund.
+
+Kod:
+
+<AdminButton
+  preset="edit"
+  aria-label="Redigera"
+  title="Redigera"
+/>
+
+<AdminButton
+  preset="delete"
+  aria-label="Ta bort"
+  title="Ta bort"
+/>
+
+<AdminButton preset="icon-save" aria-label="Spara" title="Spara" />
+
+
+--------------------------
+MODAL (STANDARD)
+--------------------------
+
+Regel:
+vänster = avbryt
+höger   = spara/bekräfta
+
+Kod:
+
+const [open, setOpen] = useState(false);
+
+<AdminButton onClick={() => setOpen(true)}>
+  Knappens titel
+</AdminButton>
+
+<AdminModal
+  isOpen={open}
+  onClose={() => setOpen(false)}
+  title="Modalens rubrik"
+>
+  <p>Brödtext/info om val</p>
+
+  <div style={{ display: "flex", gap: 8 }}>
+    <AdminButton
+      variant="cancel"
+      onClick={() => setOpen(false)}
+    >
+      Avbryt
+    </AdminButton>
+
+    <AdminButton
+      preset="save"
+      onClick={() => setOpen(false)}
+    />
+  </div>
+</AdminModal>
+
+
+--------------------------
+STANDARDLAYOUT I FORMULÄR
+--------------------------
+
+Kod:
+
+<AdminButton variant="ghost" type="button">
+  Välj bild
+</AdminButton>
+
+<div style={{ display: "flex", gap: 8 }}>
+  <AdminButton preset="save" />
+  <AdminButton variant="cancel" type="button">
+    Avbryt
+  </AdminButton>
+</div>
+
+

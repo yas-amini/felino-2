@@ -1,0 +1,113 @@
+FELINO – KNAPPGUIDE (RESTAURANGSIDAN)
+LÄGG TILL IMPORTERNA HÖGST UPP I TSX-FIL FÖR ATT FÅ MED DESSA KNAPPAR OCH "MODALEN":
+
+import Button from "../../components/common/Button/Button";
+import Modal from "../../components/common/Modal/Modal"; 
+
+-------------------------------------
+
+SNABBREGEL
+Primary   = viktigaste handlingen
+Secondary = extra val
+Ghost     = avbryt / tillbaka
+
+
+-------------------------------------
+PRIMARY (standard)
+-------------------------------------
+Kod:
+<Button>TEXT</Button>
+
+Med ikon:
+<Button leftIcon={<FontAwesomeIcon icon={faCartShopping} />}>
+  TEXT
+</Button>
+
+
+-------------------------------------
+SECONDARY
+-------------------------------------
+Kod:
+<Button variant="secondary">TEXT</Button>
+
+
+-------------------------------------
+GHOST
+-------------------------------------
+Kod:
+<Button variant="ghost">TEXT</Button>
+
+
+-------------------------------------
+KNAPPAR I RAD
+-------------------------------------
+Används när flera knappar ska ligga på en rad, helt enkelt.
+
+Kod:
+<div className="fpBtnRow">
+  <Button>Förstahandsvalet</Button>
+  <Button variant="secondary">Andrahandsvalet</Button>
+  <Button variant="ghost">Avbryt/tillbaka-knapp</Button>
+</div>
+
+
+-------------------------------------
+STAPLADE KNAPPAR
+-------------------------------------
+Används för mindre ytor, mobil osv, möjligtvis
+
+Kod:
+<div className="fpBtnCol">
+  <Button>Förstahandsval</Button>
+  <Button variant="secondary">Andrahandsval</Button>
+  <Button variant="ghost">Avbryt/tillbaka-knapp</Button>
+</div>
+
+
+-------------------------------------
+MODAL (standard)
+-------------------------------------
+Regel:
+vänster = avbryt
+höger   = bekräfta
+
+Kod:
+
+const [open, setOpen] = useState(false);
+
+<Button onClick={() => setOpen(true)}>
+  Knappens titel
+</Button>
+
+<Modal isOpen={open} onClose={() => setOpen(false)}>
+  <h3>Fråga</h3>
+
+  <div className="fpBtnRow">
+    <Button variant="ghost" onClick={() => setOpen(false)}>
+      Avbryt
+    </Button>
+
+    <Button onClick={() => setOpen(false)}>
+      Bekräftelse
+    </Button>
+  </div>
+</Modal>
+
+
+-------------------------------------
+IKONER (FontAwesome)
+-------------------------------------
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCartShopping,
+  faCalendar,
+  faArrowRight,
+  faClock,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
+
+
+
+
+

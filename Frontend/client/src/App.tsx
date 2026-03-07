@@ -21,6 +21,7 @@ import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
 import AdminProductsPage from "./pages/admin/AdminProductsPage";
 import AdminBookingPage from "./pages/admin/AdminBookingPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
+import AdminProfilePage from "./pages/admin/AdminProfilePage";
 
 function NotFound() {
   return (
@@ -60,6 +61,7 @@ export default function App() {
           <Route path="booking" element={<AdminBookingPage />} />
           <Route path="products" element={<AdminProductsPage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
+          <Route path="profile" element={<AdminProfilePage />} />
         </Route>
       </Routes>
     </BrowserRouter>
