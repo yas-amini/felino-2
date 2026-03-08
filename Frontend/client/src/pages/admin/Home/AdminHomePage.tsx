@@ -1,8 +1,8 @@
 import { useState } from "react";
-import AdminPage from "../../components/admin/AdminPage";
+import AdminPage from "../../../components/admin/layout/AdminPage";
 import "./AdminHomePage.css";
-import AdminButton from "../../components/admin/AdminButton";
-import AdminModal from "../../components/admin/AdminModal";
+import AdminButton from "../../../components/admin/shared/AdminButton";
+import AdminModal from "../../../components/admin/shared/AdminModal";
 import { useNavigate } from "react-router-dom";
 
 export default function AdminHomePage() {

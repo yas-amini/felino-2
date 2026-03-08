@@ -15,9 +15,9 @@
 .admin-sidebar {
     position: fixed;
     inset: 0 auto 0 0;
-    width: 150px;
+    width: 110px;
     background: #ffffff;
-    border-right: 1px solid rgba(0,0,0,0.08);
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
     overflow: visible;
     z-index: 30;
 }
@@ -25,17 +25,18 @@
 .admin-sidebar-scroll {
     position: relative;
     height: 100%;
-    padding: 14px;
+    padding: 10px;
     overflow-y: auto;
 }
 
 .admin-menu {
     display: grid;
-    gap: 25px;
+    row-gap: 22px;
+    column-gap: 18px;
 }
 
 .admin-page {
-    margin-left: 150px;
+    margin-left: 110px;
     padding: 0;
     min-height: 100vh;
 }
@@ -75,8 +76,8 @@
     position: relative;
     z-index: 1;
     display: block;
-    width: 68%;
-    height: 68%;
+    width: 65%;
+    height: 65%;
     object-fit: cover;
     border: 0;
     outline: none;
@@ -85,84 +86,107 @@
 }
 
 /* HOVER */
+/* PROFILE */
+.admin-tile--profile:not(.is-active):hover {
+    background: linear-gradient(135deg, #dbe4ff 0%, #c2d2ff 55%, #9fb6ff 100%);
+    color: #000;
+}
 
 /* HOME */
 .admin-tile--home:not(.is-active):hover {
-  background: linear-gradient(135deg, #ff7a40 0%, #e35e22 60%, #b94616 100%);
-  color: #fff;
+    background: linear-gradient(135deg, #ffe2cc 0%, #ffc9a6 55%, #ffad80 100%);
+    color: #000;
 }
 
 /* ORDERS */
 .admin-tile--orders:not(.is-active):hover {
-  background: linear-gradient(135deg, #ffc04a 0%, #eea01e 55%, #c9830f 100%);
-  color: #000;
+    background: linear-gradient(135deg, #fff1bf 0%, #ffe28a 55%, #ffd24d 100%);
+    color: #000;
 }
 
 /* BOOKING */
 .admin-tile--booking:not(.is-active):hover {
-  background: linear-gradient(135deg, #d6eeeb 0%, #bcdbd8 55%, #94c7c1 100%);
-  color: #000;
+    background: linear-gradient(135deg, #dff7f4 0%, #c6efe9 55%, #9fe3da 100%);
+    color: #000;
 }
 
 /* PRODUCTS */
 .admin-tile--products:not(.is-active):hover {
-  background: linear-gradient(135deg, #4f8562 0%, #2c5238 55%, #1c3a27 100%);
-  color: #fff;
+    background: linear-gradient(135deg, #d7efe0 0%, #b8dec9 55%, #8ec7a9 100%);
+    color: #000;
 }
 
 /* SETTINGS */
 .admin-tile--settings:not(.is-active):hover {
-  background: linear-gradient(135deg, #8cc65e 0%, #6da640 55%, #2e7d32 100%);
-  color: #000;
+    background: linear-gradient(135deg, #e8f7d9 0%, #d2efb8 55%, #b8e28f 100%);
+    color: #000;
 }
 
-/* PROFILE */
-.admin-tile--profile:not(.is-active):hover {
-  background: linear-gradient(135deg, #5561c9 0%, #6874cf 55%, #212e80 100%);
-  color: #fff;
+/* CATEGORIES */
+.admin-tile--categories:not(.is-active):hover {
+    background: linear-gradient(135deg, #f0e1ff 0%, #e0c9ff 55%, #cfa8ff 100%);
+    color: #000;
 }
 
+/* CAMPAIGNS */
+.admin-tile--campaigns:not(.is-active):hover {
+    background: linear-gradient(135deg, #ffe0ec 0%, #ffc2d8 55%, #ff9fbe 100%);
+    color: #000;
+}
 
 /* ACTIVE */
 
+/* PROFILE */
+.admin-tile--profile.is-active {
+    background: linear-gradient(135deg, #c2d2ff 0%, #9fb6ff 100%);
+    color: #000;
+}
+
 /* HOME */
 .admin-tile--home.is-active {
-  background: linear-gradient(135deg, #ff7a40 0%, #e35e22 65%);
-  color: #fff;
+    background: linear-gradient(135deg, #ffc9a6 0%, #ffad80 100%);
+    color: #000;
 }
 
 /* ORDERS */
 .admin-tile--orders.is-active {
-  background: linear-gradient(135deg, #ffc04a 0%, #eea01e 65%);
-  color: #000;
+    background: linear-gradient(135deg, #ffe28a 0%, #ffd24d 100%);
+    color: #000;
 }
 
 /* BOOKING */
 .admin-tile--booking.is-active {
-  background: linear-gradient(135deg, #d6eeeb 0%, #bcdbd8 65%);
-  color: #000;
+    background: linear-gradient(135deg, #c6efe9 0%, #9fe3da 100%);
+    color: #000;
 }
 
 /* PRODUCTS */
 .admin-tile--products.is-active {
-  background: linear-gradient(135deg, #4f8562 0%, #2c5238 65%);
-  color: #fff;
+    background: linear-gradient(135deg, #b8dec9 0%, #8ec7a9 100%);
+    color: #000;
 }
 
 /* SETTINGS */
 .admin-tile--settings.is-active {
-  background: linear-gradient(135deg, #8cc65e 0%, #6da640 65%);
-  color: #000;
+    background: linear-gradient(135deg, #d2efb8 0%, #b8e28f 100%);
+    color: #000;
 }
 
-.admin-tile--profile.is-active {
-  background: linear-gradient(135deg, #5561c9 0%, #6874cf 55%, #212e80 100%);
-  color: #fff;
+/* CATEGORIES */
+.admin-tile--categories.is-active {
+    background: linear-gradient(135deg, #e0c9ff 0%, #cfa8ff 100%);
+    color: #000;
+}
+
+/* CAMPAIGNS */
+.admin-tile--campaigns.is-active {
+    background: linear-gradient(135deg, #ffc2d8 0%, #ff9fbe 100%);
+    color: #000;
 }
 
 .admin-tile:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(0,0,0,.12);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, .12);
 }
 
 /* Subbar */
@@ -223,7 +247,7 @@
         background: #fff;
         border-right: 0;
         border-bottom: 1px solid rgba(0, 0, 0, 0.35);
-        z-index: 30;
+        z-index: 1000;
         padding-bottom: 20px;
     }
 

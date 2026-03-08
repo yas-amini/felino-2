@@ -26,7 +26,7 @@ export default function AdminLayout() {
                 ["admin-tile", "admin-tile--profile", isActive ? "is-active" : ""].join(" ")
               }
             >
-              <img className="admin-tile-img" src="/images/icons/profilepic.png" alt="Användare" />
+              <img className="admin-tile-img" src="/images/admin/profilepic.png" alt="Användare" />
             </NavLink>
             <NavLink
               to="/admin"
@@ -37,7 +37,7 @@ export default function AdminLayout() {
                 ["admin-tile", "admin-tile--home", isActive ? "is-active" : ""].join(" ")
               }
             >
-              <img className="admin-tile-img" src="/images/icons/house_black.png" alt="Hem" />
+              <img className="admin-tile-img" src="/images/admin/house_black.png" alt="Hem" />
             </NavLink>
 
             <NavLink
@@ -48,7 +48,7 @@ export default function AdminLayout() {
                 ["admin-tile", "admin-tile--orders", isActive ? "is-active" : ""].join(" ")
               }
             >
-              <img className="admin-tile-img" src="/images/icons/bong_black.png" alt="Beställningar" />
+              <img className="admin-tile-img" src="/images/admin/bong_black.png" alt="Beställningar" />
             </NavLink>
 
             <NavLink
@@ -59,7 +59,7 @@ export default function AdminLayout() {
                 ["admin-tile", "admin-tile--booking", isActive ? "is-active" : ""].join(" ")
               }
             >
-              <img className="admin-tile-img" src="/images/icons/bord_black.png" alt="Bordsbokningar" />
+              <img className="admin-tile-img" src="/images/admin/bord_black.png" alt="Bordsbokningar" />
             </NavLink>
 
             <NavLink
@@ -70,7 +70,7 @@ export default function AdminLayout() {
                 ["admin-tile", "admin-tile--products", isActive ? "is-active" : ""].join(" ")
               }
             >
-              <img className="admin-tile-img" src="/images/icons/penna_black.png" alt="Produkter" />
+              <img className="admin-tile-img" src="/images/admin/penna_black.png" alt="Produkter" />
             </NavLink>
 
             <NavLink
@@ -81,7 +81,29 @@ export default function AdminLayout() {
                 ["admin-tile", "admin-tile--settings", isActive ? "is-active" : ""].join(" ")
               }
             >
-              <img className="admin-tile-img" src="/images/icons/kugghjul_black.png" alt="Inställningar" />
+              <img className="admin-tile-img" src="/images/admin/kugghjul_black.png" alt="Inställningar" />
+            </NavLink>
+
+             <NavLink
+              to="/admin/categories"
+              data-tip="Kategorier"
+              aria-label="Kategorier"
+              className={({ isActive }) =>
+                ["admin-tile", "admin-tile--categories", isActive ? "is-active" : ""].join(" ")
+              }
+            >
+              <img className="admin-tile-img" src="/images/admin/categories.png" alt="Kategorier" />
+            </NavLink>
+
+              <NavLink
+              to="/admin/campaigns"
+              data-tip="Kampanjer"
+              aria-label="Kampanjer"
+              className={({ isActive }) =>
+                ["admin-tile", "admin-tile--campaigns", isActive ? "is-active" : ""].join(" ")
+              }
+            >
+              <img className="admin-tile-img" src="/images/admin/campaigns.png" alt="Kampanjer" />
             </NavLink>
           </nav>
         </div>

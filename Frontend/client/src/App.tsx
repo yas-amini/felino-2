@@ -16,12 +16,14 @@ import CartPage from "./pages/cartpage/CartPage";
 import CheckoutPage from "./pages/checkoutpage/CheckoutPage";
 
 // Pages (admin)
-import AdminHomePage from "./pages/admin/AdminHomePage";
-import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
-import AdminProductsPage from "./pages/admin/AdminProductsPage";
-import AdminBookingPage from "./pages/admin/AdminBookingPage";
-import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
-import AdminProfilePage from "./pages/admin/AdminProfilePage";
+import AdminHomePage from "./pages/admin/Home/AdminHomePage";
+import AdminOrdersPage from "./pages/admin/Orders/AdminOrdersPage";
+import AdminProductsPage from "./pages/admin/Products/AdminProductsPage";
+import AdminBookingPage from "./pages/admin/Booking/AdminBookingPage";
+import AdminSettingsPage from "./pages/admin/Settings/AdminSettingsPage";
+import AdminProfilePage from "./pages/admin/Profile/AdminProfilePage";
+import AdminCategoriesPage from "./pages/admin/Categories/AdminCategoriesPage";
+import AdminCampaignsPage from "./pages/admin/Campaigns/AdminCampaignsPage";
 
 function NotFound() {
   return (
@@ -62,6 +64,8 @@ export default function App() {
           <Route path="products" element={<AdminProductsPage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
           <Route path="profile" element={<AdminProfilePage />} />
+          <Route path="categories" element={<AdminCategoriesPage />} />
+          <Route path="campaigns" element={<AdminCampaignsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

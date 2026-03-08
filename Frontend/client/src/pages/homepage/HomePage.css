@@ -1,0 +1,322 @@
+.homePage {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 24px 0 48px;
+}
+
+.heroSection {
+  display: grid;
+  grid-template-columns: 1.4fr 0.9fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.heroContent,
+.heroCard,
+.menuCard,
+.infoCard,
+.ctaSection {
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.heroContent {
+  padding: 40px;
+  background: linear-gradient(135deg, #fff8f0 0%, #ffffff 100%);
+}
+
+.heroBadge {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #ffe4d1;
+  color: #9a3412;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.heroContent h1 {
+  margin: 0 0 12px;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 1.05;
+  color: #1f2937;
+}
+
+.heroContent p {
+  margin: 0;
+  max-width: 640px;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #4b5563;
+}
+
+.heroButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.heroCard {
+  padding: 28px;
+  background: #386642;
+  color: #ffffff;
+}
+
+.heroCard h3 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  color: #fbbf24;
+}
+
+.heroCardTitle {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.heroCardText {
+  margin: 0 0 22px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+.heroInfoRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.homeSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sectionHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sectionLabel {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #c2410c;
+}
+
+.sectionHeading h2,
+.infoCard h2,
+.ctaSection h2 {
+  margin: 0;
+  color: #1f2937;
+}
+
+.menuGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.menuCard {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.menuCardTop {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.menuCardTop h3 {
+  margin: 0;
+  color: #111827;
+}
+
+.menuCardTop span {
+  white-space: nowrap;
+  font-weight: 800;
+  color: #c2410c;
+}
+
+.menuCard p {
+  margin: 0;
+  color: #6b7280;
+  line-height: 1.6;
+  min-height: 48px;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.infoCard {
+  padding: 28px;
+}
+
+.infoCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  color: #c2410c;
+}
+
+.infoCardHeader h2 {
+  color: #1f2937;
+}
+
+.hoursList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hoursRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ececec;
+  color: #374151;
+}
+
+.contactText {
+  margin: 0 0 18px;
+  line-height: 1.8;
+  color: #4b5563;
+}
+
+.contactButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ctaSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 32px;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+}
+
+.ctaSection p {
+  margin: 8px 0 0;
+  color: #6b7280;
+}
+
+.ctaButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.menuModalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.menuModalHeader h3 {
+  margin: 0 0 8px;
+}
+
+.menuModalHeader p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.menuModalList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.menuModalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 18px;
+  padding: 14px 0;
+  border-bottom: 1px solid #ececec;
+}
+
+.menuModalRow h4 {
+  margin: 0 0 6px;
+}
+
+.menuModalRow p {
+  margin: 0;
+  color: #6b7280;
+}
+
+@media (max-width: 1024px) {
+  .heroSection,
+  .infoGrid,
+  .menuGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .menuGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ctaSection {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .homePage {
+    gap: 24px;
+    padding: 16px 0 32px;
+  }
+
+  .heroContent,
+  .heroCard,
+  .infoCard,
+  .ctaSection,
+  .menuCard {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .menuGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .heroButtons,
+  .ctaButtons,
+  .contactButtons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .menuModalHeader,
+  .menuModalRow,
+  .hoursRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

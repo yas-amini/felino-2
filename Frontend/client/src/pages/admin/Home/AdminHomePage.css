@@ -187,46 +187,45 @@
   white-space: nowrap;
 }
 
-/* card colors */
 .admin-home-stat-card--orders {
-  background: linear-gradient(135deg, #eea01e 0%, #d78b12 100%);
+  background: linear-gradient(135deg, #ffcf5c 0%, #d48b0f 100%);
 }
 
 .admin-home-stat-card--orders:hover {
   transform: translateY(-2px);
   filter: brightness(1.05);
-  box-shadow: 0 10px 22px rgba(238, 160, 30, 0.35);
+  box-shadow: 0 10px 22px rgba(212, 139, 15, 0.35);
 }
 
 .admin-home-stat-card--booking {
-  background: linear-gradient(135deg, #bcdbd8 0%, #9fc9c4 100%);
+  background: linear-gradient(135deg, #e1f3f0 0%, #a9d5cf 100%);
   color: #1f2937;
 }
 
 .admin-home-stat-card--booking:hover {
   transform: translateY(-2px);
   filter: brightness(1.05);
-  box-shadow: 0 10px 22px rgba(159, 201, 196, 0.35);
+  box-shadow: 0 10px 22px rgba(169, 213, 207, 0.35);
 }
 
 .admin-home-stat-card--products {
-  background: linear-gradient(135deg, #2c5238 0%, #1e3c29 100%);
+  background: linear-gradient(135deg, #4f8a66 0%, #254c31 100%);
 }
 
 .admin-home-stat-card--products:hover {
   transform: translateY(-2px);
   filter: brightness(1.06);
-  box-shadow: 0 10px 22px rgba(44, 82, 56, 0.35);
+  box-shadow: 0 10px 22px rgba(37, 76, 49, 0.35);
 }
 
 .admin-home-stat-card--urgent {
-  background: linear-gradient(135deg, #e35e22 0%, #c94c15 100%);
+  background: linear-gradient(135deg, #ff874f 0%, #c84a17 100%);
 }
 
 .admin-home-stat-card--urgent:hover {
   transform: translateY(-2px);
   filter: brightness(1.05);
-  box-shadow: 0 10px 22px rgba(201, 76, 21, 0.35);
+  box-shadow: 0 10px 22px rgba(200, 74, 23, 0.35);
 }
 
 .admin-home-stat-graphic {

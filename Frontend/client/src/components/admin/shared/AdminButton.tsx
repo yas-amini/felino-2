@@ -7,6 +7,7 @@ import {
   faFloppyDisk,
   faTrash,
   faPenToSquare,
+  faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
 import "./AdminButton.css";
 
@@ -19,9 +20,10 @@ type CommonProps = {
     | "icon-delete"
     | "icon-edit"
     | "icon-save"
+    | "icon-toggle"
     | "icon-header";
   size?: "md" | "sm";
-  preset?: "save" | "delete" | "edit" | "icon-save";
+  preset?: "save" | "delete" | "edit" | "icon-save" | "toggle";
   className?: string;
   children?: ReactNode;
 };
@@ -61,6 +63,11 @@ export default function AdminButton({
   if (preset === "icon-save") {
     content = <FontAwesomeIcon icon={faFloppyDisk} />;
     variant = "icon-save";
+  }
+
+    if (preset === "toggle") {
+    content = <FontAwesomeIcon icon={faChevronDown} />;
+    variant = "icon-toggle";
   }
 
   if (preset === "delete") {

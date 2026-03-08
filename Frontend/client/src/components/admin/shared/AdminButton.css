@@ -99,7 +99,8 @@
 /* ===== List icon buttons ===== */
 .fpAdminBtn--icon-edit,
 .fpAdminBtn--icon-delete,
-.fpAdminBtn--icon-save {
+.fpAdminBtn--icon-save,
+.fpAdminBtn--icon-toggle {
   background: transparent;
   border: none;
   padding: 0;
@@ -123,6 +124,10 @@
   color: #7f1d1d;
 }
 
+.fpAdminBtn--icon-toggle {
+  color: #4b5563;
+}
+
 .fpAdminBtn--icon-edit:hover,
 .fpAdminBtn--icon-delete:hover,
 .fpAdminBtn--icon-save:hover {
@@ -132,7 +137,8 @@
 }
 
 .fpAdminBtn--icon-edit:hover,
-.fpAdminBtn--icon-save:hover {
+.fpAdminBtn--icon-save:hover,
+.fpAdminBtn--icon-toggle:hover {
   color: #111827;
 }
 
@@ -140,10 +146,17 @@
   color: #991b1b;
 }
 .fpAdminBtn svg {
-  font-size: 0.9em;
+  font-size: 1.3em;
   flex: 0 0 auto;
 }
 
+.fpAdminBtn--icon-toggle.is-open svg {
+  transform: rotate(180deg);
+}
+
+.fpAdminBtn--icon-toggle svg {
+  transition: transform 0.18s ease;
+}
 /* ===== Header quick actions ===== */
 
 .fpAdminBtn--icon-header {
