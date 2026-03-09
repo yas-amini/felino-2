@@ -1,32 +1,46 @@
-import React from "react";
-import type { Product } from "./MenuPage"; // Adjust path as needed
+interface Product {
+  id: number;
+  name: string;
+  image: string;
+  category: string;
+  ingredients?: string[];
+  sides?: string[];
+  sauce?: string;
+  price: number;
+}
 
 interface Props {
   product: Product;
-  onAdd: (product: Product) => void;
+  onOpen: (product: Product) => void;
 }
 
-const ProductCard: React.FC<Props> = ({ product, onAdd }) => {
+export default function ProductCard({ product, onOpen }: Props) {
   return (
-    <div className="product-card">
+    <div className="product-card" onClick={() => onOpen(product)}>
       <div className="product-image-container">
         <img src={product.image} alt={product.name} className="product-image" />
 
-        <button className="add-to-cart" onClick={() => onAdd(product)}>
-          <i className="fi fi-rr-add"></i>
+        <button
+          className="add-to-cart"
+          onClick={(e) => {
+            e.stopPropagation();
+            console.log("Add to cart", product);
+          }}
+        >
+          +
         </button>
       </div>
 
       <div className="product-info">
         <h3 className="product-title">{product.name}</h3>
 
-        {product.ingredients && product.ingredients.length > 0 && (
+        {product.ingredients && (
           <p className="product-ingredients">
             {product.ingredients.join(", ")}
           </p>
         )}
 
-        {product.sides && product.sides.length > 0 && (
+        {product.sides && (
           <p className="product-sides">Tillbehör: {product.sides.join(", ")}</p>
         )}
 
@@ -36,6 +50,4 @@ const ProductCard: React.FC<Props> = ({ product, onAdd }) => {
       </div>
     </div>
   );
-};
-
-export default ProductCard;
+}

@@ -1,4 +1,4 @@
-import MenuPage from "../../components/booking/MenuPage";
+import MenuPage from "../../components/bestall-hem/MenuPage";
 import Container from "../../components/layout/Container";
 
 export default function TableBooking() {

@@ -1,4 +1,5 @@
 import "./App.css";
+import "./components/bestall-hem/bestall-hem.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Layout

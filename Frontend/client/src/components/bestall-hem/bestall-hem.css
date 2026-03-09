@@ -1,0 +1,316 @@
+/* ===== MENY PRODUCT CARDS ===== */
+
+.menu-content {
+  padding: 50px;
+}
+
+.menu-content h2 {
+  font-size: 1.625rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.product-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: flex-start; /* keeps left alignment */
+  max-width: 1200px; /* optional, caps overall container */
+  margin: 0 auto; /* centers container */
+}
+
+.product-card {
+  display: flex;
+  justify-content: space-between; /* text left, image right */
+  align-items: center;
+  background: #fef8f1;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+  background: #fef8f1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.product-image-container {
+  position: relative;
+}
+
+.product-info {
+  flex: 1; /* take available space on left */
+  padding-right: 1rem;
+}
+
+.product-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  color: #170d0d;
+}
+
+.product-description {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #666;
+  margin-bottom: 0.75rem;
+}
+
+.product-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #386642;
+}
+
+.add-to-cart {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border: none;
+  color: #170d0d;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+  padding: 0.25rem;
+  border-radius: 50% 0 8px 0;
+}
+
+.add-to-cart:hover {
+  transform: scale(1.1);
+}
+
+.product-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* ===== RESPONSIVE ===== */
+
+/* Desktop (>1024px) */
+@media (min-width: 1025px) {
+  .product-card {
+    flex: 1 1 calc(50% - 20px); /* 2 per row minus gap */
+    max-width: 500px; /* prevents stretching too far */
+  }
+}
+
+/* Tablet (640-1024px) */
+@media (min-width: 640px) and (max-width: 1024px) {
+  .product-card {
+    flex: 1 1 100%;
+    max-width: 700px; /* optional, adjust for readability */
+  }
+}
+
+/* Mobile (<640px) */
+@media (max-width: 639px) {
+  .product-card {
+    flex-direction: column; /* stack image above text */
+    text-align: center;
+    padding: 0.75rem;
+  }
+
+  .product-info {
+    padding: 0;
+  }
+
+  .product-image {
+    width: 100%;
+    height: auto;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Re-order for wider screens to put image on the right */
+@media (min-width: 640px) {
+  .product-info {
+    order: 1; /* Text on the left */
+  }
+
+  .product-image-container {
+    order: 2; /* Image on the right */
+  }
+}
+
+/* ===== MODAL OVERLAY ===== */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Slightly softer overlay */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's on top */
+  opacity: 0; /* Start fully transparent */
+  transition: opacity 0.3s ease; /* Fade-in transition for the overlay */
+  padding: 2rem 0; /* Add vertical padding */
+}
+
+.modal.active {
+  display: flex;
+  opacity: 1;
+}
+
+/* ===== MODAL BOX ===== */
+.modal-content {
+  background: #fff;
+  border-radius: 16px; /* Slightly more rounded */
+  max-width: 550px; /* A bit wider */
+  width: 95%;
+  padding: 2rem; /* More padding */
+  position: relative;
+  transform: translateY(20px); /* Start slightly lower */
+  transition: transform 0.3s ease; /* Smooth slide-up transition */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Increased gap */
+  max-height: 85vh; /* Limit height to 85% of viewport height */
+  overflow-y: auto; /* Make it scrollable if content overflows */
+}
+
+.modal.active .modal-content {
+  transform: translateY(0); /* Slide to final position */
+}
+
+.modal-image img {
+  width: 100%;
+  border-radius: 12px; /* Match new border-radius */
+  object-fit: cover;
+  max-height: 280px; /* Taller image */
+}
+
+.modal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* More spacing */
+}
+
+.modal-info h2 {
+  font-size: 1.8rem; /* Larger title */
+  font-weight: 700;
+  margin: 0;
+}
+
+.modal-info p {
+  font-size: 1rem; /* Slightly larger text */
+  color: #444; /* Darker text for better readability */
+  line-height: 1.6;
+}
+
+.modal-price {
+  font-weight: 700;
+  color: #386642;
+  font-size: 1.25rem; /* Larger price */
+}
+
+/* Quantity Selector */
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quantity-selector label {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.quantity-selector input {
+  width: 50px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Special Instructions */
+.special-instructions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.special-instructions label {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.special-instructions textarea {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.modal-add {
+  background: #386642;
+  color: #fff;
+  padding: 1rem; /* More padding */
+  border-radius: 12px; /* Match new border-radius */
+  border: none;
+  cursor: pointer;
+  font-weight: 700; /* Bolder text */
+  font-size: 1.1rem;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
+  text-align: center;
+}
+
+.modal-add:hover {
+  background: #2d5034;
+}
+
+.modal-add:active {
+  transform: scale(0.98); /* Click effect */
+}
+
+/* Close button */
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 36px;
+  height: 36px;
+  background: #f0f0f0;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #333;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.modal-close:hover {
+  background: #e0e0e0;
+  transform: rotate(90deg); /* Fun hover effect */
+}
