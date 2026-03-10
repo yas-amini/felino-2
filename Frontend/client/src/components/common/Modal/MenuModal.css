@@ -1,0 +1,189 @@
+.menuModal {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  min-width: 0;
+  color: #1f1f1f;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.menuModalTop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.menuModalLogoWrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.menuModal .menuModalTitle {
+  margin: 0;
+  font-size: 2.7rem;
+  line-height: 1;
+  font-family: "galindo";
+  font-weight: 700;
+  color: #386642;
+  -webkit-text-stroke: 0.5px #111;
+  letter-spacing: 0.12em;
+}
+
+.menuModalSubtitle {
+  margin: 6px 0 0;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #555;
+  max-width: 720px;
+}
+
+.menuModalDivider {
+  border-top: 2px dashed #222;
+  width: 100%;
+  margin: 5px 0;
+}
+
+.menuModalGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.menuCategoryCard {
+  min-height: auto;
+  padding: 12px 12px 10px;
+  border: 1px solid #222;
+  border-radius: none;
+  background: #fffdfa;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+}
+
+.menuCategoryTitle {
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 2px dashed #999;
+  text-align: center;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menuCategoryTitleText {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.menuCategoryItems {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menuItemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.menuItemName {
+  color: #222;
+}
+
+.menuItemPrice {
+  white-space: nowrap;
+  font-weight: 700;
+  color: #111;
+}
+
+.menuModalFooter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.menuModalFooterText {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.7;
+}
+
+.menuModalActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+@media (max-width: 1200px) {
+  .menuModalGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* tablet */
+@media (max-width: 900px) {
+  .menuModalGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .menuModalTitle {
+    font-size: 1.7rem;
+  }
+}
+
+/* mobil */
+@media (max-width: 640px) {
+  .menuModal {
+    gap: 20px;
+  }
+
+  .menuModalLogo {
+    width: 78px;
+    height: 78px;
+  }
+
+  .menuModalTitle {
+    font-size: 1.45rem;
+  }
+
+  .menuModalSubtitle {
+    font-size: 0.92rem;
+    line-height: 1.7;
+  }
+
+  .menuModalGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .menuCategoryCard {
+    min-height: auto;
+  }
+
+  .menuModalActions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+   .menuModalActions .menuModalLink {
+    width: 100%;
+  }
+
+  .menuModalActions button {
+    width: 100%;
+  }
+}

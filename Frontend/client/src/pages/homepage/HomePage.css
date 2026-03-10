@@ -12,21 +12,109 @@
   align-items: stretch;
 }
 
-.heroContent,
-.heroCard,
-.menuCard,
-.infoCard,
-.ctaSection {
-  border-radius: 24px;
-  background: #ffffff;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
+/* GEMENSAM GRUND FÖR ALLA BOXAR */
+.contentBox {
+  overflow: hidden;
+}
+
+/* INDIVIDUELLA BOXAR */
+.heroContentBox {
+  background: #ffffff;
+  border: 2px dashed #000;
+}
+
+.heroPromoBox {
+  background: #ffffff;
+   border: none;
+  
+}
+
+.favoritesBox {
+  background: #386642;
+  border-radius: 10px;
+   /* background-image: url("/images/site/checkback.png"); */
+  background-size: 20%;
+  background-position: center;
+  background-repeat: repeat;
+}
+
+
+
+.openingHoursBox {
+  background: #ffffff;
+  border: 4px solid #000;
+}
+
+.contactBox {
+  background: #ffffff;
+}
+
+.ctaBox {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+  border-color: #f5cba7;
+}
+
+/* INRE CONTENT */
 .heroContent {
   padding: 40px;
-  background: linear-gradient(135deg, #fff8f0 0%, #ffffff 100%);
+  background: transparent;
 }
 
+.heroCard {
+  height: 100%;
+  padding: 28px;
+  background: transparent;
+  color: #000000;
+}
+
+.homeSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+}
+
+.infoCard {
+  padding: 10px;
+}
+
+.ctaSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 32px;
+  background: transparent;
+}
+
+.favoritesCarouselBox {
+  padding: 8px 0 0;
+}
+
+.contactInfoBox {
+  padding: 0;
+}
+
+.contactButtonsBox {
+  margin-top: 8px;
+}
+
+.ctaContent {
+  max-width: 620px;
+}
+
+.ctaButtonsBox {
+  display: flex;
+  align-items: center;
+}
+
+/* TYPOGRAFI / INNEHÅLL */
 .heroBadge {
   display: inline-block;
   margin-bottom: 14px;
@@ -39,10 +127,12 @@
 }
 
 .heroContent h1 {
-  margin: 0 0 12px;
-  font-size: clamp(2rem, 5vw, 3.4rem);
-  line-height: 1.05;
-  color: #1f2937;
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  font-weight: 700;
+  color: #000000;
+  letter-spacing: 0.12em;
 }
 
 .heroContent p {
@@ -50,7 +140,7 @@
   max-width: 640px;
   font-size: 1.05rem;
   line-height: 1.7;
-  color: #4b5563;
+  color: #000000;
 }
 
 .heroButtons {
@@ -60,10 +150,18 @@
   margin-top: 28px;
 }
 
-.heroCard {
-  padding: 28px;
-  background: #386642;
-  color: #ffffff;
+.heroButtons a,
+.ctaButtons a,
+.contactButtons a {
+  text-decoration: none;
+  color: inherit;
+  display: inline-flex;
+}
+
+.heroButtons a:hover,
+.ctaButtons a:hover,
+.contactButtons a:hover {
+  text-decoration: none;
 }
 
 .heroCard h3 {
@@ -92,12 +190,6 @@
   border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.homeSection {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
 .sectionHeading {
   display: flex;
   justify-content: space-between;
@@ -108,66 +200,18 @@
 
 .sectionLabel {
   margin: 0 0 6px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #c2410c;
+  color: #ffffff;
 }
 
 .sectionHeading h2,
 .infoCard h2,
 .ctaSection h2 {
   margin: 0;
-  color: #1f2937;
-}
-
-.menuGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-}
-
-.menuCard {
-  padding: 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.menuCardTop {
-  display: flex;
-  align-items: start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.menuCardTop h3 {
-  margin: 0;
-  color: #111827;
-}
-
-.menuCardTop span {
-  white-space: nowrap;
-  font-weight: 800;
-  color: #c2410c;
-}
-
-.menuCard p {
-  margin: 0;
-  color: #6b7280;
-  line-height: 1.6;
-  min-height: 48px;
-}
-
-.infoGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.infoCard {
-  padding: 28px;
+  color: #000000;
 }
 
 .infoCardHeader {
@@ -179,43 +223,97 @@
 }
 
 .infoCardHeader h2 {
-  color: #1f2937;
+  color: #000000;
 }
 
-.hoursList {
+/* CONTAINER */
+.openingHoursText {
+  text-align: center;
+}
+
+/* RUBRIK */
+.openingTitle {
+  margin: 0 0 26px;
+  padding-top: 5px;
+  padding-bottom: 15px;
+  font-size: 3.2rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+/* LISTA */
+.hoursListCentered {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 22px; 
 }
 
-.hoursRow {
+/* VARJE DAGBLOCK */
+.hoursBlock {
   display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ececec;
-  color: #374151;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* DAG */
+.hoursDay {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: #000000;
+  text-transform: uppercase;
+  
+}
+
+/* TID */
+.hoursTime {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #000000;
+  font-family:'Courier New', Courier, monospace;
 }
 
 .contactText {
   margin: 0 0 18px;
   line-height: 1.8;
   color: #4b5563;
+  font-size: 2rem;
+  text-transform: uppercase;
+}
+
+.contactTextCity {
+  margin: 0 0 18px;
+  line-height: 0.5;
+  color: #4b5563;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.contactTextTE {
+  margin: 0 0 18px;
+  line-height: 1.8;
+  color: #4b5563;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.contactImageWrapper {
+  margin-bottom: 18px;
+  overflow: hidden;
+  border-radius: 10px; 
+}
+
+.contactImageWrapper img {
+  width: 100%;
+  height: auto; 
+  object-fit: cover;
+  display: block;
 }
 
 .contactButtons {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-}
-
-.ctaSection {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  padding: 32px;
-  background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
 }
 
 .ctaSection p {
@@ -229,61 +327,19 @@
   gap: 12px;
 }
 
-.menuModalHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.menuModalHeader h3 {
-  margin: 0 0 8px;
-}
-
-.menuModalHeader p {
-  margin: 0;
-  color: #6b7280;
-}
-
-.menuModalList {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.menuModalRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-  gap: 18px;
-  padding: 14px 0;
-  border-bottom: 1px solid #ececec;
-}
-
-.menuModalRow h4 {
-  margin: 0 0 6px;
-}
-
-.menuModalRow p {
-  margin: 0;
-  color: #6b7280;
-}
-
 @media (max-width: 1024px) {
   .heroSection,
-  .infoGrid,
-  .menuGrid {
+  .infoGrid {
     grid-template-columns: 1fr;
-  }
-
-  .menuGrid {
-    grid-template-columns: repeat(2, 1fr);
   }
 
   .ctaSection {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .ctaButtonsBox {
+    width: 100%;
   }
 }
 
@@ -293,17 +349,16 @@
     padding: 16px 0 32px;
   }
 
-  .heroContent,
-  .heroCard,
-  .infoCard,
-  .ctaSection,
-  .menuCard {
-    padding: 20px;
+  .contentBox {
     border-radius: 18px;
   }
 
-  .menuGrid {
-    grid-template-columns: 1fr;
+  .heroContent,
+  .heroCard,
+  .homeSection,
+  .infoCard,
+  .ctaSection {
+    padding: 20px;
   }
 
   .heroButtons,
@@ -313,8 +368,6 @@
     align-items: stretch;
   }
 
-  .menuModalHeader,
-  .menuModalRow,
   .hoursRow {
     flex-direction: column;
     align-items: flex-start;
