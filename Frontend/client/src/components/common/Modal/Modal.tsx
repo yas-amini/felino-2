@@ -32,18 +32,24 @@ type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  size?: "default" | "wide";
 };
 
-export default function Modal({ isOpen, onClose, children }: ModalProps) {
+export default function Modal({
+  isOpen,
+  onClose,
+  children,
+  size = "default",
+}: ModalProps) {
   if (!isOpen) return null;
 
   return (
     <div className="fpModal-overlay" onClick={onClose}>
       <div
-        className="fpModal-content"
-        onClick={(e) => e.stopPropagation()} 
+        className={`fpModal-content fpModal-${size}`}
+        onClick={(e) => e.stopPropagation()}
       >
-        <button className="fpModal-close" onClick={onClose}>
+        <button className="fpModal-close" onClick={onClose} aria-label="Stäng">
           ✕
         </button>
 

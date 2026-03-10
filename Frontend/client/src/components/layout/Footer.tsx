@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import "./Footer.css";
 import Logo from "../Logo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInstagram, faFacebook, faXTwitter } from "@fortawesome/free-brands-svg-icons";
+import { faInstagram, faFacebook, faXTwitter, } from "@fortawesome/free-brands-svg-icons";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 export default function Footer() {
   return (
@@ -50,6 +51,11 @@ export default function Footer() {
             <li><a href="#" aria-label="Facebook"><FontAwesomeIcon icon={faFacebook} /></a></li>
             <li><a href="#" aria-label="Instagram"><FontAwesomeIcon icon={faInstagram} /></a></li>
             <li><a href="#" aria-label="X"><FontAwesomeIcon icon={faXTwitter} /></a></li>
+            <li>
+              <Link to="/admin/profile" aria-label="Admin">
+                <FontAwesomeIcon icon={faUser} />
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

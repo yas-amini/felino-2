@@ -14,7 +14,7 @@ export default function Logo({ size = 120 }: LogoProps) {
       style={{ width: size, height: size }}
     >
       <img
-        src="/images/Felinoslogga.png"   
+        src="/images/logga/Felinoslogga.png"   
         alt="Felino Pizza"
         className="logo-image"
       />

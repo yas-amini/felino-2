@@ -1,0 +1,194 @@
+/* ===== Base ===== */
+.fpAdminBtn {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: #f7f7f8;
+  color: #1f2937;
+  padding: 0 10px;
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;  
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.14s ease,
+    border-color 0.14s ease,
+    color 0.14s ease,
+    opacity 0.14s ease,
+    transform 0.14s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+.fpAdminBtn:focus-visible {
+  outline: 2px solid rgba(56, 102, 66, 0.18);
+  outline-offset: 2px;
+}
+
+.fpAdminBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* ===== Sizes ===== */
+.fpAdminBtn--md {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 0.8rem;
+}
+
+.fpAdminBtn--sm {
+  min-height: 26px;
+  padding: 0 8px;
+  font-size: 0.75rem;
+  border-radius: 6px;
+}
+
+/* ===== Form buttons ===== */
+.fpAdminBtn--primary {
+  background: #eceff1;
+  border-color: #d7dce0;
+  color: #111827;
+}
+
+.fpAdminBtn--primary:hover {
+  background: #e5e7eb;
+  border-color: #cfd5da;
+}
+
+.fpAdminBtn--ghost {
+  background: transparent;
+  border-color: #d7dce0;
+  color: #374151;
+}
+
+.fpAdminBtn--ghost:hover {
+  background: #f3f4f6;
+}
+
+.fpAdminBtn--danger {
+  background: #fbeaea;
+  border-color: #f2caca;
+  color: #991b1b;
+}
+
+.fpAdminBtn--danger:hover {
+  background: #f8dddd;
+}
+
+.fpAdminBtn--cancel {
+  background: transparent;
+  border-color: #e5e7eb;
+  color: #6b7280;
+}
+
+.fpAdminBtn--cancel:hover {
+  background: #f9fafb;
+  color: #374151;
+}
+
+/* ===== List icon buttons ===== */
+.fpAdminBtn--icon-edit,
+.fpAdminBtn--icon-delete,
+.fpAdminBtn--icon-save,
+.fpAdminBtn--icon-toggle {
+  background: transparent;
+  border: none;
+  padding: 0;
+  min-width: 26px;
+  min-height: 26px;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.fpAdminBtn--icon-edit {
+  color: #4b5563;
+}
+
+.fpAdminBtn--icon-save {
+  color: #374151;
+}
+
+.fpAdminBtn--icon-delete {
+  color: #7f1d1d;
+}
+
+.fpAdminBtn--icon-toggle {
+  color: #4b5563;
+}
+
+.fpAdminBtn--icon-edit:hover,
+.fpAdminBtn--icon-delete:hover,
+.fpAdminBtn--icon-save:hover {
+  background: transparent;
+  border: none;
+  transform: none;
+}
+
+.fpAdminBtn--icon-edit:hover,
+.fpAdminBtn--icon-save:hover,
+.fpAdminBtn--icon-toggle:hover {
+  color: #111827;
+}
+
+.fpAdminBtn--icon-delete:hover {
+  color: #991b1b;
+}
+.fpAdminBtn svg {
+  font-size: 1.3em;
+  flex: 0 0 auto;
+}
+
+.fpAdminBtn--icon-toggle.is-open svg {
+  transform: rotate(180deg);
+}
+
+.fpAdminBtn--icon-toggle svg {
+  transition: transform 0.18s ease;
+}
+/* ===== Header quick actions ===== */
+
+.fpAdminBtn--icon-header {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 6px;
+  background: #f3f4f6;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #1f2937;
+
+  line-height: 1;
+  box-shadow: none;
+}
+
+.fpAdminBtn--icon-header:hover {
+  background: #fff;
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #111827;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.fpAdminBtn--icon-header svg {
+  font-size: 1.1rem;
+  display: block;
+  flex: 0 0 auto;
+}

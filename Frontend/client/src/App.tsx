@@ -1,12 +1,14 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-// Layout
-import Navbar from "./components/layout/Navbar";
-import Footer from "./components/layout/Footer";
+// Layouts
+import SiteLayout from "./layouts/SiteLayout";
+import AdminLayout from "./layouts/AdminLayout";
+
+// Layout helper
 import Container from "./components/layout/Container";
 
-// Pages
+// Pages (site)
 import HomePage from "./pages/homepage/HomePage";
 import OrderPage from "./pages/orderpage/OrderPage";
 import TableBooking from "./pages/tablebooking/TableBooking";
@@ -14,6 +16,16 @@ import BestallHem from "./pages/bestall-hem/MenuPage";
 import { sampleProducts } from "./data/products";
 import CartPage from "./pages/cartpage/CartPage";
 import CheckoutPage from "./pages/checkoutpage/CheckoutPage";
+
+// Pages (admin)
+import AdminHomePage from "./pages/admin/Home/AdminHomePage";
+import AdminOrdersPage from "./pages/admin/Orders/AdminOrdersPage";
+import AdminProductsPage from "./pages/admin/Products/AdminProductsPage";
+import AdminBookingPage from "./pages/admin/Booking/AdminBookingPage";
+import AdminSettingsPage from "./pages/admin/Settings/AdminSettingsPage";
+import AdminProfilePage from "./pages/admin/Profile/AdminProfilePage";
+import AdminCategoriesPage from "./pages/admin/Categories/AdminCategoriesPage";
+import AdminCampaignsPage from "./pages/admin/Campaigns/AdminCampaignsPage";
 
 function NotFound() {
   return (
@@ -27,33 +39,37 @@ function NotFound() {
 export default function App() {
   return (
     <BrowserRouter>
-      <Navbar />
-
-      <main>
-        <Routes>
-          {/* Startsida */}
+      <Routes>
+        {/* SITE */}
+        <Route element={<SiteLayout />}>
           <Route path="/" element={<HomePage />} />
 
-          {/* Meny / Beställ */}
           <Route path="/meny" element={<OrderPage />} />
           <Route path="/bestall" element={<BestallHem products={sampleProducts} />} />
 
-          {/* Boka bord */}
           <Route path="/boka-bord" element={<TableBooking />} />
 
-          {/* Varukorg & Checkout */}
           <Route path="/varukorg" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
 
-          {/* Redirect gammal route */}
           <Route path="/order" element={<Navigate to="/bestall" replace />} />
 
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
+        </Route>
 
-      <Footer />
+        {/* ADMIN */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="" element={<AdminHomePage />} />
+          <Route path="orders" element={<AdminOrdersPage />} />
+          <Route path="booking" element={<AdminBookingPage />} />
+          <Route path="products" element={<AdminProductsPage />} />
+          <Route path="settings" element={<AdminSettingsPage />} />
+          <Route path="profile" element={<AdminProfilePage />} />
+          <Route path="categories" element={<AdminCategoriesPage />} />
+          <Route path="campaigns" element={<AdminCampaignsPage />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }

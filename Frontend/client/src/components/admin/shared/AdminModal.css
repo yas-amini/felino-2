@@ -1,0 +1,77 @@
+/* ===== Overlay ===== */
+.fpAdminModal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+/* ===== Modal ===== */
+.fpAdminModal-content {
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.fpAdminModal-content--sm {
+  width: min(92vw, 420px);
+}
+
+.fpAdminModal-content--md {
+  width: min(92vw, 520px);
+}
+
+.fpAdminModal-content--lg {
+  width: min(92vw, 900px);
+}
+
+/* ===== Header ===== */
+.fpAdminModal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.fpAdminModal-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* ===== Close button ===== */
+.fpAdminModal-close {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  color: #6b7280;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fpAdminModal-close:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+/* ===== Body ===== */
+.fpAdminModal-body {
+  padding: 14px;
+  font-size: 0.9rem;
+  color: #374151;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}

@@ -6,22 +6,70 @@
   align-items: center;
   justify-content: center;
   z-index: 9999;
+  padding: 24px;
+  box-sizing: border-box;
 }
 
 .fpModal-content {
   background: #fff;
   padding: 2rem;
   border-radius: 10px;
-  width: min(92vw, 520px);
   position: relative;
+  box-sizing: border-box;
+  width: min(92vw, 520px);
+  max-width: 100%;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.fpModal-default {
+  width: min(92vw, 520px);
+}
+
+.fpModal-wide {
+  width: min(95vw, 1320px);
+  max-height: calc(100vh - 48px);
+}
+
+.fpModal-content p {
+  font-size: 0.9rem;
+}
+
+.fpModal-content h2 {
+  font-size: 1.4rem;
 }
 
 .fpModal-close {
   position: absolute;
-  top: 10px;
-  right: 12px;
+  top: 14px;
+  right: 14px;
   border: none;
   background: transparent;
-  font-size: 1.2rem;
+  font-size: 1rem;
   cursor: pointer;
+  z-index: 2;
+  line-height: 1;
+}
+
+@media (max-width: 640px) {
+  .fpModal-overlay {
+    padding: 12px;
+  }
+
+  .fpModal-content {
+    padding: 1.25rem;
+    max-height: calc(100vh - 24px);
+  }
+
+  .fpModal-default,
+  .fpModal-wide {
+    width: 100%;
+    max-height: calc(100vh - 24px);
+  }
+
+  .fpModal-close {
+    top: 10px;
+    right: 10px;
+  }
 }
