@@ -1,12 +1,92 @@
 .calendar-container {
-    border: 1px solid rgb(228, 228, 228);
-    margin: 2rem 0;
-    border-radius: 1rem;
+  border: 1px solid rgb(228, 228, 228);
+  margin: 2rem 0;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #fff;
 }
+
 .calendar-layout {
-    display: grid;
-    grid-template-columns: 1fr 4fr;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 560px;
+  background: #fff;
 }
+
+.calendar-sidebar {
+  border-right: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.calendar-sidebar-header {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.calendar-sidebar-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-sidebar-row {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.calendar-time-badge {
+  background: #10b981;
+  color: #fff;
+  border-radius: 8px;
+  padding: 4px 8px;
+  min-width: 58px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.calendar-booking-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+}
+
 .calendar-area {
-    padding: 4rem;
+  overflow-x: auto;
+  background: #fff;
+}
+
+.calendar-time-header {
+  display: grid;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.calendar-time-header-cell {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #4b5563;
+  border-right: 1px solid #f3f4f6;
+  background: #fff;
+}
+
+.calendar-grid {
+  display: grid;
+}
+
+.calendar-grid-cell {
+  height: 64px;
+  border-right: 1px solid #f3f4f6;
+  border-bottom: 1px solid #f3f4f6;
+  background: #fff;
 }
