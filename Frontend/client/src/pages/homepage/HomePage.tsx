@@ -56,6 +56,7 @@ export default function HomePage() {
                 Enkelt, snabbt och riktigt bra.
               </p>
 
+
               <div className="heroButtons">
                 <Button
                   onClick={() => setMenuOpen(true)}
@@ -63,6 +64,7 @@ export default function HomePage() {
                 >
                   Felino&apos;s Meny
                 </Button>
+
                 <Link to="/bestall">
                   <Button leftIcon={<FontAwesomeIcon icon={faCartShopping} />}>
                     Beställ nu
@@ -70,148 +72,108 @@ export default function HomePage() {
                 </Link>
 
                 <Link to="/boka-bord">
-                  <Button
-                    leftIcon={<FontAwesomeIcon icon={faCalendar} />}
-                  >
+                  <Button leftIcon={<FontAwesomeIcon icon={faCalendar} />}>
                     Boka bord
                   </Button>
                 </Link>
+              </div>
 
+              <div className="heroContactInfo">
+                <div className="heroContactItem">
+                  <span className="heroContactLabel">Telefon</span>
+                  <a href="tel:0123456789" className="heroContactValue">
+                    012-345 67 89
+                  </a>
+                </div>
+
+                <div className="heroContactItem">
+                  <span className="heroContactLabel">E-post</span>
+                  <a href="mailto:info@felinopizza.se" className="heroContactValue">
+                    info@felinopizza.se
+                  </a>
+                </div>
+
+                <div className="heroContactItem">
+                  <span className="heroContactLabel">Adress</span>
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=Storgatan+1+123+45+Stockholm"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="heroContactValue"
+                  >
+                    Storgatan 1, 123 45 Stockholm
+                  </a>
+                </div>
               </div>
             </div>
           </div>
 
 
         </section>
-        <div className="sectionCornerLabel heroCornerPlacement">
-          Kundernas favoriter
-        </div>
-        <section className="contentBox favoritesBox">
-          <div className="homeSection favoritesSection">
-            <div className="sectionHeading">
-              <div>
+        <section className="favoritesSectionWrapper">
+          <div className="sectionCornerLabel favoritesSectionLabel">
+            Kundernas favoriter
+          </div>
+
+          <div className="contentBox favoritesBox">
+            <div className="homeSection favoritesSection">
+              <div className="favoritesCarouselBox">
+                <ProductCarousel />
               </div>
             </div>
-
-            <div className="favoritesCarouselBox">
-              <ProductCarousel />
-            </div>
           </div>
-
         </section>
-        <div className="sectionCornerLabel heroCornerPlacement"> Schyssta deals
-        </div>
-        <div className="heroPromoRow">
-          <div className="contentBox heroPromoBox">
-            <img
-              src="/images/site/campaigns/pizzaaaa.jpg"
-              alt="Kampanj 1"
-              className="promoImage"
-            />
-            <div className="promoOverlay" />
-            <div className="promoContent">
-              <h3>Dagens tips</h3>
-              <p className="promoTitle">2 för 1 på utvalda pizzor</p>
-              <p className="promoText">
-                Gäller vardagar mellan 14:00–17:00.
-              </p>
-            </div>
-          </div>
+        <section className="promoSection">
+          <div className="sectionCornerLabel promoSectionLabel">Schyssta deals</div>
 
-          <div className="contentBox heroPromoBox">
-            <img
-              src="/images/site/campaigns/cheeseburger.jpg"
-              alt="Kampanj 2"
-              className="promoImage"
-            />
-            <div className="promoOverlay" />
-            <div className="promoContent">
-              <h3>Veckans kampanj</h3>
-              <p className="promoTitle">Läsk på köpet</p>
-              <p className="promoText">Vid köp av valfri familjepizza.</p>
-            </div>
-          </div>
-
-          <div className="contentBox heroPromoBox">
-            <img
-              src="/images/site/campaigns/pizzeria1.jpg"
-              alt="Kampanj 3"
-              className="promoImage"
-            />
-            <div className="promoOverlay" />
-            <div className="promoContent">
-              <h3>Lunchdeal</h3>
-              <p className="promoTitle">Pizza + dryck 109:-</p>
-              <p className="promoText">Alla vardagar.</p>
-            </div>
-          </div>
-        </div>
-
-
-
-        <div className="sectionCornerLabel"> Hitta hit
-        </div>
-        <section className="infoGrid">
-          <div className="contentBox contactBox">
-            <div className="infoCard">
-
-              <div className="contactImageWrapper">
+          <div className="heroPromoRow">
+            <div className="contentBox heroPromoBox">
+              <div className="promoInner">
                 <img
-                  src="/images/logga/felinopizzeriaillus.png"
-                  alt="Karta till Felino Pizza"
+                  src="/images/site/campaigns/pizzaaaa.jpg"
+                  alt="Kampanj 1"
+                  className="promoImage"
                 />
-              </div>
-
-              {/* NY WRAPPER */}
-              <div className="contactContent">
-                <div className="contactInfoBox">
-                  <p className="contactText">Storgatan 1</p>
-                  <p className="contactTextCity">123 45 Stockholm</p>
-
-                  <p className="contactTextTE">
-                    Telefon: 012-345 67 89
-                    <br />
-                    E-post: info@felinopizza.se
+                <div className="promoOverlay" />
+                <div className="promoContent">
+                  <h3>Dagens tips</h3>
+                  <p className="promoTitle">2 för 1 på utvalda pizzor</p>
+                  <p className="promoText">
+                    Gäller vardagar mellan 14:00–17:00.
                   </p>
                 </div>
+              </div>
+            </div>
 
-                <div className="contactButtonsBox">
-                  <div className="contactButtons">
-                    <Button variant="secondary">Visa karta</Button>
-                    <Button variant="ghost">Kontakta oss</Button>
-                  </div>
+            <div className="contentBox heroPromoBox">
+              <div className="promoInner">
+                <img
+                  src="/images/site/campaigns/cheeseburger.jpg"
+                  alt="Kampanj 2"
+                  className="promoImage"
+                />
+                <div className="promoOverlay" />
+                <div className="promoContent">
+                  <h3>Veckans kampanj</h3>
+                  <p className="promoTitle">Läsk på köpet</p>
+                  <p className="promoText">Vid köp av valfri familjepizza.</p>
                 </div>
               </div>
-
-            </div>
-          </div>
-        </section>
-        <section className="contentBox ctaBox">
-          <div className="ctaSection">
-            <div className="ctaContent">
-              <p className="sectionLabel">Hungrig?</p>
-              <h2>Beställ din favoritpizza idag</h2>
-              <p>
-                Snabb service, goda råvaror och pizzor för hela familjen.
-              </p>
             </div>
 
-            <div className="ctaButtonsBox">
-              <div className="ctaButtons">
-                <Link to="/bestall">
-                  <Button leftIcon={<FontAwesomeIcon icon={faCartShopping} />}>
-                    Beställ online
-                  </Button>
-                </Link>
-
-                <Link to="/boka-bord">
-                  <Button
-                    variant="secondary"
-                    leftIcon={<FontAwesomeIcon icon={faCalendar} />}
-                  >
-                    Boka bord
-                  </Button>
-                </Link>
+            <div className="contentBox heroPromoBox">
+              <div className="promoInner">
+                <img
+                  src="/images/site/campaigns/pizzeria1.jpg"
+                  alt="Kampanj 3"
+                  className="promoImage"
+                />
+                <div className="promoOverlay" />
+                <div className="promoContent">
+                  <h3>Lunchdeal</h3>
+                  <p className="promoTitle">Pizza + dryck 109:-</p>
+                  <p className="promoText">Alla vardagar.</p>
+                </div>
               </div>
             </div>
           </div>

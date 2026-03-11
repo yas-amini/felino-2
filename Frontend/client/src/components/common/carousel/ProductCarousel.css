@@ -1,5 +1,8 @@
 .productCarouselWrapper {
   position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  padding-inline: 44px; /* plats för pilar + jämna sidokan­ter */
 }
 
 .productCarousel {
@@ -10,6 +13,7 @@
   scroll-snap-type: x proximity;
   width: 100%;
   padding: 2px 0 20px;
+  box-sizing: border-box;
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
@@ -19,17 +23,19 @@
   display: none;
 }
 
+/* Placeholder-kort */
 .productPlaceholderCard {
   flex: 0 0 calc((100% - 36px) / 4);
   aspect-ratio: 1 / 1;
   scroll-snap-align: start;
-  background: #fffdfa;
-  border: 1px solid #d9d4cb;
+  background: #ffffff;
+  border: 1px solid #ffffff;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   padding: 10px 10px 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  box-sizing: border-box;
 }
 
 @media (min-width: 1400px) {
@@ -41,8 +47,8 @@
 .productPlaceholderMedia {
   flex: 1;
   border-radius: 4px;
-  background: linear-gradient(135deg, #f2efe8 0%, #e7e1d6 100%);
-  border: 1px solid #e1dbd0;
+  background: linear-gradient(135deg, #ffffff 0%, #e7e1d6 100%);
+  border: 1px solid #ffffff;
 }
 
 .productPlaceholderBody {
@@ -54,15 +60,12 @@
 .productPlaceholderLine {
   height: 10px;
   border-radius: 999px;
-  background: #e6e0d5;
+  background: #ffffff;
 }
-
 
 .productPlaceholderLineText {
   width: 100%;
 }
-
-
 
 .productCarouselArrow {
   position: absolute;
@@ -87,37 +90,90 @@
 }
 
 .productCarouselArrowLeft {
-  left: -28px;
+  left: 0;
 }
 
 .productCarouselArrowRight {
-  right: -28px;
+  right: 0;
 }
 
+/* =========================
+   TABLET / MINDRE DESKTOP
+========================= */
 @media (max-width: 1200px) {
+  .productCarouselWrapper {
+    padding-inline: 36px;
+  }
+
+  .productCarousel {
+    gap: 10px;
+    padding-bottom: 16px;
+  }
+
   .productPlaceholderCard {
-    flex: 0 0 calc((100% - 24px) / 3);
+    flex: 0 0 calc((100% - 20px) / 3);
+    padding: 8px 8px 12px;
+  }
+
+  .productCarouselArrow {
+    width: 34px;
+    height: 34px;
   }
 }
 
+/* =========================
+   TABLET
+========================= */
 @media (max-width: 900px) {
+  .productCarouselWrapper {
+    padding-inline: 16px; /* jämna ytterkanter runt boxen */
+  }
+
+  .productCarousel {
+    gap: 10px;
+    padding: 2px 0 12px;
+  }
+
   .productCarouselArrow {
     display: none;
   }
 
   .productPlaceholderCard {
-    flex: 0 0 190px;
+    flex: 0 0 calc((100% - 10px) / 2);
+    max-width: none;
+    padding: 8px 8px 10px;
+  }
+
+  .productPlaceholderBody {
+    gap: 6px;
+  }
+
+  .productPlaceholderLine {
+    height: 8px;
   }
 }
 
-@media (max-width: 640px) {
+/* =========================
+   MINDRE TABLET
+========================= */
+@media (max-width: 768px) {
+  .productCarouselWrapper {
+    padding-inline: 12px;
+  }
+
   .productCarousel {
-    gap: 10px;
-    padding-bottom: 4px;
+    gap: 8px;
+    padding-bottom: 10px;
   }
 
   .productPlaceholderCard {
-    flex: 0 0 72%;
-    max-width: 220px;
+    flex: 0 0 calc((100% - 8px) / 2);
+  }
+}
+
+/* Mobil: om komponenten ändå råkar renderas */
+@media (max-width: 640px) {
+  .productCarouselWrapper {
+    display: none;
   }
 }
