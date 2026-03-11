@@ -1,5 +1,9 @@
 .tabs-Toolbar {
     display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-between;
+    flex-direction: column;    
+}
+.header-calendar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between
 }

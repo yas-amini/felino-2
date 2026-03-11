@@ -15,7 +15,11 @@ export default function AdminBookingPage() {
     <AdminPage title="Bordsbokningar">
 
       <div className="tabs-Toolbar">
-        <BookingToolBar />
+        <div className="header-calendar">
+          <p>Här kan du se bokingar</p>
+          <BookingToolBar />
+        </div>
+
         <div>
           <BookingTabs activeTab={activeTab} onChange={setActiveTab} />
           {activeTab === "kalender" && <BookingCalendar />}

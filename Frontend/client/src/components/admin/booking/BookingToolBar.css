@@ -4,7 +4,7 @@
     border: none;
 }
 .booking-toolbar {
-    width: 100%;
+    width: 50%;
     height: fit-content;
     display: flex;
     justify-content: end;
