@@ -4,7 +4,28 @@ import { faUsers, faClock, faKey } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../../components/common/Button/Button";
 import "./AdminProfilePage.css";
 
+type Authorization = {
+  id: number
+  name: string
+}
+
 export default function AdminProfilePage() {
+
+const authorizations: Authorization[] = [
+  {
+    id: 1,
+    name: "Roll: Admin"
+  },
+  {
+    id: 2,
+    name: "Schemahantering"
+  },
+  {
+    id: 3,
+    name: "Användarhantering"
+  }
+]
+
   return (
     <AdminPage title="Användarsida">
       <div className="userpage-container">
@@ -48,10 +69,16 @@ export default function AdminProfilePage() {
             </div>
             <Button type="button" variant="secondary">Ändra</Button>
           </div>
-
-
-
-
+        </section>
+        <section className="user-authorization-section">
+          <h3>Roll och Behörigheter</h3>
+          <ul>
+            {authorizations.map(authorization =>
+              <li key={authorization.id}>
+                {authorization.name}
+              </li>
+            )}
+          </ul>
         </section>
       </div>
     </AdminPage >
