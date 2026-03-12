@@ -33,7 +33,12 @@ function AdminPageContent({
   title?: string;
   noCard: boolean;
 }) {
-  const { openCreateProductModal, canCreateProduct } = useAdminQuickActions();
+  const {
+    openCreateProductModal,
+    canCreateProduct,
+    openCreateCampaignModal,
+    canCreateCampaign,
+  } = useAdminQuickActions();
 
   return (
     <section className="fpAdminPage">
@@ -99,6 +104,8 @@ function AdminPageContent({
               <AdminButton
                 variant="icon-header"
                 type="button"
+                onClick={openCreateCampaignModal}
+                disabled={!canCreateCampaign}
                 title="Ny kampanj"
                 aria-label="Ny kampanj"
               >
