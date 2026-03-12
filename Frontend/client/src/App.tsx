@@ -1,5 +1,8 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { CartProvider } from "./context/CartContext";
+import { NotificationProvider } from "./context/NotificationContext";
+import Notification from "./components/common/Notification";
 
 // Layouts
 import SiteLayout from "./layouts/SiteLayout";
@@ -37,37 +40,44 @@ function NotFound() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* SITE */}
-        <Route element={<SiteLayout />}>
-          <Route path="/" element={<HomePage />} />
-         
-          <Route path="/bestall" element={<BestallHem products={sampleProducts} />} />
+    <NotificationProvider>
+      <CartProvider>
+        <BrowserRouter>
+          <Notification />
+          <Routes>
+            {/* SITE */}
+            <Route element={<SiteLayout />}>
+              <Route path="/" element={<HomePage />} />
 
-          <Route path="/boka-bord" element={<TableBooking />} />
+              {/* OrderPage was deleted, redirecting to bestall for now */}
+              <Route path="/meny" element={<Navigate to="/bestall" replace />} />
+              <Route path="/bestall" element={<BestallHem products={sampleProducts} />} />
 
-          <Route path="/varukorg" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/boka-bord" element={<TableBooking />} />
 
-          <Route path="/order" element={<Navigate to="/bestall" replace />} />
+              <Route path="/varukorg" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
 
-          {/* 404 */}
-          <Route path="*" element={<NotFound />} />
-        </Route>
+              <Route path="/order" element={<Navigate to="/bestall" replace />} />
 
-        {/* ADMIN */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route path="" element={<AdminHomePage />} />
-          <Route path="orders" element={<AdminOrdersPage />} />
-          <Route path="booking" element={<AdminBookingPage />} />
-          <Route path="products" element={<AdminProductsPage />} />
-          <Route path="settings" element={<AdminSettingsPage />} />
-          <Route path="profile" element={<AdminProfilePage />} />
-          <Route path="categories" element={<AdminCategoriesPage />} />
-          <Route path="campaigns" element={<AdminCampaignsPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+              {/* 404 */}
+              <Route path="*" element={<NotFound />} />
+            </Route>
+
+            {/* ADMIN */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route path="" element={<AdminHomePage />} />
+              <Route path="orders" element={<AdminOrdersPage />} />
+              <Route path="booking" element={<AdminBookingPage />} />
+              <Route path="products" element={<AdminProductsPage />} />
+              <Route path="settings" element={<AdminSettingsPage />} />
+              <Route path="profile" element={<AdminProfilePage />} />
+              <Route path="categories" element={<AdminCategoriesPage />} />
+              <Route path="campaigns" element={<AdminCampaignsPage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </CartProvider>
+    </NotificationProvider>
   );
 }

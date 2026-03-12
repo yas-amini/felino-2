@@ -2,6 +2,9 @@ import { useState } from "react";
 import ProductCard from "./ProductCard";
 import "./MenuPage.css";
 import Container from "../../components/layout/Container";
+import { useCart } from "../../context/CartContext";
+import { useNotification } from "../../context/NotificationContext";
+
 
 type Product = {
   id: number;
@@ -29,6 +32,16 @@ const categoryTranslations: Record<string, string> = {
 
 export default function MenuPage({ products = [] }: Props) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [specialInstructions, setSpecialInstructions] = useState("");
+  const { addToCart } = useCart();
+  const { showNotification } = useNotification();
+
+  function openProduct(product: Product) {
+    setSelectedProduct(product);
+    setQuantity(1);
+    setSpecialInstructions("");
+  }
 
   const categories = [...new Set(products.map((p) => p.category))];
 
@@ -46,7 +59,7 @@ export default function MenuPage({ products = [] }: Props) {
                   <ProductCard
                     key={product.id}
                     product={product}
-                    onOpen={setSelectedProduct}
+                    onOpen={openProduct}
                   />
                 ))}
             </div>
@@ -83,16 +96,33 @@ export default function MenuPage({ products = [] }: Props) {
 
               <div className="quantity-selector">
                 <label>Antal:</label>
-                <input type="number" defaultValue={1} min={1} />
+                <input
+                  type="number"
+                  value={quantity}
+                  min={1}
+                  onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
+                />
               </div>
 
               <div className="special-instructions">
-                <label>Speciella önskemål:</label>
-                <textarea placeholder="T.ex. ingen lök..."></textarea>
+                <label>Speciala önskemål:</label>
+                <textarea
+                  placeholder="T.ex. ingen lök..."
+                  value={specialInstructions}
+                  onChange={(e) => setSpecialInstructions(e.target.value)}
+                />
               </div>
 
               <button className="modal-add" onClick={() => {
-                alert(`Tillagd i varukorgen: ${selectedProduct.name}`);
+                addToCart({
+                  id: selectedProduct.id,
+                  name: selectedProduct.name,
+                  price: selectedProduct.price,
+                  image: selectedProduct.image,
+                  quantity,
+                  specialInstructions: specialInstructions.trim() || undefined,
+                });
+                showNotification(`${selectedProduct.name} har lagts till i varukorgen!`);
                 setSelectedProduct(null);
               }}>
                 Lägg till i beställning
