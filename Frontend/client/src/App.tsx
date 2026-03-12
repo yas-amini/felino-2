@@ -40,14 +40,18 @@ function NotFound() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* SITE */}
-        <Route element={<SiteLayout />}>
-          <Route path="/" element={<HomePage />} />
+    <NotificationProvider>
+      <CartProvider>
+        <BrowserRouter>
+          <Notification />
+          <Routes>
+            {/* SITE */}
+            <Route element={<SiteLayout />}>
+              <Route path="/" element={<HomePage />} />
 
-          <Route path="/meny" element={<OrderPage />} />
-          <Route path="/bestall" element={<BestallHem products={sampleProducts} />} />
+              {/* OrderPage was deleted, redirecting to bestall for now */}
+              <Route path="/meny" element={<Navigate to="/bestall" replace />} />
+              <Route path="/bestall" element={<BestallHem products={sampleProducts} />} />
 
               <Route path="/boka-bord" element={<TableBooking />} />
 

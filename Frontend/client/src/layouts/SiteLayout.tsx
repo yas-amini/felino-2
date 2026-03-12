@@ -3,26 +3,16 @@ import { useState } from "react";
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
-<<<<<<< HEAD
+import MenuModal from "../components/common/Modal/MenuModal";
 import { useCart } from "../context/CartContext";
 
 export default function SiteLayout() {
   const { cartCount } = useCart();
-
-  return (
-    <>
-      <Navbar cartCount={cartCount} />
-=======
-import MenuModal from "../components/common/Modal/MenuModal";
-
-export default function SiteLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <>
-      <Navbar />
-
->>>>>>> main
+      <Navbar cartCount={cartCount} />
       <main>
         <Outlet />
       </main>
