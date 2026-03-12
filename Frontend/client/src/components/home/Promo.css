@@ -1,0 +1,224 @@
+/* PROMO */
+
+.promoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.promoSectionLabel {
+  color: #000;
+  white-space: nowrap;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.heroPromoRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+.heroPromoBox {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 18px;
+  border: 8px solid #386642;
+  background-image: url("/images/site/rutig.png");
+  background-size: 210px;
+  background-repeat: repeat;
+  background-position: center;
+  aspect-ratio: 1 / 1;
+}
+
+.promoInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.promoImage {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.promoOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.promoContent {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  color: #ffffff;
+  background: #4765468a;
+  box-sizing: border-box;
+}
+
+.promoContent h3 {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.promoTitle {
+  margin: 0 0 8px;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.promoText {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+
+@media (max-width: 1100px) {
+  .heroPromoRow {
+    gap: 18px;
+  }
+
+  .heroPromoBox {
+    aspect-ratio: 1 / 0.82;
+    padding: 14px;
+  }
+
+  .promoContent {
+    padding: 18px;
+  }
+
+  .promoTitle {
+    font-size: 1.1rem;
+  }
+
+  .promoText {
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+}
+
+
+@media (max-width: 1024px) {
+  .heroPromoRow {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .heroPromoBox {
+    aspect-ratio: 1 / 0.78;
+    padding: 12px;
+  }
+
+  .promoContent {
+    padding: 16px;
+  }
+
+  .promoContent h3 {
+    font-size: 0.8rem;
+  }
+
+  .promoTitle {
+    font-size: 1.02rem;
+  }
+
+  .promoText {
+    font-size: 0.86rem;
+    line-height: 1.4;
+  }
+}
+
+
+@media (max-width: 900px) {
+  .heroPromoRow {
+    gap: 14px;
+  }
+
+  .heroPromoBox {
+    aspect-ratio: 1 / 0.72;
+    padding: 10px;
+  }
+
+  .promoContent {
+    padding: 14px;
+  }
+
+  .promoContent h3 {
+    font-size: 0.78rem;
+  }
+
+  .promoTitle {
+    font-size: 1rem;
+  }
+
+  .promoText {
+    font-size: 0.84rem;
+    line-height: 1.35;
+    
+  }
+}
+
+
+@media (max-width: 768px) {
+  .heroPromoRow {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .heroPromoBox {
+    aspect-ratio: 16 / 9;
+    padding: 10px;
+  }
+
+  .promoContent {
+    padding: 18px;
+  }
+
+  .promoContent h3 {
+    font-size: 0.82rem;
+  }
+
+  .promoTitle {
+    font-size: 1.08rem;
+  }
+
+  .promoText {
+    font-size: 0.88rem;
+  }
+}
+
+
+@media (max-width: 520px) {
+  .heroPromoBox {
+    aspect-ratio: 15 / 10;
+  }
+}

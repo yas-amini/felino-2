@@ -109,7 +109,6 @@ export default function AdminLayout() {
         </div>
       </aside>
 
-      {/* (Valfri) subbar */}
       <nav id="admin-subbar" className="admin-subbar" aria-label="Undermenyn" />
 
       {/* CONTENT-RUTA */}

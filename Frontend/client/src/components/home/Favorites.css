@@ -1,0 +1,49 @@
+/* FAVORITES */
+
+.favoritesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.favoritesSectionLabel {
+  display: inline-block;
+  color: #000;
+  white-space: nowrap;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0 0 -8px 0;
+}
+
+/* BOXENS INNEHÅLL */
+
+.favoritesContent {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 24px 24px 0;
+  background: #386642;
+  border-radius: 10px;
+  overflow: hidden; 
+}
+
+/* TABLET */
+
+@media (max-width: 1024px) {
+  .favoritesContent {
+    padding: 20px 20px 0;
+  }
+}
+
+/* SMALL TABLET */
+
+@media (max-width: 900px) {
+  .favoritesContent {
+    padding: 18px 16px 0;
+  }
+}
