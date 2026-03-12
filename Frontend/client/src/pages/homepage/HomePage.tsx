@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import Page from "../../components/layout/Page";
 import MenuModal from "../../components/common/Modal/MenuModal";
-import Hero from "../../components/home/hero"
+import Hero from "../../components/home/Hero"
 import OpeningHours from "../../components/home/OpeningHours";
 import Favorites from "../../components/home/Favorites";
 import Promo from "../../components/home/Promo";

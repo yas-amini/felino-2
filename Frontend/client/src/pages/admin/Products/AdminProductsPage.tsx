@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
@@ -71,7 +72,10 @@ function getStoredProducts(): Product[] {
   }
 }
 
-function ProductsPageContent() {
+export default function AdminProductsPage() {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [categories, setCategories] = useState<StoredCategory[]>(() =>
     getStoredCategories()
   );
@@ -89,6 +93,18 @@ function ProductsPageContent() {
     if (typeof window === "undefined") return;
     window.localStorage.setItem(PRODUCT_STORAGE_KEY, JSON.stringify(products));
   }, [products]);
+
+  useEffect(() => {
+    const shouldOpenCreate = searchParams.get("create") === "1";
+
+    if (shouldOpenCreate && categories.length > 0) {
+      setOpenCreate(true);
+
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete("create");
+      setSearchParams(nextParams, { replace: true });
+    }
+  }, [searchParams, categories.length, setSearchParams]);
 
   const categoryOptions: ProductCategoryOption[] = categories.map((category) => ({
     value: category.slug,
@@ -111,6 +127,15 @@ function ProductsPageContent() {
 
     setProducts((prev) => [newProduct, ...prev]);
     setOpenCreate(false);
+  }
+
+  function handleOpenCreate() {
+    if (categories.length === 0) {
+      navigate("/admin/categories");
+      return;
+    }
+
+    setOpenCreate(true);
   }
 
   function handleOpenEdit(product: Product) {
@@ -163,150 +188,159 @@ function ProductsPageContent() {
   }
 
   return (
-    <section className="admin-settings" data-scope="products">
-      <section className="admin-section">
-        <div className="products-section-head">
-          <div>
-            <h2>Aktiva produkter</h2>
-            <p className="muted">
-              Här ser du alla produkter uppdelade per kategori.
-            </p>
-          </div>
-
-          <div className="products-section-actions">
-            <AdminButton
-              variant="primary"
-              type="button"
-              onClick={() => setOpenCreate(true)}
-              disabled={categories.length === 0}
-              title={
-                categories.length === 0
-                  ? "Lägg först till minst en kategori"
-                  : "Lägg till produkt"
-              }
-            >
-              <FontAwesomeIcon icon={faPlus} />
-              <span>Lägg till produkt</span>
-            </AdminButton>
-          </div>
-        </div>
-      </section>
-
-      {categories.length === 0 ? (
-        <section className="admin-section">
-          <p className="muted">
-            Inga kategorier finns ännu. Lägg först till kategorier på kategorisidan.
-          </p>
-        </section>
-      ) : (
-        categories.map((category) => {
-          const categoryProducts = products.filter(
-            (product) => product.category === category.slug
-          );
-
-          return (
-            <section
-              key={category.id}
-              className="admin-section product-category-section"
-            >
-              <div className="product-category-head">
-                <h3>{category.name}</h3>
-                <span className="product-category-count">
-                  {categoryProducts.length} st
-                </span>
+    <>
+      <AdminPage title="Produkter">
+        <section className="admin-settings" data-scope="products">
+          <section className="admin-section">
+            <div className="products-section-head">
+              <div>
+                <h2>Aktiva produkter</h2>
+                <p className="muted">
+                  Här ser du alla produkter uppdelade per kategori.
+                </p>
               </div>
 
-              {categoryProducts.length === 0 ? (
-                <p className="muted">Inga produkter i denna kategori ännu.</p>
-              ) : (
-                <>
-                  <div className="products-desktop-view">
-                    <div className="table-wrap">
-                      <table className="products-table">
-                        <thead>
-                          <tr>
-                            <th>Bild</th>
-                            <th>Namn</th>
-                            <th>Ingredienser</th>
-                            <th>Pris</th>
-                            <th>Sås</th>
-                            <th>Alt-text</th>
-                            <th>Åtgärder</th>
-                          </tr>
-                        </thead>
+              <div className="products-section-actions">
+                <AdminButton
+                  variant="primary"
+                  type="button"
+                  onClick={handleOpenCreate}
+                  disabled={categories.length === 0}
+                  title={
+                    categories.length === 0
+                      ? "Lägg först till minst en kategori"
+                      : "Lägg till produkt"
+                  }
+                >
+                  <FontAwesomeIcon icon={faPlus} />
+                  <span>Lägg till produkt</span>
+                </AdminButton>
+              </div>
+            </div>
+          </section>
 
-                        <tbody>
-                          {categoryProducts.map((product) => (
-                            <tr key={product.id}>
-                              <td data-label="Bild">
-                                {product.image ? (
-                                  <img
-                                    src={product.image}
-                                    alt={product.altText || product.name}
-                                    className="thumb"
-                                    width={64}
-                                    height={64}
-                                  />
-                                ) : (
-                                  <span className="muted">Ingen</span>
-                                )}
-                              </td>
-
-                              <td data-label="Namn">{product.name}</td>
-                              <td data-label="Ingredienser">{product.ingredients}</td>
-                              <td data-label="Pris">{product.price}</td>
-                              <td data-label="Sås">{product.sauce || "-"}</td>
-                              <td data-label="Alt-text">{product.altText || "-"}</td>
-
-                              <td data-label="Åtgärder" className="actions">
-                                <AdminButton
-                                  preset="icon-save"
-                                  size="sm"
-                                  type="button"
-                                  title="Spara"
-                                  aria-label={`Spara ${product.name}`}
-                                  onClick={() => handleSave(product)}
-                                />
-
-                                <AdminButton
-                                  preset="edit"
-                                  size="sm"
-                                  type="button"
-                                  title="Redigera"
-                                  aria-label={`Redigera ${product.name}`}
-                                  onClick={() => handleOpenEdit(product)}
-                                />
-
-                                <AdminButton
-                                  preset="delete"
-                                  size="sm"
-                                  type="button"
-                                  title="Ta bort"
-                                  aria-label={`Ta bort ${product.name}`}
-                                  onClick={() => handleOpenDelete(product)}
-                                />
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  <div className="products-mobile-view">
-                    <AdminProductsAccordion
-                      products={categoryProducts}
-                      onEdit={handleOpenEdit}
-                      onDelete={handleOpenDelete}
-                      onSave={handleSave}
-                    />
-                  </div>
-                </>
-              )}
+          {categories.length === 0 ? (
+            <section className="admin-section">
+              <p className="muted">
+                Inga kategorier finns ännu. Lägg först till kategorier på
+                kategorisidan.
+              </p>
             </section>
-          );
-        })
-      )}
+          ) : (
+            categories.map((category) => {
+              const categoryProducts = products.filter(
+                (product) => product.category === category.slug
+              );
+
+              return (
+                <section
+                  key={category.id}
+                  className="admin-section product-category-section"
+                >
+                  <div className="product-category-head">
+                    <h3>{category.name}</h3>
+                    <span className="product-category-count">
+                      {categoryProducts.length} st
+                    </span>
+                  </div>
+
+                  {categoryProducts.length === 0 ? (
+                    <p className="muted">Inga produkter i denna kategori ännu.</p>
+                  ) : (
+                    <>
+                      <div className="products-desktop-view">
+                        <div className="table-wrap">
+                          <table className="products-table">
+                            <thead>
+                              <tr>
+                                <th>Bild</th>
+                                <th>Namn</th>
+                                <th>Ingredienser</th>
+                                <th>Pris</th>
+                                <th>Sås</th>
+                                <th>Alt-text</th>
+                                <th>Åtgärder</th>
+                              </tr>
+                            </thead>
+
+                            <tbody>
+                              {categoryProducts.map((product) => (
+                                <tr key={product.id}>
+                                  <td data-label="Bild">
+                                    {product.image ? (
+                                      <img
+                                        src={product.image}
+                                        alt={product.altText || product.name}
+                                        className="thumb"
+                                        width={64}
+                                        height={64}
+                                      />
+                                    ) : (
+                                      <span className="muted">Ingen</span>
+                                    )}
+                                  </td>
+
+                                  <td data-label="Namn">{product.name}</td>
+                                  <td data-label="Ingredienser">
+                                    {product.ingredients}
+                                  </td>
+                                  <td data-label="Pris">{product.price}</td>
+                                  <td data-label="Sås">{product.sauce || "-"}</td>
+                                  <td data-label="Alt-text">
+                                    {product.altText || "-"}
+                                  </td>
+
+                                  <td data-label="Åtgärder" className="actions">
+                                    <AdminButton
+                                      preset="icon-save"
+                                      size="sm"
+                                      type="button"
+                                      title="Spara"
+                                      aria-label={`Spara ${product.name}`}
+                                      onClick={() => handleSave(product)}
+                                    />
+
+                                    <AdminButton
+                                      preset="edit"
+                                      size="sm"
+                                      type="button"
+                                      title="Redigera"
+                                      aria-label={`Redigera ${product.name}`}
+                                      onClick={() => handleOpenEdit(product)}
+                                    />
+
+                                    <AdminButton
+                                      preset="delete"
+                                      size="sm"
+                                      type="button"
+                                      title="Ta bort"
+                                      aria-label={`Ta bort ${product.name}`}
+                                      onClick={() => handleOpenDelete(product)}
+                                    />
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      <div className="products-mobile-view">
+                        <AdminProductsAccordion
+                          products={categoryProducts}
+                          onEdit={handleOpenEdit}
+                          onDelete={handleOpenDelete}
+                          onSave={handleSave}
+                        />
+                      </div>
+                    </>
+                  )}
+                </section>
+              );
+            })
+          )}
+        </section>
+      </AdminPage>
 
       <AdminProductCreateModal
         isOpen={openCreate}
@@ -353,14 +387,6 @@ function ProductsPageContent() {
         cancelText="Nej"
         confirmVariant="danger"
       />
-    </section>
-  );
-}
-
-export default function AdminProductsPage() {
-  return (
-    <AdminPage title="Produkter">
-      <ProductsPageContent />
-    </AdminPage>
+    </>
   );
 }
