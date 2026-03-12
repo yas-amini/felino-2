@@ -71,6 +71,23 @@ function getStoredProducts(): Product[] {
   }
 }
 
+function syncCategoriesWithProducts(
+  categories: StoredCategory[],
+  products: Product[]
+): StoredCategory[] {
+  return categories.map((category) => {
+    const productIds = products
+      .filter((product) => product.category === category.slug)
+      .map((product) => product.id);
+
+    return {
+      ...category,
+      productIds,
+      productCount: productIds.length,
+    };
+  });
+}
+
 function ProductsPageContent() {
   const { openCreateProductModal, canCreateProduct } = useAdminQuickActions();
 
@@ -121,7 +138,9 @@ function ProductsPageContent() {
   }
 
   function handleEditSubmit(values: ProductFormValues) {
-    if (!selectedProduct || !values.category) return;
+    if (!selectedProduct || !values.category || typeof window === "undefined") {
+      return;
+    }
 
     const nextProducts = products.map((product) =>
       product.id === selectedProduct.id
@@ -133,20 +152,38 @@ function ProductsPageContent() {
             price: values.price,
             sauce: values.sauce || "",
             altText: values.altText || "",
-            image: values.image,
+            image: product.image,
           }
         : product
     );
 
-    setProducts(nextProducts);
+    const nextCategories = syncCategoriesWithProducts(
+      getStoredCategories(),
+      nextProducts
+    );
 
-    if (typeof window !== "undefined") {
+    try {
       window.localStorage.setItem(
         PRODUCT_STORAGE_KEY,
         JSON.stringify(nextProducts)
       );
-      window.dispatchEvent(new Event("admin-products-updated"));
+      window.localStorage.setItem(
+        CATEGORY_STORAGE_KEY,
+        JSON.stringify(nextCategories)
+      );
+    } catch (error) {
+      console.error("Kunde inte spara ändrad produkt i localStorage:", error);
+      window.alert(
+        "Produkten kunde inte sparas eftersom lokal lagring är full. Rensa sparade produkter/bilder i localStorage och försök igen."
+      );
+      return;
     }
+
+    setProducts(nextProducts);
+    setCategories(nextCategories);
+
+    window.dispatchEvent(new Event("admin-products-updated"));
+    window.dispatchEvent(new Event("admin-categories-updated"));
 
     setOpenEdit(false);
     setSelectedProduct(null);
@@ -158,28 +195,42 @@ function ProductsPageContent() {
   }
 
   function confirmDelete() {
-    if (!selectedProduct) return;
+    if (!selectedProduct || typeof window === "undefined") return;
 
     const nextProducts = products.filter(
       (product) => product.id !== selectedProduct.id
     );
 
-    setProducts(nextProducts);
+    const nextCategories = syncCategoriesWithProducts(
+      getStoredCategories(),
+      nextProducts
+    );
 
-    if (typeof window !== "undefined") {
+    try {
       window.localStorage.setItem(
         PRODUCT_STORAGE_KEY,
         JSON.stringify(nextProducts)
       );
-      window.dispatchEvent(new Event("admin-products-updated"));
+      window.localStorage.setItem(
+        CATEGORY_STORAGE_KEY,
+        JSON.stringify(nextCategories)
+      );
+    } catch (error) {
+      console.error("Kunde inte ta bort produkt i localStorage:", error);
+      window.alert(
+        "Produkten kunde inte uppdateras eftersom lokal lagring är full eller trasig. Rensa localStorage och försök igen."
+      );
+      return;
     }
+
+    setProducts(nextProducts);
+    setCategories(nextCategories);
+
+    window.dispatchEvent(new Event("admin-products-updated"));
+    window.dispatchEvent(new Event("admin-categories-updated"));
 
     setOpenDelete(false);
     setSelectedProduct(null);
-  }
-
-  function handleSave(product: Product) {
-    console.log("Spara produkt:", product);
   }
 
   return (
@@ -274,21 +325,16 @@ function ProductsPageContent() {
                               </td>
 
                               <td data-label="Namn">{product.name}</td>
-                              <td data-label="Ingredienser">{product.ingredients}</td>
+                              <td data-label="Ingredienser">
+                                {product.ingredients}
+                              </td>
                               <td data-label="Pris">{product.price}</td>
                               <td data-label="Sås">{product.sauce || "-"}</td>
-                              <td data-label="Alt-text">{product.altText || "-"}</td>
+                              <td data-label="Alt-text">
+                                {product.altText || "-"}
+                              </td>
 
                               <td data-label="Åtgärder" className="actions">
-                                <AdminButton
-                                  preset="icon-save"
-                                  size="sm"
-                                  type="button"
-                                  title="Spara"
-                                  aria-label={`Spara ${product.name}`}
-                                  onClick={() => handleSave(product)}
-                                />
-
                                 <AdminButton
                                   preset="edit"
                                   size="sm"
@@ -319,7 +365,7 @@ function ProductsPageContent() {
                       products={categoryProducts}
                       onEdit={handleOpenEdit}
                       onDelete={handleOpenDelete}
-                      onSave={handleSave}
+                      onSave={() => {}}
                     />
                   </div>
                 </>
@@ -340,6 +386,7 @@ function ProductsPageContent() {
         product={
           selectedProduct
             ? {
+                id: selectedProduct.id,
                 category: selectedProduct.category,
                 name: selectedProduct.name,
                 ingredients: selectedProduct.ingredients,

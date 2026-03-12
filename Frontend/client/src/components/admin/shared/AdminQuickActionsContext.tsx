@@ -77,6 +77,23 @@ function getStoredProducts(): StoredProduct[] {
   }
 }
 
+function syncCategoriesWithProducts(
+  categories: StoredCategory[],
+  products: StoredProduct[]
+): StoredCategory[] {
+  return categories.map((category) => {
+    const productIds = products
+      .filter((product) => product.category === category.slug)
+      .map((product) => product.id);
+
+    return {
+      ...category,
+      productIds,
+      productCount: productIds.length,
+    };
+  });
+}
+
 export function AdminQuickActionsProvider({
   children,
 }: {
@@ -148,15 +165,37 @@ export function AdminQuickActionsProvider({
       price: values.price,
       sauce: values.sauce || "",
       altText: values.altText || "",
-      image: values.image,
+      image: undefined,
     };
 
-    window.localStorage.setItem(
-      PRODUCT_STORAGE_KEY,
-      JSON.stringify([newProduct, ...existingProducts])
+    const nextProducts = [newProduct, ...existingProducts];
+    const nextCategories = syncCategoriesWithProducts(
+      getStoredCategories(),
+      nextProducts
     );
 
+    try {
+      window.localStorage.setItem(
+        PRODUCT_STORAGE_KEY,
+        JSON.stringify(nextProducts)
+      );
+      window.localStorage.setItem(
+        CATEGORY_STORAGE_KEY,
+        JSON.stringify(nextCategories)
+      );
+    } catch (error) {
+      console.error("Kunde inte spara produkt i localStorage:", error);
+      window.alert(
+        "Produkten kunde inte sparas eftersom lokal lagring är full. Rensa sparade produkter/bilder i localStorage och försök igen."
+      );
+      return;
+    }
+
+    setCategories(nextCategories);
+
     window.dispatchEvent(new Event("admin-products-updated"));
+    window.dispatchEvent(new Event("admin-categories-updated"));
+
     setIsCreateOpen(false);
   }
 

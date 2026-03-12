@@ -1,0 +1,114 @@
+.adminProfileModal {
+  width: 100%;
+  max-width: 420px;
+  padding: 0.5rem;
+  color: #1f1f1f;
+}
+
+.adminProfileModal__header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.adminProfileModal__eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a63d40;
+}
+
+.adminProfileModal__header h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.9rem;
+  line-height: 1.2;
+  padding-top: 20px;
+  padding-bottom: 10px;
+}
+
+.adminProfileModal__text {
+  margin: 0;
+  color: #5f5f5f;
+  line-height: 1.5;
+}
+
+.adminProfileModal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.adminProfileModal__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.adminProfileModal__field label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.adminProfileModal__field input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid #d8d8d8;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.adminProfileModal__field input:focus {
+  outline: none;
+  border-color: #a63d40;
+  box-shadow: 0 0 0 3px rgba(166, 61, 64, 0.12);
+}
+
+.adminProfileModal__note {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: #6b6b6b;
+  text-align: center;
+}
+
+.adminProfileModal__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.adminProfileModal__actions > * {
+  flex: 1;
+}
+
+.adminProfileModal__forgot {
+  margin-top: 0.4rem;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 0.9rem;
+  color: #a63d40;
+  cursor: pointer;
+  text-align: left;
+  font-weight: 500;
+}
+
+.adminProfileModal__forgot:hover {
+  text-decoration: underline;
+}
+
+.adminProfileModal__resetBox {
+  margin-top: 0.25rem;
+  padding: 0.9rem;
+  border-radius: 12px;
+  background: #faf7f7;
+  border: 1px solid #eee;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}

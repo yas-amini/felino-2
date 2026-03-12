@@ -156,208 +156,197 @@ export default function AdminCategoryForm({
 
   return (
     <form
-      className="category-form category-form--modal"
+      className="adminCategoryForm"
       noValidate
       onSubmit={handleSubmit}
     >
-      <div className="category-form__grid">
-        <div className="form-field">
-          <label className="field-label" htmlFor="cat-name">
-            Namn
-          </label>
-          <input
-            id="cat-name"
-            name="name"
-            type="text"
-            className="in text"
-            placeholder="Ex. Pizza"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
+      <div className="adminCategoryForm__grid">
+        <div className="adminCategoryForm__main">
+          <div className="adminCategoryForm__row">
+            <div className="adminCategoryForm__field">
+              <label htmlFor="cat-name">Namn</label>
+              <input
+                id="cat-name"
+                name="name"
+                type="text"
+                placeholder="Ex. Pizza"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
 
-        <div className="form-field">
-          <label className="field-label" htmlFor="cat-slug">
-            URL-slug
-          </label>
-          <input
-            id="cat-slug"
-            name="slug"
-            type="text"
-            className="in text"
-            placeholder="pizza"
-            value={slug}
-            onChange={(e) => setSlug(e.target.value)}
-          />
-        </div>
+            <div className="adminCategoryForm__field">
+              <label htmlFor="cat-slug">URL-slug</label>
+              <input
+                id="cat-slug"
+                name="slug"
+                type="text"
+                placeholder="pizza"
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+              />
+            </div>
+          </div>
 
-        <div className="form-field form-field--wide">
-          <label className="field-label" htmlFor="cat-description">
-            Beskrivning
-          </label>
-          <textarea
-            id="cat-description"
-            name="description"
-            className="in text"
-            rows={4}
-            placeholder="Beskriv kategorin..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </div>
+          <div className="adminCategoryForm__field">
+            <label htmlFor="cat-description">Beskrivning</label>
+            <textarea
+              id="cat-description"
+              name="description"
+              rows={4}
+              placeholder="Beskriv kategorin..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
 
-        <div className="form-field form-field--wide">
-          <label className="field-label">Produkter i kategorin</label>
+          <div className="adminCategoryForm__field">
+            <label>Produkter i kategorin</label>
 
-          <div className="category-products-panel">
-            {currentCategoryProducts.length > 0 && (
-              <p className="category-products-panel__count">
-                {currentCategoryProducts.length} produkter i kategorin
+            <div className="adminCategoryForm__panel">
+              {currentCategoryProducts.length > 0 && (
+                <p className="adminCategoryForm__count">
+                  {currentCategoryProducts.length} produkter i kategorin
+                </p>
+              )}
+
+              <div
+                className="adminCategoryForm__selectedList"
+                role="group"
+                aria-label="Produkter i kategorin"
+              >
+                {currentCategoryProducts.length > 0 ? (
+                  currentCategoryProducts.map((product) => (
+                    <div
+                      key={product.id}
+                      className="adminCategoryForm__selectedItem"
+                    >
+                      <span className="adminCategoryForm__productName">
+                        {product.name}
+                      </span>
+
+                      <button
+                        type="button"
+                        className="adminCategoryForm__remove"
+                        aria-label={`Ta bort ${product.name} från kategorin`}
+                        title="Ta bort"
+                        onClick={() => removeProduct(product.id)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="adminCategoryForm__empty">
+                    Inga produkter valda ännu
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="adminCategoryForm__field">
+            <label htmlFor="cat-product-search">Lägg till produkter</label>
+
+            <input
+              id="cat-product-search"
+              type="text"
+              placeholder="Sök produktnamn..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+
+            {hasSearch && (
+              <p className="adminCategoryForm__count">
+                {filteredProducts.length}{" "}
+                {filteredProducts.length === 1 ? "träff" : "träffar"}
               </p>
             )}
 
-            <div
-              className="category-products-list category-products-list--selected"
-              role="group"
-              aria-label="Produkter i kategorin"
-            >
-              {currentCategoryProducts.length > 0 ? (
-                currentCategoryProducts.map((product) => (
-                  <div
+            {hasVisibleSearchResults && (
+              <div
+                className="adminCategoryForm__searchList"
+                role="group"
+                aria-label="Sökresultat produkter"
+              >
+                {filteredProducts.map((product) => (
+                  <label
                     key={product.id}
-                    className="category-products-list__selected-item"
+                    className="adminCategoryForm__searchItem"
                   >
-                    <span className="category-products-list__name">
+                    <input
+                      type="checkbox"
+                      checked={selectedProductIds.includes(product.id)}
+                      onChange={() => addProduct(product.id)}
+                    />
+                    <span className="adminCategoryForm__productName">
                       {product.name}
                     </span>
+                  </label>
+                ))}
+              </div>
+            )}
 
-                    <button
-                      type="button"
-                      className="category-products-list__remove"
-                      aria-label={`Ta bort ${product.name} från kategorin`}
-                      title="Ta bort"
-                      onClick={() => removeProduct(product.id)}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <p className="category-products-list__empty">
-                  Inga produkter valda ännu
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="form-field form-field--wide">
-          <label className="field-label" htmlFor="cat-product-search">
-            Lägg till produkter
-          </label>
-
-          <input
-            id="cat-product-search"
-            type="text"
-            className="in text"
-            placeholder="Sök produktnamn..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-
-          {hasSearch && (
-            <p className="category-products-panel__count">
-              {filteredProducts.length}{" "}
-              {filteredProducts.length === 1 ? "träff" : "träffar"}
-            </p>
-          )}
-
-          {hasVisibleSearchResults && (
-            <div
-              className="category-products-list category-products-list--search"
-              role="group"
-              aria-label="Sökresultat produkter"
-            >
-              {filteredProducts.map((product) => (
-                <label
-                  key={product.id}
-                  className="category-products-list__search-item"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedProductIds.includes(product.id)}
-                    onChange={() => addProduct(product.id)}
-                  />
-                  <span className="category-products-list__name">
-                    {product.name}
-                  </span>
-                </label>
-              ))}
-            </div>
-          )}
-
-          {hasNoSearchResults && (
-            <p className="category-products-list__empty">
-              Inga produkter matchade din sökning.
-            </p>
-          )}
-        </div>
-
-        <div className="form-field form-field--wide">
-          <label className="field-label" htmlFor="cat-image">
-            Bild
-          </label>
-
-          <input
-            ref={fileInputRef}
-            id="cat-image"
-            className="sr-only-file"
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-
-          {imagePreview && (
-            <div className="category-image-preview">
-              <img src={imagePreview} alt="Förhandsvisning" />
-            </div>
-          )}
-
-          <div className="category-image-actions">
-            <AdminButton
-              type="button"
-              size="md"
-              variant="primary"
-              onClick={handlePickImage}
-            >
-              {imagePreview ? "Byt bild" : "Lägg till bild"}
-            </AdminButton>
-
-            {imagePreview && (
-              <AdminButton
-                type="button"
-                size="md"
-                variant="cancel"
-                onClick={removeImage}
-              >
-                Ta bort bild
-              </AdminButton>
+            {hasNoSearchResults && (
+              <p className="adminCategoryForm__empty">
+                Inga produkter matchade din sökning.
+              </p>
             )}
           </div>
         </div>
 
-        <div className="form-field form-field--wide">
-          <div className="btn-row-bottom">
-            <AdminButton type="submit" variant="primary">
-              {submitLabel}
-            </AdminButton>
+        <aside className="adminCategoryForm__side">
+          <div className="adminCategoryForm__uploadBox">
+            <p className="adminCategoryForm__uploadTitle">Kategori-bild</p>
 
-            <AdminButton type="button" variant="cancel" onClick={onCancel}>
-              Avbryt
-            </AdminButton>
+            <div className="adminCategoryForm__imagePreview">
+              {imagePreview ? (
+                <img src={imagePreview} alt="Förhandsvisning" />
+              ) : (
+                <span>Ingen bild vald</span>
+              )}
+            </div>
+
+            <input
+              ref={fileInputRef}
+              id="cat-image"
+              className="adminCategoryForm__fileInput"
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+
+            <div className="adminCategoryForm__uploadActions">
+              <AdminButton
+                type="button"
+                size="sm"
+                onClick={handlePickImage}
+              >
+                {imagePreview ? "Byt bild" : "Lägg till bild"}
+              </AdminButton>
+
+              {imagePreview && (
+                <AdminButton
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={removeImage}
+                >
+                  Ta bort
+                </AdminButton>
+              )}
+            </div>
           </div>
-        </div>
+        </aside>
+      </div>
+
+      <div className="adminCategoryForm__actions">
+        <AdminButton type="button" variant="ghost" onClick={onCancel}>
+          Avbryt
+        </AdminButton>
+
+        <AdminButton type="submit">{submitLabel}</AdminButton>
       </div>
     </form>
   );
