@@ -1,0 +1,39 @@
+.profile-user-container {
+    max-width: 800px;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background-color: white;
+    padding: 1rem;
+}
+.profile-user {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    align-items: start;
+
+}
+.profile-name {
+    padding-top: 0;
+}
+.profile-info {
+    display: grid;
+     grid-template-columns: 1fr 1fr;
+     padding-top: 1rem;
+}
+.profile-login-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 0.5rem;
+}
+.profile-login-info p {
+    padding: 0;
+    margin: 0;
+}
+.edit-profile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
