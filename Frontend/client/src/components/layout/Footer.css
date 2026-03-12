@@ -48,10 +48,17 @@ footer {
 
 .footer-brand {
   display: flex;
-  align-items: flex-start;
-  margin-top: 15px;
+  align-items: flex-end;
+  height: 100%;
+  overflow: visible; 
 }
 
+.footerLogo {
+  width: 300px;
+  height: auto;
+  display: block;
+  transform: translateY(30px); 
+}
 /* ===== RUBRIKER ===== */
 
 .footer-col h3 {
@@ -220,6 +227,7 @@ footer {
     padding: 1.25rem 1.5rem;
   }
 }
+
 
 @media (prefers-reduced-motion: reduce) {
   .footer-col a,

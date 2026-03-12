@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import "./Footer.css";
-import Logo from "../Logo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInstagram, faFacebook, faXTwitter, } from "@fortawesome/free-brands-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -11,7 +10,11 @@ export default function Footer() {
       <nav className="footer-content" aria-label="Sidfotsnavigering">
         <section className="footer-col">
           <div className="footer-brand">
-            <Logo size={150} />
+            <img
+              src="/images/logga/felinopizzeriaillus.png"
+              alt="Felino Pizza"
+              className="footerLogo"
+            />
           </div>
         </section>
 
