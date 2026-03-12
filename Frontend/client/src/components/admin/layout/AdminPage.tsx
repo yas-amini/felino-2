@@ -12,6 +12,10 @@ import {
 
 import AdminContainer from "./AdminContainer";
 import AdminButton from "../shared/AdminButton";
+import {
+  AdminQuickActionsProvider,
+  useAdminQuickActions,
+} from "../shared/AdminQuickActionsContext";
 import "./AdminPage.css";
 
 type Props = {
@@ -20,7 +24,17 @@ type Props = {
   noCard?: boolean;
 };
 
-export default function AdminPage({ children, title, noCard = false }: Props) {
+function AdminPageContent({
+  children,
+  title,
+  noCard,
+}: {
+  children: ReactNode;
+  title?: string;
+  noCard: boolean;
+}) {
+  const { openCreateProductModal, canCreateProduct } = useAdminQuickActions();
+
   return (
     <section className="fpAdminPage">
       {title ? (
@@ -33,8 +47,14 @@ export default function AdminPage({ children, title, noCard = false }: Props) {
             <div className="fpAdminActions">
               <AdminButton
                 variant="icon-header"
-                to="/admin/products?create=1"
-                title="Lägg till produkt"
+                type="button"
+                onClick={openCreateProductModal}
+                disabled={!canCreateProduct}
+                title={
+                  canCreateProduct
+                    ? "Lägg till produkt"
+                    : "Lägg först till minst en kategori"
+                }
                 aria-label="Lägg till produkt"
               >
                 <FontAwesomeIcon icon={faPlus} />
@@ -102,5 +122,19 @@ export default function AdminPage({ children, title, noCard = false }: Props) {
         {noCard ? children : <div className="fpAdminCard">{children}</div>}
       </AdminContainer>
     </section>
+  );
+}
+
+export default function AdminPage({
+  children,
+  title,
+  noCard = false,
+}: Props) {
+  return (
+    <AdminQuickActionsProvider>
+      <AdminPageContent title={title} noCard={noCard}>
+        {children}
+      </AdminPageContent>
+    </AdminQuickActionsProvider>
   );
 }

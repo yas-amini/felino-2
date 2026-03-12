@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import AdminButton from "../shared/AdminButton";
 import "./AdminProductForm.css";
 
@@ -71,6 +71,15 @@ export default function AdminProductForm({
     }
   }, [initialValues]);
 
+  const isValid = useMemo(() => {
+    return (
+      category.trim() !== "" &&
+      name.trim().length >= 2 &&
+      ingredients.trim() !== "" &&
+      price.trim() !== ""
+    );
+  }, [category, name, ingredients, price]);
+
   function handlePickImage() {
     if (!fileInputRef.current) return;
 
@@ -101,7 +110,7 @@ export default function AdminProductForm({
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    onSubmit({
+    const values: ProductFormValues = {
       category,
       name: name.trim(),
       ingredients: ingredients.trim(),
@@ -109,7 +118,13 @@ export default function AdminProductForm({
       sauce: sauce.trim(),
       altText: altText.trim(),
       image: imagePreview || undefined,
-    });
+    };
+
+    if (!values.category || !values.name || !values.ingredients || !values.price) {
+      return;
+    }
+
+    onSubmit(values);
   }
 
   return (
@@ -129,6 +144,7 @@ export default function AdminProductForm({
             className="in select"
             value={category}
             onChange={(e) => setCategory(e.target.value as ProductCategory | "")}
+            required
           >
             <option value="">Välj kategori</option>
             {categories.map((categoryOption) => (
@@ -153,6 +169,7 @@ export default function AdminProductForm({
             placeholder="Ex. Vesuvio"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            required
           />
         </div>
 
@@ -169,6 +186,7 @@ export default function AdminProductForm({
             placeholder="tomatsås, ost, skinka"
             value={ingredients}
             onChange={(e) => setIngredients(e.target.value)}
+            required
           />
         </div>
 
@@ -187,6 +205,7 @@ export default function AdminProductForm({
             placeholder="99.00"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
+            required
           />
         </div>
 
@@ -267,7 +286,7 @@ export default function AdminProductForm({
 
         <div className="form-field form-field--wide">
           <div className="btn-row-bottom">
-            <AdminButton type="submit" variant="primary">
+            <AdminButton type="submit" variant="primary" disabled={!isValid}>
               {submitLabel}
             </AdminButton>
 
