@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import { useNotification } from "../../context/NotificationContext";
 import Button from "../common/Button/Button";
+
 import "./Checkout.css";
 
 type CustomerForm = {
@@ -13,7 +15,9 @@ type CustomerForm = {
 
 export default function Checkout() {
   const { cartItems, cartTotal, clearCart } = useCart();
+  const { showNotification } = useNotification();
   const navigate = useNavigate();
+
 
   const [form, setForm] = useState<CustomerForm>({
     name: "",
@@ -92,12 +96,15 @@ export default function Checkout() {
 
       // ─── Success ───
       clearCart();
-      alert(`Tack ${customer.name}! Order #${orderId} är mottagen.`);
+      showNotification(`Tack ${customer.name}! Din order är mottagen.`);
       navigate("/");
     } catch (err) {
       console.error(err);
-      setErrorMsg("Något gick fel – försök igen.");
+      const msg = "Något gick fel – försök igen.";
+      setErrorMsg(msg);
+      showNotification(msg, "error");
     } finally {
+
       setIsSubmitting(false);
     }
   }

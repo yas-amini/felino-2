@@ -3,6 +3,8 @@ import ProductCard from "./ProductCard";
 import "./MenuPage.css";
 import Container from "../../components/layout/Container";
 import { useCart } from "../../context/CartContext";
+import { useNotification } from "../../context/NotificationContext";
+
 
 type Product = {
   id: number;
@@ -33,6 +35,7 @@ export default function MenuPage({ products = [] }: Props) {
   const [quantity, setQuantity] = useState(1);
   const [specialInstructions, setSpecialInstructions] = useState("");
   const { addToCart } = useCart();
+  const { showNotification } = useNotification();
 
   function openProduct(product: Product) {
     setSelectedProduct(product);
@@ -119,6 +122,7 @@ export default function MenuPage({ products = [] }: Props) {
                   quantity,
                   specialInstructions: specialInstructions.trim() || undefined,
                 });
+                showNotification(`${selectedProduct.name} har lagts till i varukorgen!`);
                 setSelectedProduct(null);
               }}>
                 Lägg till i beställning
