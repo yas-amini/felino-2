@@ -4,8 +4,8 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import AdminPage from "../../../components/admin/layout/AdminPage";
 import AdminButton from "../../../components/admin/shared/AdminButton";
+import { useAdminQuickActions } from "../../../components/admin/shared/AdminQuickActionsContext";
 import AdminProductsAccordion from "../../../components/admin/products/AdminProductsAccordion";
-import AdminProductCreateModal from "../../../components/admin/products/AdminProductCreateModal";
 import AdminProductEditModal from "../../../components/admin/products/AdminProductEditModal";
 import AdminConfirmModal from "../../../components/admin/shared/AdminConfirmModal";
 import type {
@@ -72,46 +72,48 @@ function getStoredProducts(): Product[] {
 }
 
 function ProductsPageContent() {
+  const { openCreateProductModal, canCreateProduct } = useAdminQuickActions();
+
   const [categories, setCategories] = useState<StoredCategory[]>(() =>
     getStoredCategories()
   );
   const [products, setProducts] = useState<Product[]>(() => getStoredProducts());
-  const [openCreate, setOpenCreate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
-    setCategories(getStoredCategories());
-  }, []);
+    const syncData = () => {
+      setCategories(getStoredCategories());
+      setProducts(getStoredProducts());
+    };
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem(PRODUCT_STORAGE_KEY, JSON.stringify(products));
-  }, [products]);
+    syncData();
+
+    window.addEventListener("focus", syncData);
+    window.addEventListener("admin-products-updated", syncData as EventListener);
+    window.addEventListener(
+      "admin-categories-updated",
+      syncData as EventListener
+    );
+
+    return () => {
+      window.removeEventListener("focus", syncData);
+      window.removeEventListener(
+        "admin-products-updated",
+        syncData as EventListener
+      );
+      window.removeEventListener(
+        "admin-categories-updated",
+        syncData as EventListener
+      );
+    };
+  }, []);
 
   const categoryOptions: ProductCategoryOption[] = categories.map((category) => ({
     value: category.slug,
     label: category.name,
   }));
-
-  function handleCreate(values: ProductFormValues) {
-    if (!values.category) return;
-
-    const newProduct: Product = {
-      id: Date.now(),
-      category: values.category,
-      name: values.name,
-      ingredients: values.ingredients,
-      price: values.price,
-      sauce: values.sauce || "",
-      altText: values.altText || "",
-      image: values.image,
-    };
-
-    setProducts((prev) => [newProduct, ...prev]);
-    setOpenCreate(false);
-  }
 
   function handleOpenEdit(product: Product) {
     setSelectedProduct(product);
@@ -121,22 +123,30 @@ function ProductsPageContent() {
   function handleEditSubmit(values: ProductFormValues) {
     if (!selectedProduct || !values.category) return;
 
-    setProducts((prev) =>
-      prev.map((product) =>
-        product.id === selectedProduct.id
-          ? {
-              ...product,
-              category: values.category,
-              name: values.name,
-              ingredients: values.ingredients,
-              price: values.price,
-              sauce: values.sauce || "",
-              altText: values.altText || "",
-              image: values.image,
-            }
-          : product
-      )
+    const nextProducts = products.map((product) =>
+      product.id === selectedProduct.id
+        ? {
+            ...product,
+            category: values.category,
+            name: values.name,
+            ingredients: values.ingredients,
+            price: values.price,
+            sauce: values.sauce || "",
+            altText: values.altText || "",
+            image: values.image,
+          }
+        : product
     );
+
+    setProducts(nextProducts);
+
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(
+        PRODUCT_STORAGE_KEY,
+        JSON.stringify(nextProducts)
+      );
+      window.dispatchEvent(new Event("admin-products-updated"));
+    }
 
     setOpenEdit(false);
     setSelectedProduct(null);
@@ -150,9 +160,19 @@ function ProductsPageContent() {
   function confirmDelete() {
     if (!selectedProduct) return;
 
-    setProducts((prev) =>
-      prev.filter((product) => product.id !== selectedProduct.id)
+    const nextProducts = products.filter(
+      (product) => product.id !== selectedProduct.id
     );
+
+    setProducts(nextProducts);
+
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(
+        PRODUCT_STORAGE_KEY,
+        JSON.stringify(nextProducts)
+      );
+      window.dispatchEvent(new Event("admin-products-updated"));
+    }
 
     setOpenDelete(false);
     setSelectedProduct(null);
@@ -177,12 +197,12 @@ function ProductsPageContent() {
             <AdminButton
               variant="primary"
               type="button"
-              onClick={() => setOpenCreate(true)}
-              disabled={categories.length === 0}
+              onClick={openCreateProductModal}
+              disabled={!canCreateProduct}
               title={
-                categories.length === 0
-                  ? "Lägg först till minst en kategori"
-                  : "Lägg till produkt"
+                canCreateProduct
+                  ? "Lägg till produkt"
+                  : "Lägg först till minst en kategori"
               }
             >
               <FontAwesomeIcon icon={faPlus} />
@@ -195,7 +215,8 @@ function ProductsPageContent() {
       {categories.length === 0 ? (
         <section className="admin-section">
           <p className="muted">
-            Inga kategorier finns ännu. Lägg först till kategorier på kategorisidan.
+            Inga kategorier finns ännu. Lägg först till kategorier på
+            kategorisidan.
           </p>
         </section>
       ) : (
@@ -307,13 +328,6 @@ function ProductsPageContent() {
           );
         })
       )}
-
-      <AdminProductCreateModal
-        isOpen={openCreate}
-        onClose={() => setOpenCreate(false)}
-        onSubmit={handleCreate}
-        categories={categoryOptions}
-      />
 
       <AdminProductEditModal
         isOpen={openEdit}

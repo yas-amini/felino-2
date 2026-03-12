@@ -68,6 +68,23 @@ function getStoredProducts(): StoredProduct[] {
   }
 }
 
+function saveCategories(nextCategories: Category[]) {
+  if (typeof window === "undefined") return;
+
+  window.localStorage.setItem(
+    CATEGORY_STORAGE_KEY,
+    JSON.stringify(nextCategories)
+  );
+  window.dispatchEvent(new Event("admin-categories-updated"));
+}
+
+function saveProducts(nextProducts: StoredProduct[]) {
+  if (typeof window === "undefined") return;
+
+  window.localStorage.setItem(PRODUCT_STORAGE_KEY, JSON.stringify(nextProducts));
+  window.dispatchEvent(new Event("admin-products-updated"));
+}
+
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>(() =>
     getStoredCategories()
@@ -81,14 +98,32 @@ export default function AdminCategoriesPage() {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem(CATEGORY_STORAGE_KEY, JSON.stringify(categories));
-  }, [categories]);
+    const syncData = () => {
+      setCategories(getStoredCategories());
+      setProducts(getStoredProducts());
+    };
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem(PRODUCT_STORAGE_KEY, JSON.stringify(products));
-  }, [products]);
+    syncData();
+
+    window.addEventListener("focus", syncData);
+    window.addEventListener(
+      "admin-categories-updated",
+      syncData as EventListener
+    );
+    window.addEventListener("admin-products-updated", syncData as EventListener);
+
+    return () => {
+      window.removeEventListener("focus", syncData);
+      window.removeEventListener(
+        "admin-categories-updated",
+        syncData as EventListener
+      );
+      window.removeEventListener(
+        "admin-products-updated",
+        syncData as EventListener
+      );
+    };
+  }, []);
 
   const allProductsForForm: ProductItem[] = products.map((product) => ({
     id: product.id,
@@ -110,15 +145,18 @@ export default function AdminCategoriesPage() {
       image: values.image,
     };
 
-    setCategories((prev) => [newCategory, ...prev]);
-
-    setProducts((prev) =>
-      prev.map((product) =>
-        values.productIds.includes(product.id)
-          ? { ...product, category: values.slug }
-          : product
-      )
+    const nextCategories = [newCategory, ...categories];
+    const nextProducts = products.map((product) =>
+      values.productIds.includes(product.id)
+        ? { ...product, category: values.slug }
+        : product
     );
+
+    setCategories(nextCategories);
+    setProducts(nextProducts);
+
+    saveCategories(nextCategories);
+    saveProducts(nextProducts);
 
     setOpenCreate(false);
   }
@@ -134,42 +172,44 @@ export default function AdminCategoriesPage() {
     const oldSlug = selectedCategory.slug;
     const newSlug = values.slug;
 
-    setCategories((prev) =>
-      prev.map((category) =>
-        category.id === selectedCategory.id
-          ? {
-              ...category,
-              name: values.name,
-              slug: newSlug,
-              description: values.description,
-              image: values.image,
-            }
-          : category
-      )
+    const nextCategories = categories.map((category) =>
+      category.id === selectedCategory.id
+        ? {
+            ...category,
+            name: values.name,
+            slug: newSlug,
+            description: values.description,
+            image: values.image,
+          }
+        : category
     );
 
-    setProducts((prev) =>
-      prev.map((product) => {
-        const wasInThisCategory = product.category === oldSlug;
-        const shouldBeInThisCategory = values.productIds.includes(product.id);
+    const nextProducts = products.map((product) => {
+      const wasInThisCategory = product.category === oldSlug;
+      const shouldBeInThisCategory = values.productIds.includes(product.id);
 
-        if (shouldBeInThisCategory) {
-          return {
-            ...product,
-            category: newSlug,
-          };
-        }
+      if (shouldBeInThisCategory) {
+        return {
+          ...product,
+          category: newSlug,
+        };
+      }
 
-        if (wasInThisCategory) {
-          return {
-            ...product,
-            category: "",
-          };
-        }
+      if (wasInThisCategory) {
+        return {
+          ...product,
+          category: "",
+        };
+      }
 
-        return product;
-      })
-    );
+      return product;
+    });
+
+    setCategories(nextCategories);
+    setProducts(nextProducts);
+
+    saveCategories(nextCategories);
+    saveProducts(nextProducts);
 
     setOpenEdit(false);
     setSelectedCategory(null);
@@ -185,15 +225,19 @@ export default function AdminCategoriesPage() {
 
     const deletedSlug = selectedCategory.slug;
 
-    setCategories((prev) =>
-      prev.filter((category) => category.id !== selectedCategory.id)
+    const nextCategories = categories.filter(
+      (category) => category.id !== selectedCategory.id
     );
 
-    setProducts((prev) =>
-      prev.map((product) =>
-        product.category === deletedSlug ? { ...product, category: "" } : product
-      )
+    const nextProducts = products.map((product) =>
+      product.category === deletedSlug ? { ...product, category: "" } : product
     );
+
+    setCategories(nextCategories);
+    setProducts(nextProducts);
+
+    saveCategories(nextCategories);
+    saveProducts(nextProducts);
 
     setOpenDelete(false);
     setSelectedCategory(null);

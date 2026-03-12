@@ -93,16 +93,7 @@ export default function Navbar({ cartCount = 0 }: NavbarProps) {
                 Hem
               </NavLink>
             </li>
-            <li>
-              <NavLink
-                to="/meny"
-                className={({ isActive }) =>
-                  isActive ? "fpNav-link is-active" : "fpNav-link"
-                }
-              >
-                Meny
-              </NavLink>
-            </li>
+           
             <li>
               <NavLink
                 to="/bestall"

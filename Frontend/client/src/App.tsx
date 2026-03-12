@@ -10,7 +10,6 @@ import Container from "./components/layout/Container";
 
 // Pages (site)
 import HomePage from "./pages/homepage/HomePage";
-import OrderPage from "./pages/orderpage/OrderPage";
 import TableBooking from "./pages/tablebooking/TableBooking";
 import BestallHem from "./pages/bestall-hem/MenuPage";
 import { sampleProducts } from "./data/products";
@@ -43,8 +42,7 @@ export default function App() {
         {/* SITE */}
         <Route element={<SiteLayout />}>
           <Route path="/" element={<HomePage />} />
-
-          <Route path="/meny" element={<OrderPage />} />
+         
           <Route path="/bestall" element={<BestallHem products={sampleProducts} />} />
 
           <Route path="/boka-bord" element={<TableBooking />} />
