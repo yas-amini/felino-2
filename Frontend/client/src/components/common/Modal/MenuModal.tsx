@@ -107,8 +107,7 @@ export default function MenuModal({ isOpen, onClose }: Props) {
                     </div>
 
                     <p className="menuModalSubtitle">
-                        Ett urval av våra mest populära rätter. Se hela menyn för alla
-                        alternativ.
+                        Ett urval av våra mest populära rätter. 
                     </p>
                 </div>
 
@@ -137,7 +136,7 @@ export default function MenuModal({ isOpen, onClose }: Props) {
 
                 <div className="menuModalFooter">
                     <p className="menuModalFooterText">
-                        Ring för avhämtning eller se hela menyn för samtliga rätter.
+                        Boka bord, beställ hemkörning/upphämtning eller kika in hela menyn på beställningssidan!
                     </p>
 
                     <div className="menuModalActions">
@@ -156,9 +155,6 @@ export default function MenuModal({ isOpen, onClose }: Props) {
                             >
                                 Beställ hem
                             </Button>
-                        </Link>
-                        <Link to="/meny" className="menuModalLink">
-                            <Button variant="secondary">Se hela menyn</Button>
                         </Link>
                     </div>
                 </div>
