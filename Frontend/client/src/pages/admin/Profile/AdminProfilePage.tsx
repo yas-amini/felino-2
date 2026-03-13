@@ -1,6 +1,6 @@
 import AdminPage from "../../../components/admin/layout/AdminPage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsers, faClock, faKey } from "@fortawesome/free-solid-svg-icons";
+import { faUsers, faClock, faKey, faCalendar } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../../components/common/Button/Button";
 import "./AdminProfilePage.css";
 
@@ -11,20 +11,28 @@ type Authorization = {
 
 export default function AdminProfilePage() {
 
-const authorizations: Authorization[] = [
-  {
-    id: 1,
-    name: "Roll: Admin"
-  },
-  {
-    id: 2,
-    name: "Schemahantering"
-  },
-  {
-    id: 3,
-    name: "Användarhantering"
-  }
-]
+  const authorizations: Authorization[] = [
+    {
+      id: 1,
+      name: "Roll: Admin"
+    },
+    {
+      id: 2,
+      name: "Schemahantering"
+    },
+    {
+      id: 3,
+      name: "Användarhantering"
+    }
+  ]
+
+  const days = [
+    { name: "Måndag", date: "10 mars", slots: ["09:00-12:00 (Bokad)", "13:00-16:00"], booked: [true, false] },
+    { name: "Tisdag", date: "11 mars", slots: ["09:00-12:00 (Bokad)", "13:00-16:00 (Bokad)"], booked: [true, true] },
+    { name: "Onsdag", date: "12 mars", slots: ["09:00-12:00", "13:00-16:00"], booked: [false, false] },
+    { name: "Torsdag", date: "13 mars", slots: ["09:00-12:00", "13:00-16:00 (Bokad)"], booked: [false, true] },
+    { name: "Fredag", date: "14 mars", slots: ["09:00-12:00 (Bokad)", "13:00-16:00"], booked: [true, false] },
+  ];
 
   return (
     <AdminPage title="Användarsida">
@@ -79,6 +87,40 @@ const authorizations: Authorization[] = [
               </li>
             )}
           </ul>
+        </section>
+        <section className="user-workcalendar-section">
+          <div className="workcalendar-heading">
+            <FontAwesomeIcon icon={faCalendar} />
+            <h3>Passbokningar</h3>
+          </div>
+          <div className="workcalendar-toolbar">
+            <button>Föregående vecka</button>
+            <span>Vecka 11, 2026</span>
+            <button>Nästa vecka</button>
+          </div>
+
+          <div className="workcalendar-list">
+            {days.map((day) => (
+              <div className="workcalendar-day" key={day.name}>
+                <div className="workcalendar-day-header">
+                  <strong>{day.name}</strong>
+                  <span>{day.date}</span>
+                </div>
+
+                <div className="workcalendar-slots">
+                  {day.slots.map((slot, index) => (
+                    <div
+                      key={index}
+                      className={`workcalendar-slot ${day.booked[index] ? "booked" : ""}`}
+                    >
+                      {slot}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
         </section>
       </div>
     </AdminPage >
