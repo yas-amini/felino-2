@@ -5,7 +5,9 @@ import BookingToolBar from "../../../components/admin/booking/BookingToolBar";
 import BookingCalendar from "../../../components/admin/booking/BookingCalendar";
 import "./AdminBookingPage.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock, faPhone, faMailBulk, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faClock, faPhone, faMailBulk, faUsers, faMapPin } from "@fortawesome/free-solid-svg-icons";
+import Button from "../../../components/common/Button/Button";
+
 
 export type BookingTab = "lista" | "kalender" | "bord";
 
@@ -23,7 +25,7 @@ export default function AdminBookingPage() {
       table: "Nr 11",
       status: "Bekräftad"
     },
-        {
+    {
       name: "Svensson",
       time: "17:00 - 19:00",
       people: 6,
@@ -32,6 +34,16 @@ export default function AdminBookingPage() {
       table: "Nr 2",
       status: "Bekräftad"
     }
+  ];
+  const tables = [
+    { name: "Nr 1", capacity: 4, location: "Utomhus", status: "Tillgänglig" },
+    { name: "Nr 2", capacity: 6, location: "Inomhus", status: "Tillgänglig" },
+    { name: "Nr 3", capacity: 2, location: "Utomhus", status: "Tillgänglig" },
+    { name: "Nr 4", capacity: 8, location: "Inomhus", status: "Tillgänglig" },
+    { name: "Nr 5", capacity: 4, location: "Inomhus", status: "Tillgänglig" },
+    { name: "Nr 6", capacity: 6, location: "Inomhus", status: "Tillgänglig" },
+    { name: "Nr 7", capacity: 2, location: "Utomhus", status: "Tillgänglig" },
+    { name: "Nr 8", capacity: 4, location: "Utomhus", status: "Tillgänglig" },
   ];
 
   return (
@@ -79,7 +91,37 @@ export default function AdminBookingPage() {
               </section>
             </div>
           )}
+          {activeTab === "bord" && (
+            <section className="tables-section">
+              <div className="tables-section-header">
+                <h3>Bord & Kapacitet</h3>
+                <Button variant="primary">Lägg till bord</Button>
+              </div>
+
+              <div className="tables-grid">
+                {tables.map((table) => (
+                  <div className="table-card" key={table.name}>
+                    <div className="table-card-top">
+                      <h4>{table.name}</h4>
+                      <span className="table-status available">✓ {table.status}</span>
+                    </div>
+
+                    <div className="table-meta">
+                      <p><FontAwesomeIcon icon={faUsers} /> Kapacitet: {table.capacity} personer</p>
+                      <p><FontAwesomeIcon icon={faMapPin} /> {table.location}</p>
+                    </div>
+
+                    <div className="table-card-actions">
+                      <Button variant="secondary">Redigera</Button>
+                      <Button variant="primary">Boka</Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
+
       </div>
     </AdminPage>
   );

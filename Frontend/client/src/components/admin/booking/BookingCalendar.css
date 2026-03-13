@@ -45,11 +45,11 @@
 .calendar-time-badge {
   background: #10b981;
   color: #fff;
-  border-radius: 8px;
-  padding: 4px 8px;
+  font-size: x-small;
+  padding: 3px 8px;
+  border-radius: 0.5rem;
   min-width: 58px;
   text-align: center;
-  font-size: 12px;
   font-weight: 600;
 }
 
