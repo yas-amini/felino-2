@@ -7,3 +7,60 @@
     flex-direction: row;
     justify-content: space-between
 }
+.booking-section {
+  background: white;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  padding: 1rem;
+  margin-top: 2rem;
+}
+
+.booking-section h3 {
+  padding: 0;
+
+}
+
+.booking-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.booking-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.booking-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.booking-header strong {
+    font-size: medium;
+}
+
+.badge {
+  font-size: x-small;
+  padding: 3px 8px;
+  border-radius: 0.5rem;
+}
+
+.confirmed {
+  background: #111827;
+  color: white;
+}
+
+.booking-info {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  color: #6b7280;
+  font-size: normal;
+}
+
+.booking-table {
+  margin-top: 4px;
+  font-size: small;
+  color: #374151;
+}
