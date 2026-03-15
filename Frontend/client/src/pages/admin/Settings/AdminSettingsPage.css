@@ -1,5 +1,17 @@
-/* Admin Settings Styles */
+.admin-settings {
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
 
+.muted {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Hours Table */
 .settings-hours-table {
   width: 100%;
   border-collapse: collapse;
@@ -60,6 +72,7 @@
   color: #9ca3af;
 }
 
+/* Welcome Text Area */
 .settings-welcome-textarea {
   width: 100%;
   min-height: 150px;
@@ -81,6 +94,7 @@
   box-shadow: 0 0 0 1px #111827;
 }
 
+/* Save Row & Feedback */
 .settings-save-row {
   display: flex;
   align-items: center;
