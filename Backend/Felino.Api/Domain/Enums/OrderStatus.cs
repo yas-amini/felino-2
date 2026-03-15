@@ -1,6 +1,11 @@
-﻿namespace Felino.Api.Domain.Enums
+namespace Felino.Api.Domain.Enums
 {
-    public class OrderStatus
+    public enum OrderStatus
     {
+        Pending,
+        Confirmed,
+        Shipped,
+        Delivered,
+        Cancelled
     }
 }

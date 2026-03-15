@@ -1,6 +1,7 @@
-﻿namespace Felino.Api.Implementations
+using Felino.Api.Services.Interfaces;
+namespace Felino.Api.Implementations
 {
-    public class CategoryService
+    public class CategoryService : ICategoryService
     {
     }
 }

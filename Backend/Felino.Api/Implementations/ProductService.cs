@@ -1,6 +1,7 @@
-﻿namespace Felino.Api.Implementations
+using Felino.Api.Services.Interfaces;
+namespace Felino.Api.Implementations
 {
-    public class ProductService
+    public class ProductService : IProductService
     {
     }
 }

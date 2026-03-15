@@ -1,6 +1,10 @@
-﻿namespace Felino.Api.Domain.Enums
+namespace Felino.Api.Domain.Enums
 {
-    public class PaymentStatus
+    public enum PaymentStatus
     {
+        Unpaid,
+        Paid,
+        Failed,
+        Refunded
     }
 }
