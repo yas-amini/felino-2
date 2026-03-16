@@ -37,7 +37,7 @@
 
 .admin-page {
     margin-left: 110px;
-    padding: 0;
+    padding: 16px 24px 24px 24px;
     min-height: 100vh;
 }
 
@@ -189,33 +189,161 @@
     box-shadow: 0 6px 14px rgba(0, 0, 0, .12);
 }
 
-/* Subbar */
+/* ===== Subbar / notice rail ===== */
 .admin-subbar {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    align-items: center;
+    min-height: 56px;
     background: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.admin-subbar a {
-    text-decoration: none;
-    color: #111;
-    font-size: 14px;
-    padding: 8px 10px;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    border-radius: 8px;
+.admin-notice-rail {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
 }
 
-.admin-subbar a:hover,
-.admin-subbar a:focus-visible {
-    background: #f3f4f6;
-    outline: none;
+.admin-notice-counter {
+    flex: 0 0 auto;
+    min-width: 42px;
+    height: 34px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: #eceff1;
+    border-color: #d7dce0;
+    color: #111827;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
 }
 
-.admin-subbar a.is-active {
-    background: #111;
-    color: #fff;
-    border-color: #111;
+.admin-notice-chip {
+    flex: 0 0 auto;
+    min-width: 0;
+    max-width: 260px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    cursor: pointer;
+    animation: adminNoticeSlideIn 220ms ease;
+}
+
+
+.admin-notice-chip--order {
+    background: #fff1bf;
+}
+
+.admin-notice-chip--booking {
+    background: #eff6ff;
+}
+
+.admin-notice-chip--campaign {
+    background: #fff7ed;
+}
+
+.admin-notice-chip--system {
+    background: #f9fafb;
+}
+
+.admin-notice-chip__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+
+.admin-notice-chip__dot--order {
+    background: #22c55e;
+}
+
+.admin-notice-chip__dot--booking {
+    background: #9fe3da;
+}
+
+.admin-notice-chip__dot--campaign {
+    background: #ffc2d8;
+}
+
+.admin-notice-chip__dot--system {
+    background: #6b7280;
+}
+
+.admin-notice-chip__text {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 13px;
+    color: #111827;
+}
+
+.admin-notice-chip__close {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0;
+}
+
+.admin-notice-chip__close:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: #111827;
+}
+
+.admin-notice-chip__close:focus-visible {
+    outline: 2px solid #111827;
+    outline-offset: 2px;
+}
+
+.admin-notice-clear {
+  margin-left: auto;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #eceff1;
+  color: #111827;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.admin-notice-clear:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+@keyframes adminNoticeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 /* Desktop tweaks */
@@ -223,13 +351,9 @@
     .admin-subbar {
         position: sticky;
         top: 0;
-        margin-left: 150px;
-        padding: 12px 24px;
+        margin-left: 110px;
+        padding: 10px 24px;
         z-index: 20;
-    }
-
-    .admin-page {
-        padding-top: 16px;
     }
 }
 
@@ -257,8 +381,8 @@
     }
 
     .admin-menu {
-        grid-template-columns: repeat(8, 1fr); 
-        gap: 8px; 
+        grid-template-columns: repeat(8, 1fr);
+        gap: 8px;
         align-items: start;
     }
 
@@ -268,12 +392,12 @@
 
     .admin-tile::after {
         bottom: -16px;
-        font-size: 9px;   
+        font-size: 9px;
         padding: 2px 4px;
     }
 
     .admin-tile-img {
-        width: 52%;       
+        width: 52%;
         height: 52%;
     }
 
@@ -285,9 +409,14 @@
         background: #fff;
     }
 
+    .admin-notice-rail {
+        overflow-x: auto;
+        padding-bottom: 2px;
+    }
+
     .admin-page {
         margin-left: 0;
-        padding: 0;
+        padding: 12px 12px 20px 12px;
         min-height: 100vh;
     }
 }

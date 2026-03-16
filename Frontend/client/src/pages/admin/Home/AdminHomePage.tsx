@@ -182,7 +182,7 @@ export default function AdminHomePage() {
 
             <button
               className="admin-home-stat-card admin-home-stat-card--products"
-              onClick={() => navigate("/admin/products")}
+              onClick={() => navigate("/admin/campaigns")}
             >
               <span className="admin-home-stat-label">Aktiva kampanjer</span>
 
