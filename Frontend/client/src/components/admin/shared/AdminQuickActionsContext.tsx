@@ -12,6 +12,8 @@ import type {
   ProductCategoryOption,
   ProductFormValues,
 } from "../products/AdminProductForm";
+import AdminCampaignCreateModal from "../campaigns/AdminCampaignCreateModal";
+import type { CampaignFormValues } from "../campaigns/AdminCampaignForm";
 
 type StoredCategory = {
   id: number;
@@ -34,13 +36,27 @@ type StoredProduct = {
   image?: string;
 };
 
+type StoredCampaign = {
+  id: number;
+  title: string;
+  body: string;
+  image?: string;
+  altText?: string;
+  startDate: string;
+  endDate: string;
+  status: "active" | "upcoming";
+};
+
 type AdminQuickActionsContextType = {
   openCreateProductModal: () => void;
   canCreateProduct: boolean;
+  openCreateCampaignModal: () => void;
+  canCreateCampaign: boolean;
 };
 
 const CATEGORY_STORAGE_KEY = "admin_categories";
 const PRODUCT_STORAGE_KEY = "admin_products";
+const CAMPAIGN_STORAGE_KEY = "admin_campaigns";
 
 const AdminQuickActionsContext =
   createContext<AdminQuickActionsContextType | null>(null);
@@ -77,12 +93,46 @@ function getStoredProducts(): StoredProduct[] {
   }
 }
 
+function getStoredCampaigns(): StoredCampaign[] {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  try {
+    const saved = window.localStorage.getItem(CAMPAIGN_STORAGE_KEY);
+    if (!saved) return [];
+
+    const parsed = JSON.parse(saved) as unknown;
+    return Array.isArray(parsed) ? (parsed as StoredCampaign[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function syncCategoriesWithProducts(
+  categories: StoredCategory[],
+  products: StoredProduct[]
+): StoredCategory[] {
+  return categories.map((category) => {
+    const productIds = products
+      .filter((product) => product.category === category.slug)
+      .map((product) => product.id);
+
+    return {
+      ...category,
+      productIds,
+      productCount: productIds.length,
+    };
+  });
+}
+
 export function AdminQuickActionsProvider({
   children,
 }: {
   children: ReactNode;
 }) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isCreateCampaignOpen, setIsCreateCampaignOpen] = useState(false);
   const [categories, setCategories] = useState<StoredCategory[]>([]);
 
   useEffect(() => {
@@ -117,6 +167,7 @@ export function AdminQuickActionsProvider({
   );
 
   const canCreateProduct = categoryOptions.length > 0;
+  const canCreateCampaign = true;
 
   function openCreateProductModal() {
     const latestCategories = getStoredCategories();
@@ -148,21 +199,95 @@ export function AdminQuickActionsProvider({
       price: values.price,
       sauce: values.sauce || "",
       altText: values.altText || "",
-      image: values.image,
+      image: undefined,
     };
 
-    window.localStorage.setItem(
-      PRODUCT_STORAGE_KEY,
-      JSON.stringify([newProduct, ...existingProducts])
+    const nextProducts = [newProduct, ...existingProducts];
+    const nextCategories = syncCategoriesWithProducts(
+      getStoredCategories(),
+      nextProducts
     );
 
+    try {
+      window.localStorage.setItem(
+        PRODUCT_STORAGE_KEY,
+        JSON.stringify(nextProducts)
+      );
+      window.localStorage.setItem(
+        CATEGORY_STORAGE_KEY,
+        JSON.stringify(nextCategories)
+      );
+    } catch (error) {
+      console.error("Kunde inte spara produkt i localStorage:", error);
+      window.alert(
+        "Produkten kunde inte sparas eftersom lokal lagring är full. Rensa sparade produkter/bilder i localStorage och försök igen."
+      );
+      return;
+    }
+
+    setCategories(nextCategories);
+
     window.dispatchEvent(new Event("admin-products-updated"));
+    window.dispatchEvent(new Event("admin-categories-updated"));
+
     setIsCreateOpen(false);
+  }
+
+  function openCreateCampaignModal() {
+    setIsCreateCampaignOpen(true);
+  }
+
+  function closeCreateCampaignModal() {
+    setIsCreateCampaignOpen(false);
+  }
+
+  function handleCreateCampaign(values: CampaignFormValues) {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const existingCampaigns = getStoredCampaigns();
+    const now = new Date();
+    const start = values.startDate ? new Date(values.startDate) : null;
+
+    const newCampaign: StoredCampaign = {
+      id: Date.now(),
+      title: values.title,
+      body: values.body,
+      image: values.image || undefined,
+      altText: values.altText || "",
+      startDate: values.startDate,
+      endDate: values.endDate,
+      status: start && start > now ? "upcoming" : "active",
+    };
+
+    const nextCampaigns = [newCampaign, ...existingCampaigns];
+
+    try {
+      window.localStorage.setItem(
+        CAMPAIGN_STORAGE_KEY,
+        JSON.stringify(nextCampaigns)
+      );
+    } catch (error) {
+      console.error("Kunde inte spara kampanj i localStorage:", error);
+      window.alert(
+        "Kampanjen kunde inte sparas eftersom lokal lagring är full. Rensa sparade bilder/data i localStorage och försök igen."
+      );
+      return;
+    }
+
+    window.dispatchEvent(new Event("admin-campaigns-updated"));
+    setIsCreateCampaignOpen(false);
   }
 
   return (
     <AdminQuickActionsContext.Provider
-      value={{ openCreateProductModal, canCreateProduct }}
+      value={{
+        openCreateProductModal,
+        canCreateProduct,
+        openCreateCampaignModal,
+        canCreateCampaign,
+      }}
     >
       {children}
 
@@ -171,6 +296,12 @@ export function AdminQuickActionsProvider({
         onClose={closeCreateProductModal}
         onSubmit={handleCreateProduct}
         categories={categoryOptions}
+      />
+
+      <AdminCampaignCreateModal
+        isOpen={isCreateCampaignOpen}
+        onClose={closeCreateCampaignModal}
+        onSubmit={handleCreateCampaign}
       />
     </AdminQuickActionsContext.Provider>
   );

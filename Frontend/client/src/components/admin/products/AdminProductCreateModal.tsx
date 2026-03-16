@@ -26,6 +26,7 @@ export default function AdminProductCreateModal({
       size="lg"
     >
       <AdminProductForm
+        key={isOpen ? "create-open" : "create-closed"}
         submitLabel="Lägg till produkt"
         onCancel={onClose}
         onSubmit={onSubmit}

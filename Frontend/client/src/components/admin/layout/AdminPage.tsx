@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
@@ -8,10 +9,12 @@ import {
   faBullhorn,
   faUser,
   faHouse,
+  faCalendarCheck,
 } from "@fortawesome/free-solid-svg-icons";
 
 import AdminContainer from "./AdminContainer";
 import AdminButton from "../shared/AdminButton";
+import AdminConfirmModal from "../shared/AdminConfirmModal";
 import {
   AdminQuickActionsProvider,
   useAdminQuickActions,
@@ -33,7 +36,20 @@ function AdminPageContent({
   title?: string;
   noCard: boolean;
 }) {
-  const { openCreateProductModal, canCreateProduct } = useAdminQuickActions();
+  const navigate = useNavigate();
+  const [openLogout, setOpenLogout] = useState(false);
+
+  const {
+    openCreateProductModal,
+    canCreateProduct,
+    openCreateCampaignModal,
+    canCreateCampaign,
+  } = useAdminQuickActions();
+
+  function confirmLogout() {
+    setOpenLogout(false);
+    navigate("/");
+  }
 
   return (
     <section className="fpAdminPage">
@@ -60,13 +76,15 @@ function AdminPageContent({
                 <FontAwesomeIcon icon={faPlus} />
               </AdminButton>
 
-              <AdminButton
+                            <AdminButton
                 variant="icon-header"
-                to="/"
-                title="Till hemsidan"
-                aria-label="Till hemsidan"
+                type="button"
+                onClick={openCreateCampaignModal}
+                disabled={!canCreateCampaign}
+                title="Ny kampanj"
+                aria-label="Ny kampanj"
               >
-                <FontAwesomeIcon icon={faHouse} />
+                <FontAwesomeIcon icon={faBullhorn} />
               </AdminButton>
 
               <AdminButton
@@ -78,14 +96,7 @@ function AdminPageContent({
                 <FontAwesomeIcon icon={faArrowsRotate} />
               </AdminButton>
 
-              <AdminButton
-                variant="icon-header"
-                type="button"
-                title="Stäng restaurang"
-                aria-label="Stäng restaurang"
-              >
-                <FontAwesomeIcon icon={faPowerOff} />
-              </AdminButton>
+             
 
               <AdminButton
                 variant="icon-header"
@@ -98,20 +109,41 @@ function AdminPageContent({
 
               <AdminButton
                 variant="icon-header"
-                type="button"
-                title="Ny kampanj"
-                aria-label="Ny kampanj"
+                to="/admin/bookings"
+                title="Till bordsbokningar"
+                aria-label="Till bordsbokningar"
               >
-                <FontAwesomeIcon icon={faBullhorn} />
+                <FontAwesomeIcon icon={faCalendarCheck} />
+              </AdminButton>
+
+
+
+               <AdminButton
+                variant="icon-header"
+                type="button"
+                title="Logga ut"
+                aria-label="Logga ut"
+                onClick={() => setOpenLogout(true)}
+              >
+                <FontAwesomeIcon icon={faPowerOff} />
               </AdminButton>
 
               <AdminButton
                 variant="icon-header"
                 to="/admin/profile"
-                title="Profil"
+                title="Admin"
                 aria-label="Profil"
               >
                 <FontAwesomeIcon icon={faUser} />
+              </AdminButton>
+
+              <AdminButton
+                variant="icon-header"
+                to="/"
+                title="Till hemsidan"
+                aria-label="Till hemsidan"
+              >
+                <FontAwesomeIcon icon={faHouse} />
               </AdminButton>
             </div>
           </div>
@@ -121,6 +153,17 @@ function AdminPageContent({
       <AdminContainer>
         {noCard ? children : <div className="fpAdminCard">{children}</div>}
       </AdminContainer>
+
+      <AdminConfirmModal
+        isOpen={openLogout}
+        onClose={() => setOpenLogout(false)}
+        onConfirm={confirmLogout}
+        title="Logga ut"
+        message="Är du säker på att du vill logga ut?"
+        confirmText="Ja, logga ut"
+        cancelText="Avbryt"
+        confirmVariant="danger"
+      />
     </section>
   );
 }

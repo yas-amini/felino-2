@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import AdminButton from "../shared/AdminButton";
 import "./AdminProductForm.css";
 
@@ -38,6 +38,24 @@ function fileToDataUrl(file: File): Promise<string> {
   });
 }
 
+function getNormalizedInitialValues(
+  initialValues?: Partial<ProductFormValues>
+): ProductFormValues {
+  return {
+    category: initialValues?.category ?? "",
+    name: initialValues?.name ?? "",
+    ingredients: initialValues?.ingredients ?? "",
+    price: initialValues?.price ?? "",
+    sauce: initialValues?.sauce ?? "",
+    altText: initialValues?.altText ?? "",
+    image: initialValues?.image ?? "",
+  };
+}
+
+function normalizePrice(value: string): string {
+  return value.trim().replace(",", ".");
+}
+
 export default function AdminProductForm({
   initialValues,
   submitLabel = "Spara",
@@ -45,40 +63,26 @@ export default function AdminProductForm({
   onSubmit,
   categories,
 }: Props) {
+  const normalized = getNormalizedInitialValues(initialValues);
+
   const [category, setCategory] = useState<ProductCategory | "">(
-    initialValues?.category ?? ""
+    normalized.category
   );
-  const [name, setName] = useState(initialValues?.name ?? "");
-  const [ingredients, setIngredients] = useState(initialValues?.ingredients ?? "");
-  const [price, setPrice] = useState(initialValues?.price ?? "");
-  const [sauce, setSauce] = useState(initialValues?.sauce ?? "");
-  const [altText, setAltText] = useState(initialValues?.altText ?? "");
-  const [imagePreview, setImagePreview] = useState(initialValues?.image ?? "");
+  const [name, setName] = useState(normalized.name);
+  const [ingredients, setIngredients] = useState(normalized.ingredients);
+  const [price, setPrice] = useState(normalized.price);
+  const [sauce, setSauce] = useState(normalized.sauce);
+  const [altText, setAltText] = useState(normalized.altText);
+  const [imagePreview, setImagePreview] = useState(normalized.image ?? "");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    setCategory(initialValues?.category ?? "");
-    setName(initialValues?.name ?? "");
-    setIngredients(initialValues?.ingredients ?? "");
-    setPrice(initialValues?.price ?? "");
-    setSauce(initialValues?.sauce ?? "");
-    setAltText(initialValues?.altText ?? "");
-    setImagePreview(initialValues?.image ?? "");
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+  function clearError() {
+    if (errorMessage) {
+      setErrorMessage("");
     }
-  }, [initialValues]);
-
-  const isValid = useMemo(() => {
-    return (
-      category.trim() !== "" &&
-      name.trim().length >= 2 &&
-      ingredients.trim() !== "" &&
-      price.trim() !== ""
-    );
-  }, [category, name, ingredients, price]);
+  }
 
   function handlePickImage() {
     if (!fileInputRef.current) return;
@@ -94,13 +98,16 @@ export default function AdminProductForm({
     try {
       const imageUrl = await fileToDataUrl(file);
       setImagePreview(imageUrl);
+      clearError();
     } catch (error) {
       console.error("Kunde inte läsa vald bild:", error);
+      setErrorMessage("Kunde inte läsa vald bild.");
     }
   }
 
   function removeImage() {
     setImagePreview("");
+    clearError();
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -110,20 +117,47 @@ export default function AdminProductForm({
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
+    const normalizedPrice = normalizePrice(price);
+
     const values: ProductFormValues = {
       category,
       name: name.trim(),
       ingredients: ingredients.trim(),
-      price: price.trim(),
+      price: normalizedPrice,
       sauce: sauce.trim(),
       altText: altText.trim(),
       image: imagePreview || undefined,
     };
 
-    if (!values.category || !values.name || !values.ingredients || !values.price) {
+    console.log("AdminProductForm submit", values);
+
+    if (!values.category) {
+      setErrorMessage("Välj en kategori.");
       return;
     }
 
+    if (values.name.length < 2) {
+      setErrorMessage("Ange ett namn på minst 2 tecken.");
+      return;
+    }
+
+    if (!values.ingredients) {
+      setErrorMessage("Fyll i ingredienser.");
+      return;
+    }
+
+    if (!values.price) {
+      setErrorMessage("Fyll i ett pris.");
+      return;
+    }
+
+    if (Number.isNaN(Number(values.price))) {
+      setErrorMessage("Ange ett giltigt pris.");
+      return;
+    }
+
+    setErrorMessage("");
+    console.log("AdminProductForm calling onSubmit");
     onSubmit(values);
   }
 
@@ -143,8 +177,10 @@ export default function AdminProductForm({
             name="category"
             className="in select"
             value={category}
-            onChange={(e) => setCategory(e.target.value as ProductCategory | "")}
-            required
+            onChange={(e) => {
+              setCategory(e.target.value as ProductCategory | "");
+              clearError();
+            }}
           >
             <option value="">Välj kategori</option>
             {categories.map((categoryOption) => (
@@ -168,8 +204,10 @@ export default function AdminProductForm({
             maxLength={120}
             placeholder="Ex. Vesuvio"
             value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
+            onChange={(e) => {
+              setName(e.target.value);
+              clearError();
+            }}
           />
         </div>
 
@@ -185,8 +223,10 @@ export default function AdminProductForm({
             maxLength={800}
             placeholder="tomatsås, ost, skinka"
             value={ingredients}
-            onChange={(e) => setIngredients(e.target.value)}
-            required
+            onChange={(e) => {
+              setIngredients(e.target.value);
+              clearError();
+            }}
           />
         </div>
 
@@ -197,15 +237,15 @@ export default function AdminProductForm({
           <input
             id="prod-price"
             name="price"
-            type="number"
+            type="text"
             className="in price"
             inputMode="decimal"
-            min={0}
-            step="0.01"
             placeholder="99.00"
             value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            required
+            onChange={(e) => {
+              setPrice(e.target.value);
+              clearError();
+            }}
           />
         </div>
 
@@ -220,7 +260,10 @@ export default function AdminProductForm({
             className="in text"
             placeholder="bearnaisesås"
             value={sauce}
-            onChange={(e) => setSauce(e.target.value)}
+            onChange={(e) => {
+              setSauce(e.target.value);
+              clearError();
+            }}
           />
         </div>
 
@@ -236,7 +279,10 @@ export default function AdminProductForm({
             maxLength={200}
             placeholder="Capricciosa pizza med skinka och champinjoner"
             value={altText}
-            onChange={(e) => setAltText(e.target.value)}
+            onChange={(e) => {
+              setAltText(e.target.value);
+              clearError();
+            }}
           />
         </div>
 
@@ -285,8 +331,20 @@ export default function AdminProductForm({
         </div>
 
         <div className="form-field form-field--wide">
+          {errorMessage ? (
+            <p
+              style={{
+                margin: "0 0 10px",
+                color: "#b42318",
+                fontSize: "14px",
+              }}
+            >
+              {errorMessage}
+            </p>
+          ) : null}
+
           <div className="btn-row-bottom">
-            <AdminButton type="submit" variant="primary" disabled={!isValid}>
+            <AdminButton type="submit" variant="primary">
               {submitLabel}
             </AdminButton>
 

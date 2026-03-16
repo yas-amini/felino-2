@@ -46,8 +46,8 @@
 
 .orders-col__title {
   margin: 0;
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .orders-col__count {
@@ -61,6 +61,7 @@
   background: none;
   border-radius: 999px;
   font-weight: 600;
+  font-size: 12px;
 }
 
 .orders-col__list {
@@ -71,6 +72,8 @@
   flex-direction: column;
   gap: 10px;
   min-height: 80px;
+  font-weight: 600;
+  font-size: 14px;
 }
 
 .orders-col__list.is-over {
@@ -97,7 +100,8 @@
 
 .order-id,
 .order-total {
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 12px;
 }
 
 .order-card__meta {
@@ -107,12 +111,15 @@
 }
 
 .order-customer {
+  font-size: 14px;
+  font-weight: 500;
   color: #111827;
 }
 
 .order-created {
   color: #6b7280;
-  font-size: 0.92rem;
+   font-size: 12px;
+  font-weight: 600;
 }
 
 .order-lines {
@@ -123,6 +130,8 @@
 
 .order-lines li {
   margin-bottom: 2px;
+   font-weight: 400;
+  font-size: 14px;
 }
 
 /* ===== Kundinfo ===== */
@@ -137,7 +146,8 @@
   align-items: flex-start;
   gap: 8px;
   color: #374151;
-  font-size: 0.92rem;
+   font-weight: 600;
+  font-size: 12px;
 }
 
 
@@ -168,6 +178,8 @@
   background-position: right 14px center; 
   background-size: 12px;
   outline: none;
+   font-weight: 500;
+  font-size: 14px;
 }
 
 .in.select:focus {

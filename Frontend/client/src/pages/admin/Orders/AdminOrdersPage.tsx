@@ -234,7 +234,7 @@ export default function AdminOrdersPage() {
 
                         <div className="order-card__meta">
                           <div className="order-customer">
-                            <strong>{order.customerName}</strong>
+                            {order.customerName}
                           </div>
                           <div className="order-created">
                             {formatDate(order.createdAt)}
@@ -262,13 +262,13 @@ export default function AdminOrdersPage() {
 
                           {order.comment ? (
                             <li>
-                              <strong>Kommentar:</strong> {order.comment}
+                             Kommentar:  {order.comment}
                             </li>
                           ) : null}
                         </ul>
 
                         <div className="order-customer-info">
-                          <strong>Kundinfo:</strong>
+                          Kundinfo:
                           {order.customerAddress ? (
                             <div className="detail-row">
                               <span>{order.customerAddress}</span>
