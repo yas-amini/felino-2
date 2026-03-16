@@ -1,0 +1,199 @@
+.userpage-layout {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    align-items: start;
+    gap: 1.5rem;
+}
+.userpage-layout aside {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.userpage-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.profile-user-container {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background-color: white;
+    padding: 1rem;
+}
+
+.profile-user {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    align-items: start;
+
+}
+
+.profile-name {
+    padding-top: 0;
+}
+
+.profile-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 1rem;
+}
+
+.profile-login-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 0.5rem;
+}
+
+.profile-login-info p {
+    padding: 0;
+    margin: 0;
+}
+
+.edit-profile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.security-header {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.security-header h3 {
+    padding: 0;
+    margin: 0;
+}
+
+.change-password {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: start;
+    padding: 1rem;
+}
+
+.user-security-section {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background-color: white;
+}
+
+.change-password p {
+    margin: 0;
+}
+
+.metatext {
+    font-size: small;
+}
+
+.user-authorization-section {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background-color: white;
+}
+
+.user-authorization-section h3 {
+    padding: 0;
+}
+
+ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.user-workcalendar-section {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background-color: white;
+}
+.workcalendar-heading {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+.workcalendar-heading h3 {
+    padding: 0;
+    margin: 0;
+}
+
+.workcalendar-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0rem;
+}
+
+.workcalendar-toolbar button {
+  border: 1px solid #d1d5db;
+  background: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.workcalendar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.workcalendar-day {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+.workcalendar-day-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+}
+
+.workcalendar-day-header span {
+  color: #6b7280;
+}
+
+.workcalendar-slots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.workcalendar-slot {
+  background: #f3f4f6;
+  color: #374151;
+  text-align: center;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.workcalendar-slot.booked {
+  background: #dff7e7;
+  color: #1f7a3d;
+}
+.user-create-edit {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+.user-create-edit p {
+    margin: 0;
+}
