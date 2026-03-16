@@ -1,6 +1,10 @@
-﻿namespace Felino.Api.Domain.Enums
+namespace Felino.Api.Domain.Enums
 {
-    public class ReservationStatus
+    public enum ReservationStatus
     {
+        Pending,
+        Confirmed,
+        Cancelled,
+        Completed
     }
 }

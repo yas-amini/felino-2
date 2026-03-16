@@ -1,6 +1,6 @@
-﻿namespace Felino.Api.Services.Interfaces
+namespace Felino.Api.Services.Interfaces
 {
-    public class IOrderService
+    public interface IOrderService
     {
     }
 }
