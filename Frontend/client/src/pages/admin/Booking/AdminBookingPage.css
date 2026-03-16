@@ -1,9 +1,146 @@
 .tabs-Toolbar {
     display: flex;
-    flex-direction: column;    
+    flex-direction: column;
 }
+
 .header-calendar {
     display: flex;
     flex-direction: row;
     justify-content: space-between
+}
+
+.booking-section {
+    background: white;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    padding: 1rem;
+    margin-top: 2rem;
+}
+
+.booking-section h3 {
+    padding: 0;
+
+}
+
+.booking-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.booking-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.booking-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.booking-header strong {
+    font-size: medium;
+}
+
+.badge {
+    font-size: x-small;
+    padding: 3px 8px;
+    border-radius: 0.5rem;
+}
+
+.confirmed {
+    background: #111827;
+    color: white;
+}
+
+.booking-info {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    color: #6b7280;
+    font-size: normal;
+}
+
+.booking-table {
+    margin-top: 4px;
+    font-size: small;
+    color: #374151;
+}
+
+.tables-section {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 1.5rem;
+
+}
+
+.tables-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.tables-section-header h3 {
+    margin: 0;
+    padding: 0;
+}
+
+.tables-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.table-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background: #fff;
+}
+
+.table-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.table-card-top h4 {
+    margin: 0;
+    padding: 0;
+    font-size: large;
+}
+
+.table-status {
+    font-size: x-small;
+    padding: 3px 8px;
+    border-radius: 0.5rem;
+}
+
+.table-status.available {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.table-meta {
+    color: #4b5563;
+    font-size: normal;
+    padding: 1rem 0;
+}
+.table-meta p {
+    padding: 0;
+    margin: 0;
+}
+
+.table-card-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1rem;
 }
