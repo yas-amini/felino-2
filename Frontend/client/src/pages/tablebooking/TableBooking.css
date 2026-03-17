@@ -1,0 +1,39 @@
+.booking-card {
+  max-width: 500px;
+  background: #fef8f1; /* samma ton som pizzakorten */
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1 px solid #DDD;
+}
+.change-booking-card {
+  max-width: 500px;
+  background: #fef8f1; /* samma ton som pizzakorten */
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1 px solid #DDD;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+input,
+select,
+textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #cfc7bd;
+  font-size: 14px;
+  background: white;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #3f6b4b; /* din gröna färg */
+}
