@@ -1,30 +1,35 @@
 import AdminPage from "../../../components/admin/layout/AdminPage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsers, faClock, faKey, faCalendar, faUserEdit, faUserPlus } from "@fortawesome/free-solid-svg-icons";
-import Button from "../../../components/common/Button/Button";
+import {
+  faUsers,
+  faClock,
+  faKey,
+  faCalendar,
+  faUserEdit,
+  faUserPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import "./AdminProfilePage.css";
 
 type Authorization = {
-  id: number
-  name: string
-}
+  id: number;
+  name: string;
+};
 
 export default function AdminProfilePage() {
-
   const authorizations: Authorization[] = [
     {
       id: 1,
-      name: "Roll: Admin"
+      name: "Roll: Admin",
     },
     {
       id: 2,
-      name: "Schemahantering"
+      name: "Schemahantering",
     },
     {
       id: 3,
-      name: "Användarhantering"
-    }
-  ]
+      name: "Användarhantering",
+    },
+  ];
 
   const days = [
     { name: "Måndag", date: "10 mars", slots: ["09:00-12:00 (Bokad)", "13:00-16:00"], booked: [true, false] },
@@ -44,7 +49,13 @@ export default function AdminProfilePage() {
                 <FontAwesomeIcon icon={faUsers} />
                 <div>
                   <h3 className="profile-name">Förnamn Efternamn</h3>
-                  <Button type="button" variant="ghost">Admin</Button>
+                  <button
+                    type="button"
+                    className="fpAdminBtn fpAdminBtn--ghost fpAdminBtn--sm"
+                  >
+                    Admin
+                  </button>
+
                   <div className="profile-info">
                     <p>admin-user</p>
                     <p>example@test.se</p>
@@ -52,49 +63,81 @@ export default function AdminProfilePage() {
                     <p>Skapad 10 jan 2025</p>
                   </div>
                 </div>
+
                 <div className="edit-profile">
-                  <Button type="button" variant="secondary">Redigera profil</Button>
-                  <Button type="button" variant="secondary">Byt email</Button>
+                  <button
+                    type="button"
+                    className="fpAdminBtn fpAdminBtn--primary fpAdminBtn--md"
+                  >
+                    Redigera profil
+                  </button>
+                  <button
+                    type="button"
+                    className="fpAdminBtn fpAdminBtn--primary fpAdminBtn--md"
+                  >
+                    Byt email
+                  </button>
                 </div>
               </div>
+
               <div className="profile-login-info">
                 <FontAwesomeIcon icon={faClock} />
                 <p>Senaste inloggning: 24 februari 2024, 11:54</p>
               </div>
             </div>
           </section>
+
           <section className="user-security-section">
             <div className="security-header">
               <FontAwesomeIcon icon={faKey} />
               <h3>Säkerhet</h3>
             </div>
+
             <div className="change-password">
               <div>
                 <p>Byt lösenord</p>
                 <p className="metatext">Senast ändrad 24 februari 2024</p>
               </div>
-              <Button type="button" variant="secondary">Ändra</Button>
+              <button
+                type="button"
+                className="fpAdminBtn fpAdminBtn--primary fpAdminBtn--md"
+              >
+                Ändra
+              </button>
             </div>
           </section>
+
           <section className="user-authorization-section">
             <h3>Roll och Behörigheter</h3>
             <ul>
-              {authorizations.map(authorization =>
-                <li key={authorization.id}>
-                  {authorization.name}
-                </li>
-              )}
+              {authorizations.map((authorization) => (
+                <li key={authorization.id}>{authorization.name}</li>
+              ))}
             </ul>
           </section>
+
           <section className="user-workcalendar-section">
             <div className="workcalendar-heading">
               <FontAwesomeIcon icon={faCalendar} />
               <h3>Passbokningar</h3>
             </div>
+
             <div className="workcalendar-toolbar">
-              <button>Föregående vecka</button>
+              <button
+                type="button"
+                className="fpAdminBtn fpAdminBtn--ghost fpAdminBtn--md"
+              >
+                Föregående vecka
+              </button>
+
               <span>Vecka 11, 2026</span>
-              <button>Nästa vecka</button>
+
+              <button
+                type="button"
+                className="fpAdminBtn fpAdminBtn--ghost fpAdminBtn--md"
+              >
+                Nästa vecka
+              </button>
             </div>
 
             <div className="workcalendar-list">
@@ -120,6 +163,7 @@ export default function AdminProfilePage() {
             </div>
           </section>
         </div>
+
         <aside>
           <div className="user-create-edit">
             <FontAwesomeIcon icon={faUserPlus} />
@@ -131,6 +175,6 @@ export default function AdminProfilePage() {
           </div>
         </aside>
       </div>
-    </AdminPage >
+    </AdminPage>
   );
 }

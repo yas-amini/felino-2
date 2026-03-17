@@ -52,7 +52,9 @@
 /* ===== MENY ===== */
 .fpNav-links {
   list-style: none;
-  display: flex;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
   gap: 1.5rem;
   margin: 0;
   padding: 0;

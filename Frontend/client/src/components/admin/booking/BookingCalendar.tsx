@@ -28,7 +28,7 @@ export default function BookingCalendar() {
   ];
 
   return (
-    <div className="calendar-container">
+    <div className="calendar">
       <div className="calendar-layout">
         <aside className="calendar-sidebar">
           <div className="calendar-sidebar-header">Bokningar</div>
@@ -43,7 +43,7 @@ export default function BookingCalendar() {
           </div>
         </aside>
 
-        <section className="calendar-area">
+        <section className="calendar-main">
           <div
             className="calendar-time-header"
             style={{
@@ -64,7 +64,9 @@ export default function BookingCalendar() {
               gridTemplateRows: `repeat(${bookingRows.length}, 64px)`,
             }}
           >
-            {Array.from({ length: bookingRows.length * timeSlots.length }).map((_, index) => (
+            {Array.from({
+              length: bookingRows.length * timeSlots.length,
+            }).map((_, index) => (
               <div key={index} className="calendar-grid-cell" />
             ))}
           </div>

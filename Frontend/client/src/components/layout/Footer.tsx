@@ -8,7 +8,7 @@ import {
   faXTwitter,
 } from "@fortawesome/free-brands-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import AdminProfileModal from "../common/Modal/AdminProfileModal"; // justera sökvägen
+import AdminProfileModal from "../common/Modal/AdminProfileModal"; 
 
 type FooterProps = {
   onOpenMenu: () => void;

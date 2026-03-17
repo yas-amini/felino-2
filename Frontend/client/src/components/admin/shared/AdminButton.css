@@ -157,6 +157,14 @@
 .fpAdminBtn--icon-toggle svg {
   transition: transform 0.18s ease;
 }
+
+.fpAdminBtn--field {
+  min-height: 38px;
+  padding: 0 12px;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  border-color: #d7dce0;
+}
 /* ===== Header quick actions ===== */
 
 .fpAdminBtn--icon-header {

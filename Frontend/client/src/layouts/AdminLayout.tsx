@@ -1,6 +1,10 @@
 import { useMemo, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import "./AdminLayout.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+faX
+} from "@fortawesome/free-solid-svg-icons";
 
 type TopbarState = {
   title?: string;
@@ -60,7 +64,7 @@ const INITIAL_NOTICES: AdminNotice[] = [
   },
 ];
 
-const MAX_VISIBLE_NOTICES = 6;
+const MAX_VISIBLE_NOTICES = 5;
 
 export default function AdminLayout() {
   const navigate = useNavigate();
@@ -161,7 +165,7 @@ export default function AdminLayout() {
               onClick={clearAllNotices}
               title="Rensa alla notiser"
             >
-              Rensa alla
+              <FontAwesomeIcon icon={faX} />
             </button>
           )}
         </div>

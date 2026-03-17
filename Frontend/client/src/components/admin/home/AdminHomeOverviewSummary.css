@@ -1,0 +1,141 @@
+.admin-home-summary {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.admin-home-summary-left {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-home-summary-stat {
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.admin-home-summary-label {
+  display: block;
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.admin-home-summary-value {
+  display: block;
+  font-size: 1.55rem;
+  line-height: 1.1;
+  color: #111827;
+}
+
+.admin-analytics-card {
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px;
+  height: 100%;
+}
+
+.admin-analytics-card__head h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.admin-analytics-card__head p {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* CHART */
+
+.admin-mixed-chart {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 34px 1fr 34px;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.admin-mixed-chart__y {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #6b7280;
+  padding: 4px 0 26px;
+}
+
+.admin-mixed-chart__main {
+  position: relative;
+  min-height: 260px;
+}
+
+.admin-mixed-chart__grid {
+  position: absolute;
+  inset: 0 0 26px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.admin-mixed-chart__grid span {
+  border-top: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.admin-mixed-chart__plot {
+  position: relative;
+  height: 230px;
+  padding: 0 14px;
+}
+
+.admin-mixed-chart__bars {
+  position: absolute;
+  inset: 0 14px 0 14px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  align-items: end;
+  gap: 18px;
+  z-index: 1;
+}
+
+.bar-group {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-items: center;
+  gap: 8px;
+}
+
+.bar-group small {
+  font-size: 0.72rem;
+  color: #4b5563;
+}
+
+.bar {
+  width: 30px;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(180deg, #f1b16f 0%, #c97a53 100%);
+  box-shadow: 0 4px 10px rgba(201, 122, 83, 0.18);
+}
+
+.admin-mixed-chart__line {
+  position: absolute;
+  inset: 0 14px 26px 14px;
+  width: calc(100% - 28px);
+  height: calc(100% - 26px);
+  z-index: 2;
+  overflow: visible;
+}
+
+@media (max-width: 1000px) {
+  .admin-home-summary {
+    grid-template-columns: 1fr;
+  }
+}
