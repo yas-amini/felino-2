@@ -9,11 +9,6 @@ export default function AdminHomePage() {
   return (
     <AdminPage title="Översikt">
       <section className="admin-home-page">
-        <AdminSectionHead
-          level={1}
-          title="Översikt"
-          description="En enkel startsida för restaurangens adminpanel."
-        />
 
         <div className="admin-home-layout">
           <div className="admin-home-box admin-home-box--main">
