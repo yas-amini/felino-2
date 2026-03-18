@@ -1,4 +1,5 @@
 import AdminPage from "../../../components/admin/layout/AdminPage";
+import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import AdminSectionHead from "../../../components/admin/shared/AdminSectionHead";
 import AdminHomeOverviewSummary from "../../../components/admin/home/AdminHomeOverviewSummary";
 import AdminHomeToday from "../../../components/admin/home/AdminHomeToday";
@@ -6,10 +7,11 @@ import AdminHomeTodoList from "../../../components/admin/home/AdminHomeTodoList"
 import "./AdminHomePage.css";
 
 export default function AdminHomePage() {
-  return (
-    <AdminPage title="Översikt">
-      <section className="admin-home-page">
+  useAdminTopbar("Översikt");
 
+  return (
+    <AdminPage>
+      <section className="admin-home-page">
         <div className="admin-home-layout">
           <div className="admin-home-box admin-home-box--main">
             <section className="admin-home-section">
@@ -28,7 +30,6 @@ export default function AdminHomePage() {
               </div>
             </section>
           </div>
-
 
           <aside className="admin-home-box admin-home-box--side">
             <section className="admin-home-section">

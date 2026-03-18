@@ -1,5 +1,6 @@
 import { useState } from "react";
 import AdminPage from "../../../components/admin/layout/AdminPage";
+import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import BookingTabs from "../../../components/admin/booking/BookingTabs";
 import BookingToolBar from "../../../components/admin/booking/BookingToolBar";
 import BookingCalendar from "../../../components/admin/booking/BookingCalendar";
@@ -17,6 +18,8 @@ import {
 export type BookingTab = "lista" | "kalender" | "bord";
 
 export default function AdminBookingPage() {
+  useAdminTopbar("Bordsbokningar");
+
   const [activeTab, setActiveTab] = useState<BookingTab>("kalender");
 
   const bookings = [
@@ -52,12 +55,12 @@ export default function AdminBookingPage() {
   ];
 
   return (
-    <AdminPage title="Bordsbokningar">
+    <AdminPage>
       <section className="admin-booking-page">
         <AdminSectionHead
-  level={1}
-  title="Hantera bokningar"
-  description="Här kan du se, skapa och hantera restaurangens bokningar."
+          level={1}
+          title="Hantera bokningar"
+          description="Här kan du se, skapa och hantera restaurangens bokningar."
           actions={<BookingToolBar />}
         />
 
@@ -111,19 +114,19 @@ export default function AdminBookingPage() {
 
           {activeTab === "bord" && (
             <section className="tables-section">
-         <AdminSectionHead
-  level={2}
-  title="Bord & kapacitet"
-  description="Hantera restaurangens bord, placeringar och tillgänglighet."
-  actions={
-    <button
-      type="button"
-      className="fpAdminBtn fpAdminBtn--primary"
-    >
-      Lägg till bord
-    </button>
-  }
-/>
+              <AdminSectionHead
+                level={2}
+                title="Bord & kapacitet"
+                description="Hantera restaurangens bord, placeringar och tillgänglighet."
+                actions={
+                  <button
+                    type="button"
+                    className="fpAdminBtn fpAdminBtn--primary"
+                  >
+                    Lägg till bord
+                  </button>
+                }
+              />
 
               <div className="tables-grid">
                 {tables.map((table) => (

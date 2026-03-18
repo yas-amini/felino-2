@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminPage from "../../../components/admin/layout/AdminPage";
+import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import AdminButton from "../../../components/admin/shared/AdminButton";
 import AdminCampaignCard from "../../../components/admin/campaigns/AdminCampaignCard";
 import AdminConfirmModal from "../../../components/admin/shared/AdminConfirmModal";
@@ -183,9 +184,9 @@ function AdminCampaignsPageContent() {
   return (
     <section className="admin-campaigns-page" data-scope="campaigns">
       <AdminSectionHead
-  level={1}
-  title="Alla kampanjer"
-  description="Här kan du lägga till, redigera och hantera kampanjer."
+        level={1}
+        title="Våra kampanjer"
+        description="Här kan du lägga till, redigera och hantera kampanjer."
         actions={
           <AdminButton
             variant="primary"
@@ -259,8 +260,10 @@ function AdminCampaignsPageContent() {
 }
 
 export default function AdminCampaignsPage() {
+  useAdminTopbar("Kampanjer");
+
   return (
-    <AdminPage title="Kampanjer">
+    <AdminPage>
       <AdminCampaignsPageContent />
     </AdminPage>
   );

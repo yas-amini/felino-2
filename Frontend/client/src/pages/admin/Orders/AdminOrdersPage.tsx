@@ -1,12 +1,11 @@
 import { useMemo, useState } from "react";
 import AdminPage from "../../../components/admin/layout/AdminPage";
+import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import AdminButton from "../../../components/admin/shared/AdminButton";
 import AdminModal from "../../../components/admin/shared/AdminModal";
 import "./AdminOrdersPage.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowRight
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 type OrderStatus = "new" | "preparing" | "ready" | "completed" | "canceled";
 
@@ -93,22 +92,22 @@ const INITIAL_ORDERS: Order[] = [
     items: [{ qty: 1, name: "Kebabpizza", price: 119 }],
   },
   {
-  id: 1004,
-  status: "new",
-  total: 189,
-  createdAt: "2026-03-06T10:20:00",
-  customerName: "Johan Persson",
-  customerAddress: "Kungsgatan 8, Malmö",
-  customerPhone: "070-987 65 43",
-  customerEmail: "johan@email.se",
-  delivery: 19,
-  comment: "Ring när ni är utanför.",
-  items: [
-    { qty: 1, name: "Mexicana", price: 125 },
-    { qty: 1, name: "Vitlökssås", price: 15 },
-    { qty: 1, name: "Fanta", price: 30 },
-  ],
-},
+    id: 1004,
+    status: "new",
+    total: 189,
+    createdAt: "2026-03-06T10:20:00",
+    customerName: "Johan Persson",
+    customerAddress: "Kungsgatan 8, Malmö",
+    customerPhone: "070-987 65 43",
+    customerEmail: "johan@email.se",
+    delivery: 19,
+    comment: "Ring när ni är utanför.",
+    items: [
+      { qty: 1, name: "Mexicana", price: 125 },
+      { qty: 1, name: "Vitlökssås", price: 15 },
+      { qty: 1, name: "Fanta", price: 30 },
+    ],
+  },
 ];
 
 function formatPrice(value: number) {
@@ -120,6 +119,8 @@ function formatDate(value: string) {
 }
 
 export default function AdminOrdersPage() {
+  useAdminTopbar("Beställningar");
+
   const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
   const [draggedId, setDraggedId] = useState<number | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -179,7 +180,7 @@ export default function AdminOrdersPage() {
   }
 
   return (
-    <AdminPage title="Beställningar" noCard>
+    <AdminPage noCard>
       <section className="admin-settings" data-scope="orders">
         <div className="orders-board" aria-label="Kanban för beställningar">
           {STATUS_ORDER.map((status) => {
@@ -260,11 +261,7 @@ export default function AdminOrdersPage() {
                             </li>
                           ) : null}
 
-                          {order.comment ? (
-                            <li>
-                             Kommentar:  {order.comment}
-                            </li>
-                          ) : null}
+                          {order.comment ? <li>Kommentar: {order.comment}</li> : null}
                         </ul>
 
                         <div className="order-customer-info">

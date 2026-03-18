@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminPage from "../../../components/admin/layout/AdminPage";
+import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import AdminButton from "../../../components/admin/shared/AdminButton";
 import AdminConfirmModal from "../../../components/admin/shared/AdminConfirmModal";
 import AdminSectionHead from "../../../components/admin/shared/AdminSectionHead";
@@ -85,6 +86,8 @@ function saveProducts(nextProducts: StoredProduct[]) {
 }
 
 export default function AdminCategoriesPage() {
+  useAdminTopbar("Kategorier");
+
   const [categories, setCategories] = useState<Category[]>(() =>
     getStoredCategories()
   );
@@ -243,12 +246,12 @@ export default function AdminCategoriesPage() {
   }
 
   return (
-    <AdminPage title="Kategorier">
+    <AdminPage>
       <section className="admin-categories-page" data-scope="categories">
         <AdminSectionHead
-  level={1}
-  title="Alla kategorier"
-  description="Här kan du lägga till, redigera och hantera kategorier."
+          level={1}
+          title="Våra kategorier"
+          description="Här kan du lägga till, redigera och hantera kategorier."
           actions={
             <AdminButton
               variant="primary"

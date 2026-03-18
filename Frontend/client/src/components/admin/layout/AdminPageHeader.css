@@ -1,0 +1,58 @@
+.fpAdminHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 1px 24px 15px 44px;
+  background: transparent;
+  border-bottom: 0;
+  box-shadow: none;
+  position: static;
+  top: auto;
+  z-index: auto;
+}
+
+.fpAdminTitle {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.fpAdminActionsBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.fpAdminActionsTitle {
+  font-size: 10px;
+  font-weight: 600;
+  color: #6b7280;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 1px 24px 1px 44px;
+}
+
+.fpAdminActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 1px 24px 1px 44px;
+}
+
+@media (max-width: 900px) {
+  .fpAdminActionsBlock, .admin-subbar {
+    display: none;
+  }
+
+  .fpAdminHeader {
+    align-items: center;
+    padding: 1px 24px 15px 44px;
+  }
+
+  .fpAdminTitle {
+    font-size: 22px;
+  }
+}

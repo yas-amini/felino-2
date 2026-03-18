@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminPage from "../../../components/admin/layout/AdminPage";
+import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import AdminButton from "../../../components/admin/shared/AdminButton";
 import AdminSectionHead from "../../../components/admin/shared/AdminSectionHead";
 import { useAdminQuickActions } from "../../../components/admin/shared/AdminQuickActionsContext";
@@ -250,7 +251,6 @@ function ProductsPageContent() {
                 : "Lägg först till minst en kategori"
             }
           >
-            
             <span>+ Lägg till produkt</span>
           </AdminButton>
         }
@@ -417,8 +417,10 @@ function ProductsPageContent() {
 }
 
 export default function AdminProductsPage() {
+  useAdminTopbar("Produkter");
+
   return (
-    <AdminPage title="Produkter">
+    <AdminPage>
       <ProductsPageContent />
     </AdminPage>
   );

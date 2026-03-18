@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import AdminPage from "../../../components/admin/layout/AdminPage";
 import AdminButton from "../../../components/admin/shared/AdminButton";
 import AdminSectionHead from "../../../components/admin/shared/AdminSectionHead";
+import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import "./AdminSettingsPage.css";
 
 type DayHours = {
@@ -35,6 +36,8 @@ const DEFAULT_HOURS: HoursSettings = {
 const STORAGE_KEY = "admin_settings";
 
 export default function AdminSettingsPage() {
+  useAdminTopbar("Inställningar");
+
   const [hours, setHours] = useState<HoursSettings>(DEFAULT_HOURS);
   const [welcomeTitle, setWelcomeTitle] = useState("");
   const [welcomeText, setWelcomeText] = useState("");
@@ -99,13 +102,8 @@ export default function AdminSettingsPage() {
   };
 
   return (
-    <AdminPage title="Inställningar">
+    <AdminPage>
       <section className="admin-settings-page">
-        <AdminSectionHead
-          level={1}
-          title="Öppettider & presentationstext"
-          description="Hantera öppettider och textinnehåll för startsidan."
-        />
 
         <section className="admin-settings-section">
           <AdminSectionHead

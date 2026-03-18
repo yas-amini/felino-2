@@ -1,4 +1,5 @@
 import AdminPage from "../../../components/admin/layout/AdminPage";
+import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUsers,
@@ -16,6 +17,8 @@ type Authorization = {
 };
 
 export default function AdminProfilePage() {
+  useAdminTopbar("Användarsida");
+
   const authorizations: Authorization[] = [
     {
       id: 1,
@@ -40,7 +43,7 @@ export default function AdminProfilePage() {
   ];
 
   return (
-    <AdminPage title="Användarsida">
+    <AdminPage>
       <div className="userpage-layout">
         <div className="userpage-container">
           <section className="user-info-section">
