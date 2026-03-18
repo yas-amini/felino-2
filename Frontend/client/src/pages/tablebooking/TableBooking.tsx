@@ -260,7 +260,7 @@ export default function TableBooking() {
                       </div>
 
                       <div className="booking-actions">
-                        <Button type="button" onClick={handlePreviousStep}>
+                        <Button type="button" variant="secondary" onClick={handlePreviousStep}>
                           Tillbaka
                         </Button>
                         <Button type="submit">Bekräfta bokning</Button>
@@ -335,8 +335,8 @@ export default function TableBooking() {
                 </div>
 
                 <div className="booking-actions">
-                  <Button type="button">Ändra bokning</Button>
-                  <Button type="button">Avboka</Button>
+                  <Button type="button" >Ändra bokning</Button>
+                  <Button type="button" variant="secondary">Avboka</Button>
                 </div>
 
                 <p className="booking-id">#A12345678</p>
