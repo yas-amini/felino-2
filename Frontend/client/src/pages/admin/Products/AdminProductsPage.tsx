@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-
 import AdminPage from "../../../components/admin/layout/AdminPage";
+import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import AdminButton from "../../../components/admin/shared/AdminButton";
+import AdminSectionHead from "../../../components/admin/shared/AdminSectionHead";
 import { useAdminQuickActions } from "../../../components/admin/shared/AdminQuickActionsContext";
 import AdminProductsAccordion from "../../../components/admin/products/AdminProductsAccordion";
 import AdminProductEditModal from "../../../components/admin/products/AdminProductEditModal";
@@ -234,38 +233,32 @@ function ProductsPageContent() {
   }
 
   return (
-    <section className="admin-settings" data-scope="products">
-      <section className="admin-section">
-        <div className="products-section-head">
-          <div>
-            <h2>Aktiva produkter</h2>
-            <p className="muted">
-              Här ser du alla produkter uppdelade per kategori.
-            </p>
-          </div>
-
-          <div className="products-section-actions">
-            <AdminButton
-              variant="primary"
-              type="button"
-              onClick={openCreateProductModal}
-              disabled={!canCreateProduct}
-              title={
-                canCreateProduct
-                  ? "Lägg till produkt"
-                  : "Lägg först till minst en kategori"
-              }
-            >
-              <FontAwesomeIcon icon={faPlus} />
-              <span>Lägg till produkt</span>
-            </AdminButton>
-          </div>
-        </div>
-      </section>
+    <section className="admin-products-page" data-scope="products">
+      <AdminSectionHead
+        level={1}
+        title="Aktiva produkter"
+        description="Här ser du alla produkter uppdelade per kategori."
+        actions={
+          <AdminButton
+            variant="primary"
+            type="button"
+            className="fpAdminBtn--field"
+            onClick={openCreateProductModal}
+            disabled={!canCreateProduct}
+            title={
+              canCreateProduct
+                ? "Lägg till produkt"
+                : "Lägg först till minst en kategori"
+            }
+          >
+            <span>+ Lägg till produkt</span>
+          </AdminButton>
+        }
+      />
 
       {categories.length === 0 ? (
-        <section className="admin-section">
-          <p className="muted">
+        <section className="products-empty-state">
+          <p className="products-empty-message">
             Inga kategorier finns ännu. Lägg först till kategorier på
             kategorisidan.
           </p>
@@ -279,17 +272,22 @@ function ProductsPageContent() {
           return (
             <section
               key={category.id}
-              className="admin-section product-category-section"
+              className="product-category-section"
             >
-              <div className="product-category-head">
-                <h3>{category.name}</h3>
-                <span className="product-category-count">
-                  {categoryProducts.length} st
-                </span>
-              </div>
+              <AdminSectionHead
+                level={3}
+                title={category.name}
+                actions={
+                  <span className="product-category-count">
+                    {categoryProducts.length} st
+                  </span>
+                }
+              />
 
               {categoryProducts.length === 0 ? (
-                <p className="muted">Inga produkter i denna kategori ännu.</p>
+                <p className="products-empty-message">
+                  Inga produkter i denna kategori ännu.
+                </p>
               ) : (
                 <>
                   <div className="products-desktop-view">
@@ -320,7 +318,7 @@ function ProductsPageContent() {
                                     height={64}
                                   />
                                 ) : (
-                                  <span className="muted">Ingen</span>
+                                  <span className="products-table-muted">Ingen</span>
                                 )}
                               </td>
 
@@ -419,8 +417,10 @@ function ProductsPageContent() {
 }
 
 export default function AdminProductsPage() {
+  useAdminTopbar("Produkter");
+
   return (
-    <AdminPage title="Produkter">
+    <AdminPage>
       <ProductsPageContent />
     </AdminPage>
   );

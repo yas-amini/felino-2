@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-
 import AdminPage from "../../../components/admin/layout/AdminPage";
+import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import AdminButton from "../../../components/admin/shared/AdminButton";
+import AdminCampaignCard from "../../../components/admin/campaigns/AdminCampaignCard";
 import AdminConfirmModal from "../../../components/admin/shared/AdminConfirmModal";
 import AdminCampaignEditModal from "../../../components/admin/campaigns/AdminCampaignEditModal";
+import AdminSectionHead from "../../../components/admin/shared/AdminSectionHead";
 import type { CampaignFormValues } from "../../../components/admin/campaigns/AdminCampaignForm";
 import { useAdminQuickActions } from "../../../components/admin/shared/AdminQuickActionsContext";
 
@@ -182,90 +182,32 @@ function AdminCampaignsPageContent() {
   }
 
   return (
-    <section className="admin-settings" data-scope="campaigns">
-      <section className="admin-section">
-        <div className="campaigns-section-head">
-          <div>
-            <h2>Alla kampanjer</h2>
-            <p className="muted">
-              Här kan du lägga till, redigera och schemalägga dina kampanjer.
-            </p>
-          </div>
+    <section className="admin-campaigns-page" data-scope="campaigns">
+      <AdminSectionHead
+        level={1}
+        title="Våra kampanjer"
+        description="Här kan du lägga till, redigera och hantera kampanjer."
+        actions={
+          <AdminButton
+            variant="primary"
+            type="button"
+            onClick={openCreateCampaignModal}
+            className="fpAdminBtn--field"
+          >
+            <span>+ Lägg till kampanj</span>
+          </AdminButton>
+        }
+      />
 
-          <div className="campaigns-section-actions">
-            <AdminButton
-              variant="primary"
-              type="button"
-              onClick={openCreateCampaignModal}
-            >
-              <FontAwesomeIcon icon={faPlus} />
-              <span>Lägg till kampanj</span>
-            </AdminButton>
-          </div>
-        </div>
-      </section>
-
-      <section className="admin-section">
+      <section className="admin-campaigns-content">
         <div className="campaigns-grid">
           {campaigns.map((campaign) => (
-            <article key={campaign.id} className="campaign-card">
-              <div className="campaign-card__image-wrap">
-                <span
-                  className={`campaign-card__status ${
-                    campaign.status === "active"
-                      ? "campaign-card__status--active"
-                      : "campaign-card__status--upcoming"
-                  }`}
-                >
-                  {campaign.status === "active" ? "Aktiv" : "Kommande"}
-                </span>
-
-                {campaign.image ? (
-                  <img
-                    src={campaign.image}
-                    alt={campaign.altText || campaign.title}
-                    className="campaign-card__image"
-                  />
-                ) : (
-                  <div className="campaign-card__image campaign-card__image--placeholder">
-                    <span>Ingen bild</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="campaign-card__body">
-                <div className="campaign-card__top">
-                  <div>
-                    <h3 className="campaign-card__title">{campaign.title}</h3>
-                    <p className="campaign-card__dates">
-                      {campaign.startDate} – {campaign.endDate}
-                    </p>
-                  </div>
-                </div>
-
-                <p className="campaign-card__description">{campaign.body}</p>
-
-                <div className="campaign-card__actions">
-                  <AdminButton
-                    preset="edit"
-                    size="sm"
-                    type="button"
-                    aria-label={`Redigera ${campaign.title}`}
-                    title="Redigera"
-                    onClick={() => handleOpenEdit(campaign)}
-                  />
-
-                  <AdminButton
-                    preset="delete"
-                    size="sm"
-                    type="button"
-                    aria-label={`Ta bort ${campaign.title}`}
-                    title="Ta bort"
-                    onClick={() => handleOpenDelete(campaign)}
-                  />
-                </div>
-              </div>
-            </article>
+            <AdminCampaignCard
+              key={campaign.id}
+              campaign={campaign}
+              onEdit={() => handleOpenEdit(campaign)}
+              onDelete={() => handleOpenDelete(campaign)}
+            />
           ))}
         </div>
       </section>
@@ -318,8 +260,10 @@ function AdminCampaignsPageContent() {
 }
 
 export default function AdminCampaignsPage() {
+  useAdminTopbar("Kampanjer");
+
   return (
-    <AdminPage title="Kampanjer">
+    <AdminPage>
       <AdminCampaignsPageContent />
     </AdminPage>
   );

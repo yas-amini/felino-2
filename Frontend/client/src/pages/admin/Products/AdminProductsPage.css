@@ -1,6 +1,6 @@
 .admin-settings {
   display: grid;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .admin-section {
@@ -9,38 +9,6 @@
   border-radius: 0;
   padding: 0;
   box-shadow: none;
-}
-
-.admin-section + .admin-section {
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.admin-section > h2 {
-  margin: 0 0 10px 0;
-  font-size: 1.2rem;
-  font-weight: 800;
-  padding-bottom: 0;
-}
-
-.muted {
-  color: #6b7280;
-}
-
-.products-section-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 14px;
-  flex-wrap: wrap;
-}
-
-.products-section-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .product-category-section {
@@ -58,8 +26,7 @@
 
 .product-category-head h3 {
   margin: 0;
-  font-size: 1.05rem;
-  font-weight: 700;
+  padding: 0;
 }
 
 .product-category-count {
@@ -67,6 +34,11 @@
   color: #6b7280;
   background: none;
   padding: 4px 10px;
+}
+
+.products-empty-message {
+  color: #6b7280;
+  margin: 0;
 }
 
 .notice {
@@ -140,6 +112,10 @@
 .products-table td[data-label="Bild"] {
   width: 1%;
   white-space: nowrap;
+}
+
+.products-table-muted {
+  color: #6b7280;
 }
 
 .thumb {

@@ -1,12 +1,53 @@
-.date-overview {
-    padding: 0.5rem 2rem;
-    border-radius: 0.5rem;
-    border: none;
-}
 .booking-toolbar {
-    width: 50%;
-    height: fit-content;
-    display: flex;
-    justify-content: end;
-    gap: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  width: 100%;
+  min-width: 0;
+}
+
+.booking-toolbar-date {
+  appearance: none;
+  padding: 0.5rem 0.75rem;
+  min-height: 38px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #1f2937;
+  font: inherit;
+  line-height: 1.2;
+  box-sizing: border-box;
+  min-width: 170px;
+  max-width: 100%;
+}
+
+.booking-toolbar-date:focus-visible {
+  outline: 2px solid rgba(56, 102, 66, 0.18);
+  outline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+  .booking-toolbar {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .booking-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    width: 100%;
+  }
+
+  .booking-toolbar-date,
+  .booking-toolbar .fpAdminBtn {
+    width: 100%;
+  }
+
+  .booking-toolbar-date {
+    min-width: 0;
+  }
 }

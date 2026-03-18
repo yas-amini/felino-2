@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-
 import AdminPage from "../../../components/admin/layout/AdminPage";
+import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import AdminButton from "../../../components/admin/shared/AdminButton";
 import AdminConfirmModal from "../../../components/admin/shared/AdminConfirmModal";
+import AdminSectionHead from "../../../components/admin/shared/AdminSectionHead";
 import AdminCategoryCreateModal from "../../../components/admin/categories/AdminCategoryCreateModal";
 import AdminCategoryEditModal from "../../../components/admin/categories/AdminCategoryEditModal";
+import AdminCategoryCard from "../../../components/admin/categories/AdminCategoryCard";
 import type {
   AdminCategoryFormValues,
   ProductItem,
@@ -86,6 +86,8 @@ function saveProducts(nextProducts: StoredProduct[]) {
 }
 
 export default function AdminCategoriesPage() {
+  useAdminTopbar("Kategorier");
+
   const [categories, setCategories] = useState<Category[]>(() =>
     getStoredCategories()
   );
@@ -244,31 +246,25 @@ export default function AdminCategoriesPage() {
   }
 
   return (
-    <AdminPage title="Kategorier">
-      <section className="admin-settings" data-scope="categories">
-        <section className="admin-section">
-          <div className="categories-section-head">
-            <div>
-              <h2>Alla kategorier</h2>
-              <p className="muted">
-                Här kan du lägga till, redigera och hantera dina kategorier.
-              </p>
-            </div>
+    <AdminPage>
+      <section className="admin-categories-page" data-scope="categories">
+        <AdminSectionHead
+          level={1}
+          title="Våra kategorier"
+          description="Här kan du lägga till, redigera och hantera kategorier."
+          actions={
+            <AdminButton
+              variant="primary"
+              type="button"
+              className="fpAdminBtn--field"
+              onClick={() => setOpenCreate(true)}
+            >
+              <span>+ Lägg till kategori</span>
+            </AdminButton>
+          }
+        />
 
-            <div className="categories-section-actions">
-              <AdminButton
-                variant="primary"
-                type="button"
-                onClick={() => setOpenCreate(true)}
-              >
-                <FontAwesomeIcon icon={faPlus} />
-                <span>Lägg till kategori</span>
-              </AdminButton>
-            </div>
-          </div>
-        </section>
-
-        <section className="admin-section">
+        <section className="admin-categories-content">
           <div className="categories-grid">
             {categories.map((category) => {
               const productCount = products.filter(
@@ -276,58 +272,13 @@ export default function AdminCategoriesPage() {
               ).length;
 
               return (
-                <article key={category.id} className="category-card">
-                  <div className="category-card__image-wrap">
-                    <span className="category-card__count">
-                      {productCount} produkter
-                    </span>
-
-                    {category.image ? (
-                      <img
-                        src={category.image}
-                        alt={category.name}
-                        className="category-card__image"
-                      />
-                    ) : (
-                      <div className="category-card__image category-card__image--placeholder">
-                        <span>Ingen bild</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="category-card__body">
-                    <div className="category-card__top">
-                      <div>
-                        <h3 className="category-card__title">{category.name}</h3>
-                        <p className="category-card__slug">/{category.slug}</p>
-                      </div>
-                    </div>
-
-                    <p className="category-card__description">
-                      {category.description}
-                    </p>
-
-                    <div className="category-card__actions">
-                      <AdminButton
-                        preset="edit"
-                        size="sm"
-                        type="button"
-                        aria-label={`Redigera ${category.name}`}
-                        title="Redigera"
-                        onClick={() => handleOpenEdit(category)}
-                      />
-
-                      <AdminButton
-                        preset="delete"
-                        size="sm"
-                        type="button"
-                        aria-label={`Ta bort ${category.name}`}
-                        title="Ta bort"
-                        onClick={() => handleOpenDelete(category)}
-                      />
-                    </div>
-                  </div>
-                </article>
+                <AdminCategoryCard
+                  key={category.id}
+                  category={category}
+                  productCount={productCount}
+                  onEdit={() => handleOpenEdit(category)}
+                  onDelete={() => handleOpenDelete(category)}
+                />
               );
             })}
           </div>

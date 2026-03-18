@@ -17,11 +17,13 @@ type CommonProps = {
     | "ghost"
     | "danger"
     | "cancel"
+    | "field"
     | "icon-delete"
     | "icon-edit"
     | "icon-save"
     | "icon-toggle"
     | "icon-header";
+    
   size?: "md" | "sm";
   preset?: "save" | "delete" | "edit" | "icon-save" | "toggle";
   className?: string;

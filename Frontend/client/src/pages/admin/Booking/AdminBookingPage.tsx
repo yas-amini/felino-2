@@ -1,17 +1,24 @@
 import { useState } from "react";
 import AdminPage from "../../../components/admin/layout/AdminPage";
+import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import BookingTabs from "../../../components/admin/booking/BookingTabs";
 import BookingToolBar from "../../../components/admin/booking/BookingToolBar";
 import BookingCalendar from "../../../components/admin/booking/BookingCalendar";
+import AdminSectionHead from "../../../components/admin/shared/AdminSectionHead";
 import "./AdminBookingPage.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock, faPhone, faMailBulk, faUsers, faMapPin } from "@fortawesome/free-solid-svg-icons";
-import Button from "../../../components/common/Button/Button";
-
+import {
+  faClock,
+  faPhone,
+  faMailBulk,
+  faUsers,
+  faMapPin,
+} from "@fortawesome/free-solid-svg-icons";
 
 export type BookingTab = "lista" | "kalender" | "bord";
 
 export default function AdminBookingPage() {
+  useAdminTopbar("Bordsbokningar");
 
   const [activeTab, setActiveTab] = useState<BookingTab>("kalender");
 
@@ -23,7 +30,7 @@ export default function AdminBookingPage() {
       phone: "+46 70 123 4567",
       email: "andersson@example.com",
       table: "Nr 11",
-      status: "Bekräftad"
+      status: "Bekräftad",
     },
     {
       name: "Svensson",
@@ -32,9 +39,10 @@ export default function AdminBookingPage() {
       phone: "+46 70 123 4567",
       email: "andersson@example.com",
       table: "Nr 2",
-      status: "Bekräftad"
-    }
+      status: "Bekräftad",
+    },
   ];
+
   const tables = [
     { name: "Nr 1", capacity: 4, location: "Utomhus", status: "Tillgänglig" },
     { name: "Nr 2", capacity: 6, location: "Inomhus", status: "Tillgänglig" },
@@ -47,82 +55,119 @@ export default function AdminBookingPage() {
   ];
 
   return (
-    <AdminPage title="Bordsbokningar">
+    <AdminPage>
+      <section className="admin-booking-page">
+        <AdminSectionHead
+          level={1}
+          title="Hantera bokningar"
+          description="Här kan du se, skapa och hantera restaurangens bokningar."
+          actions={<BookingToolBar />}
+        />
 
-      <div className="tabs-Toolbar">
-        <div className="header-calendar">
-          <p>Här kan du se bokingar</p>
-          <BookingToolBar />
-        </div>
-
-        <div>
+        <section className="admin-booking-tabs-section">
           <BookingTabs activeTab={activeTab} onChange={setActiveTab} />
+        </section>
+
+        <section className="admin-booking-content">
           {activeTab === "kalender" && <BookingCalendar />}
 
           {activeTab === "lista" && (
-            <div>
-              <section className="booking-section">
-                <h3>Bokningar (2)</h3>
+            <section className="booking-section">
+              <AdminSectionHead
+                level={2}
+                title={`Bokningar (${bookings.length})`}
+                description="Översikt över aktuella bokningar."
+              />
 
-                {bookings.map((booking, i) => (
-                  <div className="booking-item" key={i}>
-                    <div className="booking-header">
-                      <strong>{booking.name}</strong>
-                      <span className="badge confirmed">{booking.status}</span>
-                    </div>
-
-                    <div className="booking-info">
-                      <span><FontAwesomeIcon icon={faClock} /> {booking.time}</span>
-                      <span><FontAwesomeIcon icon={faUsers} /> {booking.people} personer</span>
-                    </div>
-
-                    {booking.phone && (
-                      <div className="booking-info">
-                        <span><FontAwesomeIcon icon={faPhone} /> {booking.phone}</span>
-                        <span><FontAwesomeIcon icon={faMailBulk} /> {booking.email}</span>
-                      </div>
-                    )}
-
-                    <div className="booking-table">
-                      Bord: {booking.table}
-                    </div>
+              {bookings.map((booking, i) => (
+                <div className="booking-item" key={i}>
+                  <div className="booking-header">
+                    <strong>{booking.name}</strong>
+                    <span className="badge confirmed">{booking.status}</span>
                   </div>
-                ))}
-              </section>
-            </div>
+
+                  <div className="booking-info">
+                    <span>
+                      <FontAwesomeIcon icon={faClock} /> {booking.time}
+                    </span>
+                    <span>
+                      <FontAwesomeIcon icon={faUsers} /> {booking.people} personer
+                    </span>
+                  </div>
+
+                  {booking.phone && (
+                    <div className="booking-info">
+                      <span>
+                        <FontAwesomeIcon icon={faPhone} /> {booking.phone}
+                      </span>
+                      <span>
+                        <FontAwesomeIcon icon={faMailBulk} /> {booking.email}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="booking-table">Bord: {booking.table}</div>
+                </div>
+              ))}
+            </section>
           )}
+
           {activeTab === "bord" && (
             <section className="tables-section">
-              <div className="tables-section-header">
-                <h3>Bord & Kapacitet</h3>
-                <Button variant="primary">Lägg till bord</Button>
-              </div>
+              <AdminSectionHead
+                level={2}
+                title="Bord & kapacitet"
+                description="Hantera restaurangens bord, placeringar och tillgänglighet."
+                actions={
+                  <button
+                    type="button"
+                    className="fpAdminBtn fpAdminBtn--primary"
+                  >
+                    Lägg till bord
+                  </button>
+                }
+              />
 
               <div className="tables-grid">
                 {tables.map((table) => (
                   <div className="table-card" key={table.name}>
                     <div className="table-card-top">
                       <h4>{table.name}</h4>
-                      <span className="table-status available">✓ {table.status}</span>
+                      <span className="table-status available">
+                        ✓ {table.status}
+                      </span>
                     </div>
 
                     <div className="table-meta">
-                      <p><FontAwesomeIcon icon={faUsers} /> Kapacitet: {table.capacity} personer</p>
-                      <p><FontAwesomeIcon icon={faMapPin} /> {table.location}</p>
+                      <p>
+                        <FontAwesomeIcon icon={faUsers} /> Kapacitet: {table.capacity} personer
+                      </p>
+                      <p>
+                        <FontAwesomeIcon icon={faMapPin} /> {table.location}
+                      </p>
                     </div>
 
                     <div className="table-card-actions">
-                      <Button variant="secondary">Redigera</Button>
-                      <Button variant="primary">Boka</Button>
+                      <button
+                        type="button"
+                        className="fpAdminBtn fpAdminBtn--primary fpAdminBtn--md"
+                      >
+                        Redigera
+                      </button>
+                      <button
+                        type="button"
+                        className="fpAdminBtn fpAdminBtn--primary fpAdminBtn--md"
+                      >
+                        Boka
+                      </button>
                     </div>
                   </div>
                 ))}
               </div>
             </section>
           )}
-        </div>
-
-      </div>
+        </section>
+      </section>
     </AdminPage>
   );
 }

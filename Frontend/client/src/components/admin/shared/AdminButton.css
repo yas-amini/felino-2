@@ -39,7 +39,7 @@
   transform: none !important;
 }
 
-/* ===== Sizes ===== */
+/* Sizes  */
 .fpAdminBtn--md {
   min-height: 30px;
   padding: 0 10px;
@@ -53,7 +53,7 @@
   border-radius: 6px;
 }
 
-/* ===== Form buttons ===== */
+
 .fpAdminBtn--primary {
   background: #eceff1;
   border-color: #d7dce0;
@@ -96,7 +96,7 @@
   color: #374151;
 }
 
-/* ===== List icon buttons ===== */
+/*  List icon buttons  */
 .fpAdminBtn--icon-edit,
 .fpAdminBtn--icon-delete,
 .fpAdminBtn--icon-save,
@@ -157,7 +157,14 @@
 .fpAdminBtn--icon-toggle svg {
   transition: transform 0.18s ease;
 }
-/* ===== Header quick actions ===== */
+
+.fpAdminBtn--field {
+  min-height: 38px;
+  padding: 0 12px;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  border-color: #d7dce0;
+}
 
 .fpAdminBtn--icon-header {
   width: 40px;

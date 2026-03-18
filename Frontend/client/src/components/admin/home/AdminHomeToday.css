@@ -1,0 +1,131 @@
+.admin-home-today-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px 14px;
+}
+
+.admin-home-today-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-home-today-label {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #1f2937;
+  padding-left: 2px;
+}
+
+.admin-home-today-card {
+  position: relative;
+  min-height: 125px;
+  border: none;
+  border-radius: 6px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  color: #000;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.admin-home-today-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+.admin-home-today-card-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.admin-home-today-card-value {
+  font-size: 0.92rem;
+  line-height: 1.35;
+  font-weight: 700;
+  color: #111827;
+}
+
+.admin-home-today-card-meta {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: rgba(17, 24, 39, 0.78);
+}
+
+.admin-home-today-card::before,
+.admin-home-today-card::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.admin-home-today-card::before {
+  width: 110px;
+  height: 110px;
+  right: -35px;
+  top: -35px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.admin-home-today-card::after {
+  width: 90px;
+  height: 90px;
+  right: 10px;
+  bottom: -55px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* ORDERS */
+.admin-home-today-card--orders {
+  background: linear-gradient(135deg, #ffe28a 0%, #ffd24d 100%);
+}
+
+/* BOOKING */
+.admin-home-today-card--booking {
+  background: linear-gradient(135deg, #c6efe9 0%, #9fe3da 100%);
+}
+
+/* PRODUCTS */
+.admin-home-today-card--products {
+  background: linear-gradient(135deg, #b8dec9 0%, #8ec7a9 100%);
+}
+
+/* SETTINGS */
+.admin-home-today-card--settings {
+  background: linear-gradient(135deg, #d2efb8 0%, #b8e28f 100%);
+}
+
+/* CATEGORIES */
+.admin-home-today-card--categories {
+  background: linear-gradient(135deg, #e0c9ff 0%, #cfa8ff 100%);
+}
+
+/* CAMPAIGNS */
+.admin-home-today-card--campaigns {
+  background: linear-gradient(135deg, #ffc2d8 0%, #ff9fbe 100%);
+}
+
+@media (max-width: 1200px) {
+  .admin-home-today-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .admin-home-today-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,217 @@
+.admin-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 110px;
+    background: #ffffff;
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    z-index: 30;
+}
+
+.admin-sidebar-scroll {
+    position: relative;
+    height: 100%;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.admin-menu {
+    display: grid;
+    row-gap: 22px;
+    column-gap: 18px;
+}
+
+.admin-tile {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    border-radius: 6px;
+    text-decoration: none;
+    background: #f3f4f6;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    overflow: visible;
+    transition: background 0.2s ease, box-shadow 0.2s ease,
+        transform 0.2s ease, border-color 0.2s ease;
+}
+
+.admin-tile::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    pointer-events: none;
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+    padding: 4px 8px;
+    color: #111;
+    box-shadow: none;
+}
+
+.admin-tile-img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 65%;
+    height: 65%;
+    object-fit: cover;
+    border: 0;
+    outline: none;
+    box-shadow: none;
+    border-radius: 10px;
+}
+
+/* HOVER */
+/* PROFILE */
+.admin-tile--profile:not(.is-active):hover {
+    background: linear-gradient(135deg, #dbe4ff 0%, #c2d2ff 55%, #9fb6ff 100%);
+    color: #000;
+}
+
+/* HOME */
+.admin-tile--home:not(.is-active):hover {
+    background: linear-gradient(135deg, #ffe2cc 0%, #ffc9a6 55%, #ffad80 100%);
+    color: #000;
+}
+
+/* ORDERS */
+.admin-tile--orders:not(.is-active):hover {
+    background: linear-gradient(135deg, #fff1bf 0%, #ffe28a 55%, #ffd24d 100%);
+    color: #000;
+}
+
+/* BOOKING */
+.admin-tile--booking:not(.is-active):hover {
+    background: linear-gradient(135deg, #dff7f4 0%, #c6efe9 55%, #9fe3da 100%);
+    color: #000;
+}
+
+/* PRODUCTS */
+.admin-tile--products:not(.is-active):hover {
+    background: linear-gradient(135deg, #d7efe0 0%, #b8dec9 55%, #8ec7a9 100%);
+    color: #000;
+}
+
+/* SETTINGS */
+.admin-tile--settings:not(.is-active):hover {
+    background: linear-gradient(135deg, #e8f7d9 0%, #d2efb8 55%, #b8e28f 100%);
+    color: #000;
+}
+
+/* CATEGORIES */
+.admin-tile--categories:not(.is-active):hover {
+    background: linear-gradient(135deg, #f0e1ff 0%, #e0c9ff 55%, #cfa8ff 100%);
+    color: #000;
+}
+
+/* CAMPAIGNS */
+.admin-tile--campaigns:not(.is-active):hover {
+    background: linear-gradient(135deg, #ffe0ec 0%, #ffc2d8 55%, #ff9fbe 100%);
+    color: #000;
+}
+
+/* ACTIVE */
+
+/* PROFILE */
+.admin-tile--profile.is-active {
+    background: linear-gradient(135deg, #c2d2ff 0%, #9fb6ff 100%);
+    color: #000;
+}
+
+/* HOME */
+.admin-tile--home.is-active {
+    background: linear-gradient(135deg, #ffc9a6 0%, #ffad80 100%);
+    color: #000;
+}
+
+/* ORDERS */
+.admin-tile--orders.is-active {
+    background: linear-gradient(135deg, #ffe28a 0%, #ffd24d 100%);
+    color: #000;
+}
+
+/* BOOKING */
+.admin-tile--booking.is-active {
+    background: linear-gradient(135deg, #c6efe9 0%, #9fe3da 100%);
+    color: #000;
+}
+
+/* PRODUCTS */
+.admin-tile--products.is-active {
+    background: linear-gradient(135deg, #b8dec9 0%, #8ec7a9 100%);
+    color: #000;
+}
+
+/* SETTINGS */
+.admin-tile--settings.is-active {
+    background: linear-gradient(135deg, #d2efb8 0%, #b8e28f 100%);
+    color: #000;
+}
+
+/* CATEGORIES */
+.admin-tile--categories.is-active {
+    background: linear-gradient(135deg, #e0c9ff 0%, #cfa8ff 100%);
+    color: #000;
+}
+
+/* CAMPAIGNS */
+.admin-tile--campaigns.is-active {
+    background: linear-gradient(135deg, #ffc2d8 0%, #ff9fbe 100%);
+    color: #000;
+}
+
+.admin-tile:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, .12);
+}
+
+.admin-tile.is-active {
+    border-color: rgba(0, 0, 0, 0.22);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, .14);
+}
+
+@media (max-width: 720px) {
+    .admin-sidebar {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        height: auto;
+        background: #fff;
+        border-right: 0;
+        z-index: 1000;
+        padding-bottom: 1px;
+        overflow: hidden;
+    }
+
+    .admin-sidebar-scroll {
+        padding: 6px 8px;
+        overflow: hidden;
+        height: auto;
+    }
+
+    .admin-menu {
+        grid-template-columns: repeat(8, 1fr);
+        gap: 8px;
+        align-items: start;
+    }
+
+    .admin-tile {
+        border-radius: 4px;
+    }
+
+    .admin-tile::after {
+        bottom: -16px;
+        font-size: 9px;
+        padding: 2px 4px;
+    }
+
+    .admin-tile-img {
+        width: 52%;
+        height: 52%;
+    }
+}

@@ -1,0 +1,153 @@
+.admin-home-summary {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.admin-home-summary-left {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-home-summary-stat {
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.admin-home-summary-label {
+  display: block;
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.admin-home-summary-value {
+  display: block;
+  font-size: 1.55rem;
+  line-height: 1.1;
+  color: #111827;
+}
+
+.admin-analytics-card {
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px;
+  height: 100%;
+}
+
+.admin-analytics-card__head h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.admin-analytics-card__head p {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* Chart */
+.admin-week-chart {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.admin-week-chart__y {
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #6b7280;
+  padding: 0 0 24px;
+}
+
+.admin-week-chart__main {
+  position: relative;
+  min-height: 260px;
+}
+
+.admin-week-chart__grid {
+  position: absolute;
+  inset: 0 0 24px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.admin-week-chart__grid span {
+  border-top: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.admin-week-chart__bars {
+  position: relative;
+  z-index: 1;
+  height: 260px;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 18px;
+  align-items: end;
+  padding: 0 10px;
+}
+
+.admin-week-chart__group {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-week-chart__group small {
+  font-size: 0.72rem;
+  color: #4b5563;
+}
+
+.admin-week-chart__bar-wrap {
+  height: 220px;
+  display: flex;
+  align-items: end;
+}
+
+.admin-week-chart__bar-button {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: default;
+  display: flex;
+  align-items: end;
+}
+
+.admin-week-chart__bar {
+  display: block;
+  width: 30px;
+  min-height: 8px;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(180deg, #f1b16f 0%, #c97a53 100%);
+  box-shadow: 0 4px 10px rgba(201, 122, 83, 0.18);
+  transition: height 0.2s ease;
+}
+
+.admin-week-chart__loading {
+  margin: 0;
+  padding-top: 16px;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 1000px) {
+  .admin-home-summary {
+    grid-template-columns: 1fr;
+  }
+}

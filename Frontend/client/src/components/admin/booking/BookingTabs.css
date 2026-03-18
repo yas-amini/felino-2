@@ -1,4 +1,22 @@
 .booking-tabs {
-    display: flex;
-    gap: 1rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  width: 100%;
+  min-width: 0;
+}
+
+.booking-tab {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 640px) {
+  .booking-tabs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .booking-tab {
+    width: 100%;
+  }
 }

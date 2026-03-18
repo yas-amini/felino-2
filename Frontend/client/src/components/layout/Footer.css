@@ -167,7 +167,10 @@ footer {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
   gap: 1rem;
 }
 

@@ -1,21 +1,27 @@
-.calendar-container {
-  border: 1px solid rgb(228, 228, 228);
-  margin: 2rem 0;
+.calendar {
+  border: 1px solid #e4e4e4;
+  margin: 0;
   border-radius: 1rem;
   overflow: hidden;
   background: #fff;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .calendar-layout {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 280px minmax(0, 1fr);
   min-height: 560px;
   background: #fff;
+  width: 100%;
+  min-width: 0;
 }
 
 .calendar-sidebar {
   border-right: 1px solid #e5e7eb;
   background: #fff;
+  min-width: 0;
 }
 
 .calendar-sidebar-header {
@@ -31,6 +37,7 @@
 .calendar-sidebar-body {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .calendar-sidebar-row {
@@ -40,6 +47,7 @@
   gap: 10px;
   padding: 0 16px;
   border-bottom: 1px solid #f3f4f6;
+  min-width: 0;
 }
 
 .calendar-time-badge {
@@ -51,22 +59,29 @@
   min-width: 58px;
   text-align: center;
   font-weight: 600;
+  flex-shrink: 0;
 }
 
 .calendar-booking-name {
   font-size: 14px;
   font-weight: 500;
   color: #111827;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
-.calendar-area {
+.calendar-main {
   overflow-x: auto;
+  overflow-y: hidden;
   background: #fff;
+  min-width: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 .calendar-time-header {
   display: grid;
   border-bottom: 1px solid #e5e7eb;
+  min-width: max-content;
 }
 
 .calendar-time-header-cell {
@@ -78,10 +93,12 @@
   color: #4b5563;
   border-right: 1px solid #f3f4f6;
   background: #fff;
+  white-space: nowrap;
 }
 
 .calendar-grid {
   display: grid;
+  min-width: max-content;
 }
 
 .calendar-grid-cell {
@@ -89,4 +106,53 @@
   border-right: 1px solid #f3f4f6;
   border-bottom: 1px solid #f3f4f6;
   background: #fff;
+}
+
+@media (max-width: 900px) {
+  .calendar-layout {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+
+  .calendar-sidebar-header,
+  .calendar-time-header-cell {
+    height: 52px;
+  }
+
+  .calendar-sidebar-row,
+  .calendar-grid-cell {
+    height: 60px;
+  }
+}
+
+@media (max-width: 640px) {
+  .calendar {
+    margin: 1rem 0;
+    border-radius: 0.75rem;
+  }
+
+  .calendar-layout {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .calendar-sidebar {
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .calendar-sidebar-header {
+    height: auto;
+    min-height: 48px;
+    padding: 12px 16px;
+  }
+
+  .calendar-sidebar-row {
+    height: auto;
+    min-height: 56px;
+    padding: 12px 16px;
+  }
+
+  .calendar-main {
+    width: 100%;
+  }
 }
