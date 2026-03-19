@@ -20,7 +20,7 @@ namespace Felino.Api.Data.Configurations
                     CategoryId = 1,
                     Ingredients = "[\"ost\"]",
                     Price = 95.00m,
-                    Image = "/images/products/pizza-margherita.jpg",
+                    ImageUrl = "/images/products/pizza-margherita.jpg",
                     AltText = "Margherita pizza med ost"
                 },
                 new Product
@@ -31,7 +31,7 @@ namespace Felino.Api.Data.Configurations
                     CategoryId = 1,
                     Ingredients = "[\"skinka\"]",
                     Price = 99.00m,
-                    Image = "/images/products/pizza-vesuvio.jpg",
+                    ImageUrl = "/images/products/pizza-vesuvio.jpg",
                     AltText = "Vesuvio pizza med skinka"
                 },
                 new Product
@@ -42,7 +42,7 @@ namespace Felino.Api.Data.Configurations
                     CategoryId = 1,
                     Ingredients = "[\"skinka\", \"ananas\"]",
                     Price = 105.00m,
-                    Image = "/images/products/pizza-hawaii.jpg",
+                    ImageUrl = "/images/products/pizza-hawaii.jpg",
                     AltText = "Hawaii pizza med skinka och ananas"
                 },
                 new Product
@@ -53,7 +53,7 @@ namespace Felino.Api.Data.Configurations
                     CategoryId = 2,
                     Ingredients = "[\"sallad\", \"tomat\", \"lök\", \"gurka\"]",
                     Price = 95.00m,
-                    Image = "/images/products/b-classic.jpg",
+                    ImageUrl = "/images/products/b-classic.jpg",
                     AltText = "Classic hamburgare",
                     Sauce = "dressing"
                 },
@@ -65,7 +65,7 @@ namespace Felino.Api.Data.Configurations
                     CategoryId = 3,
                     Ingredients = "[\"kebabkött\", \"pommes\", \"sallad\"]",
                     Price = 119.00m,
-                    Image = "/images/products/k-kebabtallrik.jpg",
+                    ImageUrl = "/images/products/k-kebabtallrik.jpg",
                     AltText = "Kebabtallrik med pommes"
                 }
             );
