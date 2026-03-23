@@ -30,5 +30,8 @@ namespace Felino.Api.Domain.Entities
 
         // The collection of individual products/items belonging to this order.
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+
+        // Navigation property to the payment details for this order.
+        public Payment? Payment { get; set; }
     }
 }
