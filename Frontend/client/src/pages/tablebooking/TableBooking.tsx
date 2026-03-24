@@ -37,6 +37,11 @@ export default function TableBooking() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [showBooking, setShowBooking] = useState(false);
 
+  const [apiError, setApiError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [createdBookingId, setCreatedBookingId] = useState<number | null>(null);
+
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -93,17 +98,58 @@ export default function TableBooking() {
     setStep(1);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!validateStepTwo()) return;
 
-    console.log("Skicka bokning:", form);
-    alert("Din bokning är skickad!");
-    setForm(initialForm);
-    setErrors({});
-    setStep(1);
+    setApiError("");
+    setIsSubmitting(true);
+
+    try {
+      const bookingRequest = {
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        date: form.date,
+        time: form.time,
+        numberOfGuests: Number(form.numberOfGuests),
+        outdoorSeating: form.outdoorSeating === "true",
+        specialRequests: form.specialRequests || "",
+      };
+
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingRequest),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Kunde inte skapa bokningen.");
+      }
+
+      const result = await response.json();
+
+      setCreatedBookingId(result.bookingId);
+
+      // Reset form
+      setForm(initialForm);
+      setErrors({});
+      setStep(1);
+    } catch (error) {
+      if (error instanceof Error) {
+        setApiError(error.message);
+      } else {
+        setApiError("Något gick fel vid bokningen.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
 
   return (
     <Page>
@@ -121,6 +167,11 @@ export default function TableBooking() {
                   <h2>Boka bord</h2>
                   <p>Välj datum och antal gäster för att boka bord hos oss.</p>
                 </div>
+                {createdBookingId && (
+                  <div className="booking-success-message">
+                    Din bokning är skapad. Ditt bokningsnummer är #{createdBookingId}.
+                  </div>
+                )}
                 <form className="booking-card" onSubmit={handleSubmit} noValidate>
                   <div className="booking-step">Steg {step} av 2</div>
 
@@ -261,11 +312,16 @@ export default function TableBooking() {
                         />
                       </div>
 
+                      {apiError && <p className="field-error">{apiError}</p>}
+
+
                       <div className="booking-actions">
                         <Button type="button" variant="secondary" onClick={handlePreviousStep}>
                           Tillbaka
                         </Button>
-                        <Button type="submit">Bekräfta bokning</Button>
+                        <Button type="submit" disabled={isSubmitting}>
+                          {isSubmitting ? "Skickar..." : "Bekräfta bokning"}
+                        </Button>
                       </div>
                     </>
                   )}
