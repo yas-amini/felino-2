@@ -8,31 +8,33 @@ import "./TableBooking.css"
 type FormState = {
   date: string;
   time: string;
-  guests: string;
-  seating: string;
+  numberOfGuests: string;
+  outdoorSeating: "" | "true" | "false";
   name: string;
   phone: string;
   email: string;
-  requests: string;
-  bookingnumber: string;
+  specialRequests: string;
+  bookingId: string;
 };
+
+type FormErrors = Partial<Record<keyof FormState, string>>;
 
 export default function TableBooking() {
   const initialForm: FormState = {
     date: "",
     time: "",
-    guests: "",
-    seating: "",
+    numberOfGuests: "",
+    outdoorSeating: "",
     name: "",
     phone: "",
     email: "",
-    requests: "",
-    bookingnumber: "",
+    specialRequests: "",
+    bookingId: "",
   };
 
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormState>(initialForm);
-  const [errors, setErrors] = useState<Partial<FormState>>({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const [showBooking, setShowBooking] = useState(false);
 
   const handleChange = (
@@ -52,19 +54,19 @@ export default function TableBooking() {
   };
 
   const validateStepOne = () => {
-    const newErrors: Partial<FormState> = {};
+    const newErrors: FormErrors = {};
 
     if (!form.date) newErrors.date = "Välj ett datum";
     if (!form.time) newErrors.time = "Välj en tid";
-    if (!form.guests) newErrors.guests = "Välj antal gäster";
-    if (!form.seating) newErrors.seating = "Välj plats";
+    if (!form.numberOfGuests) newErrors.numberOfGuests = "Välj antal gäster";
+    if (!form.outdoorSeating) newErrors.outdoorSeating = "Välj plats";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const validateStepTwo = () => {
-    const newErrors: Partial<FormState> = {};
+    const newErrors: FormErrors = {};
 
     if (!form.name.trim()) newErrors.name = "Fyll i ditt namn";
     if (!form.phone.trim()) newErrors.phone = "Fyll i ditt telefonnummer";
@@ -155,11 +157,11 @@ export default function TableBooking() {
                       </div>
 
                       <div className="form-group">
-                        <label htmlFor="guests">Antal gäster</label>
+                        <label htmlFor="numberOfGuests">Antal gäster</label>
                         <select
-                          id="guests"
-                          name="guests"
-                          value={form.guests}
+                          id="numberOfGuests"
+                          name="numberOfGuests"
+                          value={form.numberOfGuests}
                           onChange={handleChange}
                         >
                           <option value="">Välj antal</option>
@@ -170,23 +172,23 @@ export default function TableBooking() {
                           <option value="5">5</option>
                           <option value="6">6</option>
                         </select>
-                        {errors.guests && <p className="field-error">{errors.guests}</p>}
+                        {errors.numberOfGuests && <p className="field-error">{errors.numberOfGuests}</p>}
                       </div>
 
                       <div className="form-group">
-                        <label htmlFor="seating">Plats</label>
+                        <label htmlFor="outdoorSeating">Plats</label>
                         <select
-                          id="seating"
-                          name="seating"
-                          value={form.seating}
+                          id="outdoorSeating"
+                          name="outdoorSeating"
+                          value={form.outdoorSeating}
                           onChange={handleChange}
                         >
                           <option value="">Välj plats</option>
-                          <option value="outdoor">Utomhus</option>
-                          <option value="indoor">Inomhus</option>
+                          <option value="true">Utomhus</option>
+                          <option value="false">Inomhus</option>
                         </select>
-                        {errors.seating && (
-                          <p className="field-error">{errors.seating}</p>
+                        {errors.outdoorSeating && (
+                          <p className="field-error">{errors.outdoorSeating}</p>
                         )}
                       </div>
 
@@ -201,12 +203,12 @@ export default function TableBooking() {
                       <div className="booking-summary">
                         <p><strong>Datum:</strong> {form.date || "-"}</p>
                         <p><strong>Tid:</strong> {form.time || "-"}</p>
-                        <p><strong>Gäster:</strong> {form.guests || "-"}</p>
+                        <p><strong>Gäster:</strong> {form.numberOfGuests || "-"}</p>
                         <p>
                           <strong>Plats:</strong>{" "}
-                          {form.seating === "outdoor"
+                          {form.outdoorSeating === "true"
                             ? "Utomhus"
-                            : form.seating === "indoor"
+                            : form.outdoorSeating === "false"
                               ? "Inomhus"
                               : "-"}
                         </p>
@@ -249,11 +251,11 @@ export default function TableBooking() {
                       </div>
 
                       <div className="form-group">
-                        <label htmlFor="requests">Speciella önskemål</label>
+                        <label htmlFor="specialRequests">Speciella önskemål</label>
                         <textarea
-                          id="requests"
-                          name="requests"
-                          value={form.requests}
+                          id="specialRequests"
+                          name="specialRequests"
+                          value={form.specialRequests}
                           onChange={handleChange}
                           rows={4}
                         />
@@ -290,12 +292,12 @@ export default function TableBooking() {
 
           <div className="change-booking-card">
             <div className="form-group">
-              <label htmlFor="bookingnumber">Bokningsnummer</label>
+              <label htmlFor="bookingId">Bokningsnummer</label>
               <input
-                id="bookingnumber"
-                name="bookingnumber"
+                id="bookingId"
+                name="bookingId"
                 type="text"
-                value={form.bookingnumber}
+                value={form.bookingId}
                 onChange={handleChange}
               />
             </div>
