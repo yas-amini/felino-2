@@ -1,7 +1,8 @@
-using Microsoft.EntityFrameworkCore;
 using Felino.Api.Data;
 using Felino.Api.Implementations;
 using Felino.Api.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Pizzeria.Api.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

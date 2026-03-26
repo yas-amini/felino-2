@@ -8,32 +8,39 @@ import "./TableBooking.css"
 type FormState = {
   date: string;
   time: string;
-  guests: string;
-  seating: string;
+  numberOfGuests: string;
+  outdoorSeating: "" | "true" | "false";
   name: string;
   phone: string;
   email: string;
-  requests: string;
-  bookingnumber: string;
+  specialRequests: string;
+  bookingId: string;
 };
+
+type FormErrors = Partial<Record<keyof FormState, string>>;
 
 export default function TableBooking() {
   const initialForm: FormState = {
     date: "",
     time: "",
-    guests: "",
-    seating: "",
+    numberOfGuests: "",
+    outdoorSeating: "",
     name: "",
     phone: "",
     email: "",
-    requests: "",
-    bookingnumber: "",
+    specialRequests: "",
+    bookingId: "",
   };
 
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormState>(initialForm);
-  const [errors, setErrors] = useState<Partial<FormState>>({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const [showBooking, setShowBooking] = useState(false);
+
+  const [apiError, setApiError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [createdBookingId, setCreatedBookingId] = useState<number | null>(null);
+
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -52,19 +59,19 @@ export default function TableBooking() {
   };
 
   const validateStepOne = () => {
-    const newErrors: Partial<FormState> = {};
+    const newErrors: FormErrors = {};
 
     if (!form.date) newErrors.date = "Välj ett datum";
     if (!form.time) newErrors.time = "Välj en tid";
-    if (!form.guests) newErrors.guests = "Välj antal gäster";
-    if (!form.seating) newErrors.seating = "Välj plats";
+    if (!form.numberOfGuests) newErrors.numberOfGuests = "Välj antal gäster";
+    if (!form.outdoorSeating) newErrors.outdoorSeating = "Välj plats";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const validateStepTwo = () => {
-    const newErrors: Partial<FormState> = {};
+    const newErrors: FormErrors = {};
 
     if (!form.name.trim()) newErrors.name = "Fyll i ditt namn";
     if (!form.phone.trim()) newErrors.phone = "Fyll i ditt telefonnummer";
@@ -91,17 +98,58 @@ export default function TableBooking() {
     setStep(1);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!validateStepTwo()) return;
 
-    console.log("Skicka bokning:", form);
-    alert("Din bokning är skickad!");
-    setForm(initialForm);
-    setErrors({});
-    setStep(1);
+    setApiError("");
+    setIsSubmitting(true);
+
+    try {
+      const bookingRequest = {
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        date: form.date,
+        time: form.time,
+        numberOfGuests: Number(form.numberOfGuests),
+        outdoorSeating: form.outdoorSeating === "true",
+        specialRequests: form.specialRequests || "",
+      };
+
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingRequest),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Kunde inte skapa bokningen.");
+      }
+
+      const result = await response.json();
+
+      setCreatedBookingId(result.bookingId);
+
+      // Reset form
+      setForm(initialForm);
+      setErrors({});
+      setStep(1);
+    } catch (error) {
+      if (error instanceof Error) {
+        setApiError(error.message);
+      } else {
+        setApiError("Något gick fel vid bokningen.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
 
   return (
     <Page>
@@ -119,6 +167,11 @@ export default function TableBooking() {
                   <h2>Boka bord</h2>
                   <p>Välj datum och antal gäster för att boka bord hos oss.</p>
                 </div>
+                {createdBookingId && (
+                  <div className="booking-success-message">
+                    Din bokning är skapad. Ditt bokningsnummer är #{createdBookingId}.
+                  </div>
+                )}
                 <form className="booking-card" onSubmit={handleSubmit} noValidate>
                   <div className="booking-step">Steg {step} av 2</div>
 
@@ -155,11 +208,11 @@ export default function TableBooking() {
                       </div>
 
                       <div className="form-group">
-                        <label htmlFor="guests">Antal gäster</label>
+                        <label htmlFor="numberOfGuests">Antal gäster</label>
                         <select
-                          id="guests"
-                          name="guests"
-                          value={form.guests}
+                          id="numberOfGuests"
+                          name="numberOfGuests"
+                          value={form.numberOfGuests}
                           onChange={handleChange}
                         >
                           <option value="">Välj antal</option>
@@ -170,23 +223,23 @@ export default function TableBooking() {
                           <option value="5">5</option>
                           <option value="6">6</option>
                         </select>
-                        {errors.guests && <p className="field-error">{errors.guests}</p>}
+                        {errors.numberOfGuests && <p className="field-error">{errors.numberOfGuests}</p>}
                       </div>
 
                       <div className="form-group">
-                        <label htmlFor="seating">Plats</label>
+                        <label htmlFor="outdoorSeating">Plats</label>
                         <select
-                          id="seating"
-                          name="seating"
-                          value={form.seating}
+                          id="outdoorSeating"
+                          name="outdoorSeating"
+                          value={form.outdoorSeating}
                           onChange={handleChange}
                         >
                           <option value="">Välj plats</option>
-                          <option value="outdoor">Utomhus</option>
-                          <option value="indoor">Inomhus</option>
+                          <option value="true">Utomhus</option>
+                          <option value="false">Inomhus</option>
                         </select>
-                        {errors.seating && (
-                          <p className="field-error">{errors.seating}</p>
+                        {errors.outdoorSeating && (
+                          <p className="field-error">{errors.outdoorSeating}</p>
                         )}
                       </div>
 
@@ -201,12 +254,12 @@ export default function TableBooking() {
                       <div className="booking-summary">
                         <p><strong>Datum:</strong> {form.date || "-"}</p>
                         <p><strong>Tid:</strong> {form.time || "-"}</p>
-                        <p><strong>Gäster:</strong> {form.guests || "-"}</p>
+                        <p><strong>Gäster:</strong> {form.numberOfGuests || "-"}</p>
                         <p>
                           <strong>Plats:</strong>{" "}
-                          {form.seating === "outdoor"
+                          {form.outdoorSeating === "true"
                             ? "Utomhus"
-                            : form.seating === "indoor"
+                            : form.outdoorSeating === "false"
                               ? "Inomhus"
                               : "-"}
                         </p>
@@ -249,21 +302,26 @@ export default function TableBooking() {
                       </div>
 
                       <div className="form-group">
-                        <label htmlFor="requests">Speciella önskemål</label>
+                        <label htmlFor="specialRequests">Speciella önskemål</label>
                         <textarea
-                          id="requests"
-                          name="requests"
-                          value={form.requests}
+                          id="specialRequests"
+                          name="specialRequests"
+                          value={form.specialRequests}
                           onChange={handleChange}
                           rows={4}
                         />
                       </div>
 
+                      {apiError && <p className="field-error">{apiError}</p>}
+
+
                       <div className="booking-actions">
                         <Button type="button" variant="secondary" onClick={handlePreviousStep}>
                           Tillbaka
                         </Button>
-                        <Button type="submit">Bekräfta bokning</Button>
+                        <Button type="submit" disabled={isSubmitting}>
+                          {isSubmitting ? "Skickar..." : "Bekräfta bokning"}
+                        </Button>
                       </div>
                     </>
                   )}
@@ -290,12 +348,12 @@ export default function TableBooking() {
 
           <div className="change-booking-card">
             <div className="form-group">
-              <label htmlFor="bookingnumber">Bokningsnummer</label>
+              <label htmlFor="bookingId">Bokningsnummer</label>
               <input
-                id="bookingnumber"
-                name="bookingnumber"
+                id="bookingId"
+                name="bookingId"
                 type="text"
-                value={form.bookingnumber}
+                value={form.bookingId}
                 onChange={handleChange}
               />
             </div>
