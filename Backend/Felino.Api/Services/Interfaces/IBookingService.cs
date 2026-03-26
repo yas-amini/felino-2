@@ -5,5 +5,6 @@ namespace Felino.Api.Services.Interfaces
     public interface IBookingService
     {
         Task<BookingDto> CreateBookingAsync(CreateBookingDto dto);
+        Task<BookingDto> FindBookingAsync(FindBookingDto dto);
     }
 }

@@ -64,6 +64,34 @@ public class BookingService : IBookingService
             Status = booking.Status.ToString()
         };
     }
+    public async Task<BookingDto> FindBookingAsync(FindBookingDto dto)
+    {
+        var booking = await _context.Bookings
+            .Include(b => b.Customer)
+            .Include(b => b.Table)
+            .FirstOrDefaultAsync(b =>
+                b.Id == dto.BookingId &&
+                b.Customer.Email == dto.Email);
+
+        if (booking == null)
+            throw new KeyNotFoundException("Ingen bokning hittades med det angivna bokningsnumret och e-postadressen.");
+
+        return new BookingDto
+        {
+            BookingId = booking.Id,
+            Name = booking.Customer.Name,
+            Phone = booking.Customer.Phone,
+            Email = booking.Customer.Email,
+            Date = booking.Date,
+            Time = booking.Time,
+            NumberOfGuests = booking.NumberOfGuests,
+            OutdoorSeating = booking.OutdoorSeating,
+            SpecialRequests = booking.SpecialRequests,
+            TableName = booking.Table.Name,
+            Placement = booking.Table.Placement,
+            Status = booking.Status.ToString()
+        };
+    }
 
     private async Task<Customer> GetOrCreateCustomerAsync(CreateBookingDto dto)
     {

@@ -32,5 +32,18 @@ namespace Felino.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPost("find")]
+        public async Task<IActionResult> FindBooking(FindBookingDto dto)
+        {
+            try
+            {
+                var result = await _bookingService.FindBookingAsync(dto);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }
