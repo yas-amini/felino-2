@@ -19,12 +19,12 @@ type Category = {
   name: string;
   slug: string;
   description: string;
-  image?: string;
+  imageUrl?: string;
 };
 
 type StoredProduct = {
   id: number;
-  category: string;
+  categoryId: number | null;
   name: string;
   ingredients: string;
   price: string;
@@ -85,6 +85,10 @@ function saveProducts(nextProducts: StoredProduct[]) {
   window.dispatchEvent(new Event("admin-products-updated"));
 }
 
+function normalizeSlug(value: string) {
+  return value.trim().toLowerCase();
+}
+
 export default function AdminCategoriesPage() {
   useAdminTopbar("Kategorier");
 
@@ -132,25 +136,82 @@ export default function AdminCategoriesPage() {
     name: product.name,
   }));
 
-  function getCategoryProductIds(categorySlug: string): number[] {
+  function getCategoryProductIds(categoryId: number): number[] {
     return products
-      .filter((product) => product.category === categorySlug)
+      .filter((product) => product.categoryId === categoryId)
       .map((product) => product.id);
   }
 
+  function validateCategory(values: AdminCategoryFormValues, currentId?: number) {
+    const name = values.name.trim();
+    const slug = normalizeSlug(values.slug);
+    const description = values.description.trim();
+    const imageUrl = values.imageUrl?.trim() ?? "";
+
+    if (!name) {
+      alert("Namn är obligatoriskt.");
+      return false;
+    }
+
+    if (!slug) {
+      alert("Slug är obligatorisk.");
+      return false;
+    }
+
+    if (!description) {
+      alert("Beskrivning är obligatorisk.");
+      return false;
+    }
+
+    if (name.length > 100) {
+      alert("Namn får max vara 100 tecken.");
+      return false;
+    }
+
+    if (slug.length > 120) {
+      alert("Slug får max vara 120 tecken.");
+      return false;
+    }
+
+    if (description.length > 300) {
+      alert("Beskrivning får max vara 300 tecken.");
+      return false;
+    }
+
+    if (imageUrl.length > 300) {
+      alert("Bild-URL får max vara 300 tecken.");
+      return false;
+    }
+
+    const slugExists = categories.some(
+      (category) =>
+        category.slug.toLowerCase() === slug &&
+        category.id !== currentId
+    );
+
+    if (slugExists) {
+      alert("Slug måste vara unik.");
+      return false;
+    }
+
+    return true;
+  }
+
   function handleCreate(values: AdminCategoryFormValues) {
+    if (!validateCategory(values)) return;
+
     const newCategory: Category = {
       id: Date.now(),
-      name: values.name,
-      slug: values.slug,
-      description: values.description,
-      image: values.image,
+      name: values.name.trim(),
+      slug: normalizeSlug(values.slug),
+      description: values.description.trim(),
+      imageUrl: values.imageUrl?.trim() || undefined,
     };
 
     const nextCategories = [newCategory, ...categories];
     const nextProducts = products.map((product) =>
       values.productIds.includes(product.id)
-        ? { ...product, category: values.slug }
+        ? { ...product, categoryId: newCategory.id }
         : product
     );
 
@@ -170,37 +231,35 @@ export default function AdminCategoriesPage() {
 
   function handleEditSubmit(values: AdminCategoryFormValues) {
     if (!selectedCategory) return;
-
-    const oldSlug = selectedCategory.slug;
-    const newSlug = values.slug;
+    if (!validateCategory(values, selectedCategory.id)) return;
 
     const nextCategories = categories.map((category) =>
       category.id === selectedCategory.id
         ? {
             ...category,
-            name: values.name,
-            slug: newSlug,
-            description: values.description,
-            image: values.image,
+            name: values.name.trim(),
+            slug: normalizeSlug(values.slug),
+            description: values.description.trim(),
+            imageUrl: values.imageUrl?.trim() || undefined,
           }
         : category
     );
 
     const nextProducts = products.map((product) => {
-      const wasInThisCategory = product.category === oldSlug;
+      const wasInThisCategory = product.categoryId === selectedCategory.id;
       const shouldBeInThisCategory = values.productIds.includes(product.id);
 
       if (shouldBeInThisCategory) {
         return {
           ...product,
-          category: newSlug,
+          categoryId: selectedCategory.id,
         };
       }
 
       if (wasInThisCategory) {
         return {
           ...product,
-          category: "",
+          categoryId: null,
         };
       }
 
@@ -218,6 +277,15 @@ export default function AdminCategoriesPage() {
   }
 
   function handleOpenDelete(category: Category) {
+    const hasProducts = products.some(
+      (product) => product.categoryId === category.id
+    );
+
+    if (hasProducts) {
+      alert("Kategorin kan inte tas bort eftersom den har kopplade produkter.");
+      return;
+    }
+
     setSelectedCategory(category);
     setOpenDelete(true);
   }
@@ -225,21 +293,12 @@ export default function AdminCategoriesPage() {
   function confirmDelete() {
     if (!selectedCategory) return;
 
-    const deletedSlug = selectedCategory.slug;
-
     const nextCategories = categories.filter(
       (category) => category.id !== selectedCategory.id
     );
 
-    const nextProducts = products.map((product) =>
-      product.category === deletedSlug ? { ...product, category: "" } : product
-    );
-
     setCategories(nextCategories);
-    setProducts(nextProducts);
-
     saveCategories(nextCategories);
-    saveProducts(nextProducts);
 
     setOpenDelete(false);
     setSelectedCategory(null);
@@ -268,7 +327,7 @@ export default function AdminCategoriesPage() {
           <div className="categories-grid">
             {categories.map((category) => {
               const productCount = products.filter(
-                (product) => product.category === category.slug
+                (product) => product.categoryId === category.id
               ).length;
 
               return (
@@ -303,7 +362,7 @@ export default function AdminCategoriesPage() {
             selectedCategory
               ? {
                   ...selectedCategory,
-                  productIds: getCategoryProductIds(selectedCategory.slug),
+                  productIds: getCategoryProductIds(selectedCategory.id),
                 }
               : null
           }

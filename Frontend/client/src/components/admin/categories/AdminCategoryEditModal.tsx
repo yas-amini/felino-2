@@ -15,7 +15,7 @@ type Props = {
     name: string;
     slug: string;
     description: string;
-    image?: string;
+    imageUrl?: string;
     productIds: number[];
   } | null;
 };
@@ -43,7 +43,7 @@ export default function AdminCategoryEditModal({
           name: category?.name ?? "",
           slug: category?.slug ?? "",
           description: category?.description ?? "",
-          image: category?.image ?? "",
+          imageUrl: category?.imageUrl ?? "",
           productIds: category?.productIds ?? [],
         }}
       />

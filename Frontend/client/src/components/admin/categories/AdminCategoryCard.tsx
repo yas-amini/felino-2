@@ -6,7 +6,7 @@ type Category = {
   name: string;
   slug: string;
   description: string;
-  image?: string;
+  imageUrl?: string;
 };
 
 type Props = {
@@ -28,9 +28,9 @@ export default function AdminCategoryCard({
         <>
           <span className="category-card__count">{productCount} produkter</span>
 
-          {category.image ? (
+          {category.imageUrl ? (
             <img
-              src={category.image}
+              src={category.imageUrl}
               alt={category.name}
               className="category-card__image"
             />

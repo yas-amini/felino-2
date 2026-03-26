@@ -11,7 +11,7 @@ export type AdminCategoryFormValues = {
   name: string;
   slug: string;
   description: string;
-  image?: string;
+  imageUrl?: string;
   productIds: number[];
 };
 
@@ -23,11 +23,16 @@ type Props = {
     name?: string;
     description?: string;
     slug?: string;
-    image?: string;
+    imageUrl?: string;
     productIds?: number[];
   };
   allProducts?: ProductItem[];
 };
+
+const NAME_MAX_LENGTH = 100;
+const SLUG_MAX_LENGTH = 120;
+const DESCRIPTION_MAX_LENGTH = 300;
+const IMAGE_URL_MAX_LENGTH = 300;
 
 function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -40,6 +45,17 @@ function fileToDataUrl(file: File): Promise<string> {
   });
 }
 
+function normalizeSlug(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[åä]/g, "a")
+    .replace(/ö/g, "o")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
 export default function AdminCategoryForm({
   submitLabel = "Spara",
   onCancel,
@@ -50,7 +66,7 @@ export default function AdminCategoryForm({
   const initialName = initialValues?.name ?? "";
   const initialSlug = initialValues?.slug ?? "";
   const initialDescription = initialValues?.description ?? "";
-  const initialImage = initialValues?.image ?? "";
+  const initialImageUrl = initialValues?.imageUrl ?? "";
   const initialProductIds = initialValues?.productIds ?? [];
 
   const [name, setName] = useState(initialName);
@@ -60,7 +76,7 @@ export default function AdminCategoryForm({
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>(
     initialProductIds
   );
-  const [imagePreview, setImagePreview] = useState(initialImage);
+  const [imagePreview, setImagePreview] = useState(initialImageUrl);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -69,7 +85,7 @@ export default function AdminCategoryForm({
     setSlug(initialSlug);
     setDescription(initialDescription);
     setSelectedProductIds(initialProductIds);
-    setImagePreview(initialImage);
+    setImagePreview(initialImageUrl);
     setSearch("");
 
     if (fileInputRef.current) {
@@ -79,7 +95,7 @@ export default function AdminCategoryForm({
     initialName,
     initialSlug,
     initialDescription,
-    initialImage,
+    initialImageUrl,
     JSON.stringify(initialProductIds),
   ]);
 
@@ -127,8 +143,14 @@ export default function AdminCategoryForm({
     if (!file) return;
 
     try {
-      const imageUrl = await fileToDataUrl(file);
-      setImagePreview(imageUrl);
+      const nextImageUrl = await fileToDataUrl(file);
+
+      if (nextImageUrl.length > IMAGE_URL_MAX_LENGTH) {
+        alert(`Bildens data är för lång. Max ${IMAGE_URL_MAX_LENGTH} tecken tillåts.`);
+        return;
+      }
+
+      setImagePreview(nextImageUrl);
     } catch (error) {
       console.error("Kunde inte läsa vald bild:", error);
     }
@@ -145,21 +167,57 @@ export default function AdminCategoryForm({
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
+    const trimmedName = name.trim();
+    const normalizedSlug = normalizeSlug(slug);
+    const trimmedDescription = description.trim();
+    const trimmedImageUrl = imagePreview.trim();
+
+    if (!trimmedName) {
+      alert("Namn är obligatoriskt.");
+      return;
+    }
+
+    if (!normalizedSlug) {
+      alert("Slug är obligatorisk.");
+      return;
+    }
+
+    if (!trimmedDescription) {
+      alert("Beskrivning är obligatorisk.");
+      return;
+    }
+
+    if (trimmedName.length > NAME_MAX_LENGTH) {
+      alert(`Namn får max vara ${NAME_MAX_LENGTH} tecken.`);
+      return;
+    }
+
+    if (normalizedSlug.length > SLUG_MAX_LENGTH) {
+      alert(`Slug får max vara ${SLUG_MAX_LENGTH} tecken.`);
+      return;
+    }
+
+    if (trimmedDescription.length > DESCRIPTION_MAX_LENGTH) {
+      alert(`Beskrivning får max vara ${DESCRIPTION_MAX_LENGTH} tecken.`);
+      return;
+    }
+
+    if (trimmedImageUrl.length > IMAGE_URL_MAX_LENGTH) {
+      alert(`Bild-URL får max vara ${IMAGE_URL_MAX_LENGTH} tecken.`);
+      return;
+    }
+
     onSubmit({
-      name: name.trim(),
-      slug: slug.trim(),
-      description: description.trim(),
-      image: imagePreview || undefined,
+      name: trimmedName,
+      slug: normalizedSlug,
+      description: trimmedDescription,
+      imageUrl: trimmedImageUrl || undefined,
       productIds: selectedProductIds,
     });
   }
 
   return (
-    <form
-      className="adminCategoryForm"
-      noValidate
-      onSubmit={handleSubmit}
-    >
+    <form className="adminCategoryForm" noValidate onSubmit={handleSubmit}>
       <div className="adminCategoryForm__grid">
         <div className="adminCategoryForm__main">
           <div className="adminCategoryForm__row">
@@ -171,8 +229,13 @@ export default function AdminCategoryForm({
                 type="text"
                 placeholder="Ex. Pizza"
                 value={name}
+                maxLength={NAME_MAX_LENGTH}
+                required
                 onChange={(e) => setName(e.target.value)}
               />
+              <small>
+                {name.trim().length}/{NAME_MAX_LENGTH}
+              </small>
             </div>
 
             <div className="adminCategoryForm__field">
@@ -183,8 +246,13 @@ export default function AdminCategoryForm({
                 type="text"
                 placeholder="pizza"
                 value={slug}
-                onChange={(e) => setSlug(e.target.value)}
+                maxLength={SLUG_MAX_LENGTH}
+                required
+                onChange={(e) => setSlug(normalizeSlug(e.target.value))}
               />
+              <small>
+                {slug.trim().length}/{SLUG_MAX_LENGTH}
+              </small>
             </div>
           </div>
 
@@ -196,8 +264,13 @@ export default function AdminCategoryForm({
               rows={4}
               placeholder="Beskriv kategorin..."
               value={description}
+              maxLength={DESCRIPTION_MAX_LENGTH}
+              required
               onChange={(e) => setDescription(e.target.value)}
             />
+            <small>
+              {description.trim().length}/{DESCRIPTION_MAX_LENGTH}
+            </small>
           </div>
 
           <div className="adminCategoryForm__field">
@@ -312,17 +385,13 @@ export default function AdminCategoryForm({
               id="cat-image"
               className="adminCategoryForm__fileInput"
               type="file"
-              name="image"
+              name="imageUrl"
               accept="image/*"
               onChange={handleImageChange}
             />
 
             <div className="adminCategoryForm__uploadActions">
-              <AdminButton
-                type="button"
-                size="sm"
-                onClick={handlePickImage}
-              >
+              <AdminButton type="button" size="sm" onClick={handlePickImage}>
                 {imagePreview ? "Byt bild" : "Lägg till bild"}
               </AdminButton>
 
