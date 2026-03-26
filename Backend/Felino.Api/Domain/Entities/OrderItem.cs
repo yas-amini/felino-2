@@ -18,5 +18,8 @@ namespace Felino.Api.Domain.Entities
         
         // Navigation property to the parent Order.
         public Order? Order { get; set; }
+
+        // Navigation property to the original Product.
+        public Product? Product { get; set; }
     }
 }
