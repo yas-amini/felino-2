@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Felino.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260326121907_UpdateEntitiesAndFixDecimals")]
-    partial class UpdateEntitiesAndFixDecimals
+    [Migration("20260326122833_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
