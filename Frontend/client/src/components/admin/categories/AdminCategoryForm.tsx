@@ -1,18 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AdminButton from "../shared/AdminButton";
 import "./AdminCategoryForm.css";
-
-export type ProductItem = {
-  id: number;
-  name: string;
-};
 
 export type AdminCategoryFormValues = {
   name: string;
   slug: string;
   description: string;
   imageUrl?: string;
-  productIds: number[];
 };
 
 type Props = {
@@ -24,9 +18,7 @@ type Props = {
     description?: string;
     slug?: string;
     imageUrl?: string;
-    productIds?: number[];
   };
-  allProducts?: ProductItem[];
 };
 
 const NAME_MAX_LENGTH = 100;
@@ -61,21 +53,15 @@ export default function AdminCategoryForm({
   onCancel,
   onSubmit,
   initialValues,
-  allProducts = [],
 }: Props) {
   const initialName = initialValues?.name ?? "";
   const initialSlug = initialValues?.slug ?? "";
   const initialDescription = initialValues?.description ?? "";
   const initialImageUrl = initialValues?.imageUrl ?? "";
-  const initialProductIds = initialValues?.productIds ?? [];
 
   const [name, setName] = useState(initialName);
   const [slug, setSlug] = useState(initialSlug);
   const [description, setDescription] = useState(initialDescription);
-  const [search, setSearch] = useState("");
-  const [selectedProductIds, setSelectedProductIds] = useState<number[]>(
-    initialProductIds
-  );
   const [imagePreview, setImagePreview] = useState(initialImageUrl);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -84,52 +70,12 @@ export default function AdminCategoryForm({
     setName(initialName);
     setSlug(initialSlug);
     setDescription(initialDescription);
-    setSelectedProductIds(initialProductIds);
     setImagePreview(initialImageUrl);
-    setSearch("");
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-  }, [
-    initialName,
-    initialSlug,
-    initialDescription,
-    initialImageUrl,
-    JSON.stringify(initialProductIds),
-  ]);
-
-  const currentCategoryProducts = useMemo(() => {
-    return allProducts.filter((product) => selectedProductIds.includes(product.id));
-  }, [allProducts, selectedProductIds]);
-
-  const availableProducts = useMemo(() => {
-    return allProducts.filter((product) => !selectedProductIds.includes(product.id));
-  }, [allProducts, selectedProductIds]);
-
-  const filteredProducts = useMemo(() => {
-    const query = search.trim().toLowerCase();
-
-    if (!query) return [];
-
-    return availableProducts.filter((product) =>
-      product.name.toLowerCase().includes(query)
-    );
-  }, [search, availableProducts]);
-
-  const hasSearch = search.trim().length > 0;
-  const hasVisibleSearchResults = hasSearch && filteredProducts.length > 0;
-  const hasNoSearchResults = hasSearch && filteredProducts.length === 0;
-
-  function addProduct(productId: number) {
-    setSelectedProductIds((prev) =>
-      prev.includes(productId) ? prev : [...prev, productId]
-    );
-  }
-
-  function removeProduct(productId: number) {
-    setSelectedProductIds((prev) => prev.filter((id) => id !== productId));
-  }
+  }, [initialName, initialSlug, initialDescription, initialImageUrl]);
 
   function handlePickImage() {
     if (!fileInputRef.current) return;
@@ -212,7 +158,6 @@ export default function AdminCategoryForm({
       slug: normalizedSlug,
       description: trimmedDescription,
       imageUrl: trimmedImageUrl || undefined,
-      productIds: selectedProductIds,
     });
   }
 
@@ -271,100 +216,6 @@ export default function AdminCategoryForm({
             <small>
               {description.trim().length}/{DESCRIPTION_MAX_LENGTH}
             </small>
-          </div>
-
-          <div className="adminCategoryForm__field">
-            <label>Produkter i kategorin</label>
-
-            <div className="adminCategoryForm__panel">
-              {currentCategoryProducts.length > 0 && (
-                <p className="adminCategoryForm__count">
-                  {currentCategoryProducts.length} produkter i kategorin
-                </p>
-              )}
-
-              <div
-                className="adminCategoryForm__selectedList"
-                role="group"
-                aria-label="Produkter i kategorin"
-              >
-                {currentCategoryProducts.length > 0 ? (
-                  currentCategoryProducts.map((product) => (
-                    <div
-                      key={product.id}
-                      className="adminCategoryForm__selectedItem"
-                    >
-                      <span className="adminCategoryForm__productName">
-                        {product.name}
-                      </span>
-
-                      <button
-                        type="button"
-                        className="adminCategoryForm__remove"
-                        aria-label={`Ta bort ${product.name} från kategorin`}
-                        title="Ta bort"
-                        onClick={() => removeProduct(product.id)}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <p className="adminCategoryForm__empty">
-                    Inga produkter valda ännu
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="adminCategoryForm__field">
-            <label htmlFor="cat-product-search">Lägg till produkter</label>
-
-            <input
-              id="cat-product-search"
-              type="text"
-              placeholder="Sök produktnamn..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-
-            {hasSearch && (
-              <p className="adminCategoryForm__count">
-                {filteredProducts.length}{" "}
-                {filteredProducts.length === 1 ? "träff" : "träffar"}
-              </p>
-            )}
-
-            {hasVisibleSearchResults && (
-              <div
-                className="adminCategoryForm__searchList"
-                role="group"
-                aria-label="Sökresultat produkter"
-              >
-                {filteredProducts.map((product) => (
-                  <label
-                    key={product.id}
-                    className="adminCategoryForm__searchItem"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedProductIds.includes(product.id)}
-                      onChange={() => addProduct(product.id)}
-                    />
-                    <span className="adminCategoryForm__productName">
-                      {product.name}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            )}
-
-            {hasNoSearchResults && (
-              <p className="adminCategoryForm__empty">
-                Inga produkter matchade din sökning.
-              </p>
-            )}
           </div>
         </div>
 

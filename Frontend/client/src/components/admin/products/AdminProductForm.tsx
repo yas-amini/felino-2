@@ -1,8 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AdminButton from "../shared/AdminButton";
 import "./AdminProductForm.css";
-
-export type ProductCategory = string;
 
 export type ProductCategoryOption = {
   value: string;
@@ -10,13 +8,13 @@ export type ProductCategoryOption = {
 };
 
 export type ProductFormValues = {
-  category: ProductCategory | "";
+  categoryId: string;
   name: string;
   ingredients: string;
   price: string;
   sauce: string;
   altText: string;
-  image?: string;
+  imageUrl?: string;
 };
 
 type Props = {
@@ -26,6 +24,12 @@ type Props = {
   onSubmit: (values: ProductFormValues) => void;
   categories: ProductCategoryOption[];
 };
+
+const NAME_MAX_LENGTH = 100;
+const INGREDIENTS_MAX_LENGTH = 2000;
+const SAUCE_MAX_LENGTH = 100;
+const ALT_TEXT_MAX_LENGTH = 200;
+const IMAGE_URL_MAX_LENGTH = 300;
 
 function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -42,13 +46,13 @@ function getNormalizedInitialValues(
   initialValues?: Partial<ProductFormValues>
 ): ProductFormValues {
   return {
-    category: initialValues?.category ?? "",
+    categoryId: initialValues?.categoryId ?? "",
     name: initialValues?.name ?? "",
     ingredients: initialValues?.ingredients ?? "",
     price: initialValues?.price ?? "",
     sauce: initialValues?.sauce ?? "",
     altText: initialValues?.altText ?? "",
-    image: initialValues?.image ?? "",
+    imageUrl: initialValues?.imageUrl ?? "",
   };
 }
 
@@ -65,18 +69,32 @@ export default function AdminProductForm({
 }: Props) {
   const normalized = getNormalizedInitialValues(initialValues);
 
-  const [category, setCategory] = useState<ProductCategory | "">(
-    normalized.category
-  );
+  const [categoryId, setCategoryId] = useState(normalized.categoryId);
   const [name, setName] = useState(normalized.name);
   const [ingredients, setIngredients] = useState(normalized.ingredients);
   const [price, setPrice] = useState(normalized.price);
   const [sauce, setSauce] = useState(normalized.sauce);
   const [altText, setAltText] = useState(normalized.altText);
-  const [imagePreview, setImagePreview] = useState(normalized.image ?? "");
+  const [imagePreview, setImagePreview] = useState(normalized.imageUrl ?? "");
   const [errorMessage, setErrorMessage] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    const next = getNormalizedInitialValues(initialValues);
+    setCategoryId(next.categoryId);
+    setName(next.name);
+    setIngredients(next.ingredients);
+    setPrice(next.price);
+    setSauce(next.sauce);
+    setAltText(next.altText);
+    setImagePreview(next.imageUrl ?? "");
+    setErrorMessage("");
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }, [initialValues]);
 
   function clearError() {
     if (errorMessage) {
@@ -96,8 +114,14 @@ export default function AdminProductForm({
     if (!file) return;
 
     try {
-      const imageUrl = await fileToDataUrl(file);
-      setImagePreview(imageUrl);
+      const nextImageUrl = await fileToDataUrl(file);
+
+      if (nextImageUrl.length > IMAGE_URL_MAX_LENGTH) {
+        setErrorMessage(`Bildens data är för lång. Max ${IMAGE_URL_MAX_LENGTH} tecken tillåts.`);
+        return;
+      }
+
+      setImagePreview(nextImageUrl);
       clearError();
     } catch (error) {
       console.error("Kunde inte läsa vald bild:", error);
@@ -120,29 +144,37 @@ export default function AdminProductForm({
     const normalizedPrice = normalizePrice(price);
 
     const values: ProductFormValues = {
-      category,
+      categoryId,
       name: name.trim(),
       ingredients: ingredients.trim(),
       price: normalizedPrice,
       sauce: sauce.trim(),
       altText: altText.trim(),
-      image: imagePreview || undefined,
+      imageUrl: imagePreview || undefined,
     };
 
-    console.log("AdminProductForm submit", values);
-
-    if (!values.category) {
+    if (!values.categoryId) {
       setErrorMessage("Välj en kategori.");
       return;
     }
 
-    if (values.name.length < 2) {
-      setErrorMessage("Ange ett namn på minst 2 tecken.");
+    if (!values.name) {
+      setErrorMessage("Ange ett namn.");
+      return;
+    }
+
+    if (values.name.length > NAME_MAX_LENGTH) {
+      setErrorMessage(`Namn får max vara ${NAME_MAX_LENGTH} tecken.`);
       return;
     }
 
     if (!values.ingredients) {
       setErrorMessage("Fyll i ingredienser.");
+      return;
+    }
+
+    if (values.ingredients.length > INGREDIENTS_MAX_LENGTH) {
+      setErrorMessage("Ingredienser är för långt.");
       return;
     }
 
@@ -156,8 +188,22 @@ export default function AdminProductForm({
       return;
     }
 
+    if (values.sauce.length > SAUCE_MAX_LENGTH) {
+      setErrorMessage(`Sås får max vara ${SAUCE_MAX_LENGTH} tecken.`);
+      return;
+    }
+
+    if (values.altText.length > ALT_TEXT_MAX_LENGTH) {
+      setErrorMessage(`Alt-text får max vara ${ALT_TEXT_MAX_LENGTH} tecken.`);
+      return;
+    }
+
+    if ((values.imageUrl ?? "").length > IMAGE_URL_MAX_LENGTH) {
+      setErrorMessage(`Bild-URL får max vara ${IMAGE_URL_MAX_LENGTH} tecken.`);
+      return;
+    }
+
     setErrorMessage("");
-    console.log("AdminProductForm calling onSubmit");
     onSubmit(values);
   }
 
@@ -174,11 +220,11 @@ export default function AdminProductForm({
           </label>
           <select
             id="prod-cat"
-            name="category"
+            name="categoryId"
             className="in select"
-            value={category}
+            value={categoryId}
             onChange={(e) => {
-              setCategory(e.target.value as ProductCategory | "");
+              setCategoryId(e.target.value);
               clearError();
             }}
           >
@@ -200,8 +246,7 @@ export default function AdminProductForm({
             name="name"
             type="text"
             className="in text"
-            minLength={2}
-            maxLength={120}
+            maxLength={NAME_MAX_LENGTH}
             placeholder="Ex. Vesuvio"
             value={name}
             onChange={(e) => {
@@ -213,15 +258,15 @@ export default function AdminProductForm({
 
         <div className="form-field form-field--wide">
           <label className="field-label" htmlFor="prod-ings">
-            Ingredienser (kommaseparerade)
+            Ingredienser
           </label>
           <input
             id="prod-ings"
             name="ingredients"
             type="text"
             className="in text"
-            maxLength={800}
-            placeholder="tomatsås, ost, skinka"
+            maxLength={INGREDIENTS_MAX_LENGTH}
+            placeholder='["ost", "skinka"] eller kommaseparerat om du mappar senare'
             value={ingredients}
             onChange={(e) => {
               setIngredients(e.target.value);
@@ -258,6 +303,7 @@ export default function AdminProductForm({
             name="sauce"
             type="text"
             className="in text"
+            maxLength={SAUCE_MAX_LENGTH}
             placeholder="bearnaisesås"
             value={sauce}
             onChange={(e) => {
@@ -269,14 +315,14 @@ export default function AdminProductForm({
 
         <div className="form-field form-field--wide">
           <label className="field-label" htmlFor="prod-alt">
-            Alt-text (tillgänglighet)
+            Alt-text
           </label>
           <input
             id="prod-alt"
-            name="alt_text"
+            name="altText"
             type="text"
             className="in text"
-            maxLength={200}
+            maxLength={ALT_TEXT_MAX_LENGTH}
             placeholder="Capricciosa pizza med skinka och champinjoner"
             value={altText}
             onChange={(e) => {
@@ -296,7 +342,7 @@ export default function AdminProductForm({
             id="prod-image"
             className="sr-only-file"
             type="file"
-            name="image"
+            name="imageUrl"
             accept="image/*"
             onChange={handleImageChange}
           />

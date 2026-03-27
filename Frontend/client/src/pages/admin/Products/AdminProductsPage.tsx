@@ -1,235 +1,166 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AdminPage from "../../../components/admin/layout/AdminPage";
 import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import AdminButton from "../../../components/admin/shared/AdminButton";
 import AdminSectionHead from "../../../components/admin/shared/AdminSectionHead";
-import { useAdminQuickActions } from "../../../components/admin/shared/AdminQuickActionsContext";
 import AdminProductsAccordion from "../../../components/admin/products/AdminProductsAccordion";
-import AdminProductEditModal from "../../../components/admin/products/AdminProductEditModal";
+import AdminProductCreateModal from "../../../components/admin/products/AdminProductCreateModal";
 import AdminConfirmModal from "../../../components/admin/shared/AdminConfirmModal";
 import type {
   ProductCategoryOption,
   ProductFormValues,
 } from "../../../components/admin/products/AdminProductForm";
+import type {
+  CategoryDto,
+  CreateProductDto,
+  ProductDto,
+} from "../../../types/admin";
+import { getCategories } from "../../../api/admin/categoryApi";
+import { createProduct, deleteProduct, getProducts } from "../../../api/admin/productApi";
 
 import "./AdminProductsPage.css";
 
-type StoredCategory = {
-  id: number;
-  name: string;
-  slug: string;
-  description: string;
-  image?: string;
-  productIds: number[];
-  productCount: number;
-};
-
-type Product = {
-  id: number;
-  category: string;
-  name: string;
-  ingredients: string;
-  price: string;
-  sauce?: string;
-  altText?: string;
-  image?: string;
-};
-
-const CATEGORY_STORAGE_KEY = "admin_categories";
-const PRODUCT_STORAGE_KEY = "admin_products";
-
-function getStoredCategories(): StoredCategory[] {
-  if (typeof window === "undefined") {
-    return [];
-  }
-
-  try {
-    const saved = window.localStorage.getItem(CATEGORY_STORAGE_KEY);
-    if (!saved) return [];
-
-    const parsed = JSON.parse(saved) as unknown;
-    return Array.isArray(parsed) ? (parsed as StoredCategory[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function getStoredProducts(): Product[] {
-  if (typeof window === "undefined") {
-    return [];
-  }
-
-  try {
-    const saved = window.localStorage.getItem(PRODUCT_STORAGE_KEY);
-    if (!saved) return [];
-
-    const parsed = JSON.parse(saved) as unknown;
-    return Array.isArray(parsed) ? (parsed as Product[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function syncCategoriesWithProducts(
-  categories: StoredCategory[],
-  products: Product[]
-): StoredCategory[] {
-  return categories.map((category) => {
-    const productIds = products
-      .filter((product) => product.category === category.slug)
-      .map((product) => product.id);
-
-    return {
-      ...category,
-      productIds,
-      productCount: productIds.length,
-    };
-  });
-}
-
 function ProductsPageContent() {
-  const { openCreateProductModal, canCreateProduct } = useAdminQuickActions();
-
-  const [categories, setCategories] = useState<StoredCategory[]>(() =>
-    getStoredCategories()
-  );
-  const [products, setProducts] = useState<Product[]>(() => getStoredProducts());
+  const [categories, setCategories] = useState<CategoryDto[]>([]);
+  const [products, setProducts] = useState<ProductDto[]>([]);
+  const [openCreate, setOpenCreate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [openEdit, setOpenEdit] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<ProductDto | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  async function loadData() {
+    try {
+      setIsLoading(true);
+
+      const [categoriesResult, productsResult] = await Promise.all([
+        getCategories(),
+        getProducts(1, 200),
+      ]);
+
+      setCategories(categoriesResult);
+      setProducts(productsResult);
+    } catch (error) {
+      console.error("Kunde inte hämta produkter eller kategorier:", error);
+      window.alert("Det gick inte att hämta produkter.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   useEffect(() => {
-    const syncData = () => {
-      setCategories(getStoredCategories());
-      setProducts(getStoredProducts());
-    };
-
-    syncData();
-
-    window.addEventListener("focus", syncData);
-    window.addEventListener("admin-products-updated", syncData as EventListener);
-    window.addEventListener(
-      "admin-categories-updated",
-      syncData as EventListener
-    );
-
-    return () => {
-      window.removeEventListener("focus", syncData);
-      window.removeEventListener(
-        "admin-products-updated",
-        syncData as EventListener
-      );
-      window.removeEventListener(
-        "admin-categories-updated",
-        syncData as EventListener
-      );
-    };
+    loadData();
   }, []);
 
-  const categoryOptions: ProductCategoryOption[] = categories.map((category) => ({
-    value: category.slug,
-    label: category.name,
-  }));
+  const categoryOptions: ProductCategoryOption[] = useMemo(
+    () =>
+      categories.map((category) => ({
+        value: String(category.id),
+        label: category.name,
+      })),
+    [categories]
+  );
 
-  function handleOpenEdit(product: Product) {
-    setSelectedProduct(product);
-    setOpenEdit(true);
-  }
+  function validateProduct(values: ProductFormValues) {
+    const name = values.name.trim();
+    const ingredients = values.ingredients.trim();
+    const price = values.price.trim().replace(",", ".");
+    const sauce = values.sauce.trim();
+    const altText = values.altText.trim();
+    const imageUrl = values.imageUrl?.trim() ?? "";
 
-  function handleEditSubmit(values: ProductFormValues) {
-    if (!selectedProduct || !values.category || typeof window === "undefined") {
-      return;
+    if (!values.categoryId) {
+      window.alert("Välj en kategori.");
+      return false;
     }
 
-    const nextProducts = products.map((product) =>
-      product.id === selectedProduct.id
-        ? {
-            ...product,
-            category: values.category,
-            name: values.name,
-            ingredients: values.ingredients,
-            price: values.price,
-            sauce: values.sauce || "",
-            altText: values.altText || "",
-            image: product.image,
-          }
-        : product
-    );
+    if (!name) {
+      window.alert("Namn är obligatoriskt.");
+      return false;
+    }
 
-    const nextCategories = syncCategoriesWithProducts(
-      getStoredCategories(),
-      nextProducts
-    );
+    if (name.length > 100) {
+      window.alert("Namn får max vara 100 tecken.");
+      return false;
+    }
+
+    if (!ingredients) {
+      window.alert("Ingredienser är obligatoriskt.");
+      return false;
+    }
+
+    if (!price) {
+      window.alert("Pris är obligatoriskt.");
+      return false;
+    }
+
+    if (Number.isNaN(Number(price))) {
+      window.alert("Ange ett giltigt pris.");
+      return false;
+    }
+
+    if (sauce.length > 100) {
+      window.alert("Sås får max vara 100 tecken.");
+      return false;
+    }
+
+    if (altText.length > 200) {
+      window.alert("Alt-text får max vara 200 tecken.");
+      return false;
+    }
+
+    if (imageUrl.length > 300) {
+      window.alert("Bild-URL får max vara 300 tecken.");
+      return false;
+    }
+
+    return true;
+  }
+
+  async function handleCreate(values: ProductFormValues) {
+    if (!validateProduct(values)) return;
+
+    const payload: CreateProductDto = {
+      name: values.name.trim(),
+      ingredients: values.ingredients.trim(),
+      price: Number(values.price.trim().replace(",", ".")),
+      sauce: values.sauce.trim() || null,
+      altText: values.altText.trim() || null,
+      imageUrl: values.imageUrl?.trim() || null,
+      categoryId: Number(values.categoryId),
+    };
 
     try {
-      window.localStorage.setItem(
-        PRODUCT_STORAGE_KEY,
-        JSON.stringify(nextProducts)
-      );
-      window.localStorage.setItem(
-        CATEGORY_STORAGE_KEY,
-        JSON.stringify(nextCategories)
-      );
+      await createProduct(payload);
+      await loadData();
+      setOpenCreate(false);
     } catch (error) {
-      console.error("Kunde inte spara ändrad produkt i localStorage:", error);
-      window.alert(
-        "Produkten kunde inte sparas eftersom lokal lagring är full. Rensa sparade produkter/bilder i localStorage och försök igen."
-      );
-      return;
+      console.error("Kunde inte skapa produkt:", error);
+      window.alert("Det gick inte att skapa produkten.");
     }
-
-    setProducts(nextProducts);
-    setCategories(nextCategories);
-
-    window.dispatchEvent(new Event("admin-products-updated"));
-    window.dispatchEvent(new Event("admin-categories-updated"));
-
-    setOpenEdit(false);
-    setSelectedProduct(null);
   }
 
-  function handleOpenDelete(product: Product) {
+  function handleOpenEdit() {
+    window.alert("Redigering av produkt kommer när PATCH är på plats.");
+  }
+
+  function handleOpenDelete(product: ProductDto) {
     setSelectedProduct(product);
     setOpenDelete(true);
   }
 
-  function confirmDelete() {
-    if (!selectedProduct || typeof window === "undefined") return;
-
-    const nextProducts = products.filter(
-      (product) => product.id !== selectedProduct.id
-    );
-
-    const nextCategories = syncCategoriesWithProducts(
-      getStoredCategories(),
-      nextProducts
-    );
+  async function confirmDelete() {
+    if (!selectedProduct) return;
 
     try {
-      window.localStorage.setItem(
-        PRODUCT_STORAGE_KEY,
-        JSON.stringify(nextProducts)
-      );
-      window.localStorage.setItem(
-        CATEGORY_STORAGE_KEY,
-        JSON.stringify(nextCategories)
-      );
+      await deleteProduct(selectedProduct.id);
+      await loadData();
+
+      setOpenDelete(false);
+      setSelectedProduct(null);
     } catch (error) {
-      console.error("Kunde inte ta bort produkt i localStorage:", error);
-      window.alert(
-        "Produkten kunde inte uppdateras eftersom lokal lagring är full eller trasig. Rensa localStorage och försök igen."
-      );
-      return;
+      console.error("Kunde inte ta bort produkt:", error);
+      window.alert("Det gick inte att ta bort produkten.");
     }
-
-    setProducts(nextProducts);
-    setCategories(nextCategories);
-
-    window.dispatchEvent(new Event("admin-products-updated"));
-    window.dispatchEvent(new Event("admin-categories-updated"));
-
-    setOpenDelete(false);
-    setSelectedProduct(null);
   }
 
   return (
@@ -243,10 +174,10 @@ function ProductsPageContent() {
             variant="primary"
             type="button"
             className="fpAdminBtn--field"
-            onClick={openCreateProductModal}
-            disabled={!canCreateProduct}
+            onClick={() => setOpenCreate(true)}
+            disabled={categories.length === 0}
             title={
-              canCreateProduct
+              categories.length > 0
                 ? "Lägg till produkt"
                 : "Lägg först till minst en kategori"
             }
@@ -256,17 +187,20 @@ function ProductsPageContent() {
         }
       />
 
-      {categories.length === 0 ? (
+      {isLoading ? (
+        <section className="products-empty-state">
+          <p className="products-empty-message">Laddar produkter...</p>
+        </section>
+      ) : categories.length === 0 ? (
         <section className="products-empty-state">
           <p className="products-empty-message">
-            Inga kategorier finns ännu. Lägg först till kategorier på
-            kategorisidan.
+            Inga kategorier finns ännu. Lägg först till kategorier på kategorisidan.
           </p>
         </section>
       ) : (
         categories.map((category) => {
           const categoryProducts = products.filter(
-            (product) => product.category === category.slug
+            (product) => product.categoryId === category.id
           );
 
           return (
@@ -309,9 +243,9 @@ function ProductsPageContent() {
                           {categoryProducts.map((product) => (
                             <tr key={product.id}>
                               <td data-label="Bild">
-                                {product.image ? (
+                                {product.imageUrl ? (
                                   <img
-                                    src={product.image}
+                                    src={product.imageUrl}
                                     alt={product.altText || product.name}
                                     className="thumb"
                                     width={64}
@@ -323,14 +257,10 @@ function ProductsPageContent() {
                               </td>
 
                               <td data-label="Namn">{product.name}</td>
-                              <td data-label="Ingredienser">
-                                {product.ingredients}
-                              </td>
-                              <td data-label="Pris">{product.price}</td>
+                              <td data-label="Ingredienser">{product.ingredients}</td>
+                              <td data-label="Pris">{product.price} kr</td>
                               <td data-label="Sås">{product.sauce || "-"}</td>
-                              <td data-label="Alt-text">
-                                {product.altText || "-"}
-                              </td>
+                              <td data-label="Alt-text">{product.altText || "-"}</td>
 
                               <td data-label="Åtgärder" className="actions">
                                 <AdminButton
@@ -339,7 +269,7 @@ function ProductsPageContent() {
                                   type="button"
                                   title="Redigera"
                                   aria-label={`Redigera ${product.name}`}
-                                  onClick={() => handleOpenEdit(product)}
+                                  onClick={handleOpenEdit}
                                 />
 
                                 <AdminButton
@@ -360,10 +290,30 @@ function ProductsPageContent() {
 
                   <div className="products-mobile-view">
                     <AdminProductsAccordion
-                      products={categoryProducts}
-                      onEdit={handleOpenEdit}
-                      onDelete={handleOpenDelete}
-                      onSave={() => {}}
+                      products={categoryProducts.map((product) => ({
+                        id: product.id,
+                        name: product.name,
+                        ingredients: product.ingredients,
+                        price: String(product.price),
+                        sauce: product.sauce ?? "",
+                        altText: product.altText ?? "",
+                        imageUrl: product.imageUrl ?? "",
+                        categoryId: String(product.categoryId),
+                      }))}
+                      onEdit={() => handleOpenEdit()}
+                      onDelete={(product) =>
+                        handleOpenDelete({
+                          id: product.id,
+                          name: product.name,
+                          slug: "",
+                          ingredients: product.ingredients,
+                          price: Number(product.price),
+                          sauce: product.sauce ?? null,
+                          altText: product.altText ?? null,
+                          imageUrl: product.imageUrl ?? null,
+                          categoryId: Number(product.categoryId),
+                        })
+                      }
                     />
                   </div>
                 </>
@@ -373,28 +323,11 @@ function ProductsPageContent() {
         })
       )}
 
-      <AdminProductEditModal
-        isOpen={openEdit}
-        onClose={() => {
-          setOpenEdit(false);
-          setSelectedProduct(null);
-        }}
-        onSubmit={handleEditSubmit}
+      <AdminProductCreateModal
+        isOpen={openCreate}
+        onClose={() => setOpenCreate(false)}
+        onSubmit={handleCreate}
         categories={categoryOptions}
-        product={
-          selectedProduct
-            ? {
-                id: selectedProduct.id,
-                category: selectedProduct.category,
-                name: selectedProduct.name,
-                ingredients: selectedProduct.ingredients,
-                price: selectedProduct.price,
-                sauce: selectedProduct.sauce ?? "",
-                altText: selectedProduct.altText ?? "",
-                image: selectedProduct.image ?? "",
-              }
-            : null
-        }
       />
 
       <AdminConfirmModal

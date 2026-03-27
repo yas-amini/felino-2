@@ -32,13 +32,13 @@ export default function AdminProductCreateModal({
         onSubmit={onSubmit}
         categories={categories}
         initialValues={{
-          category: "",
+          categoryId: "",
           name: "",
           ingredients: "",
           price: "",
           sauce: "",
           altText: "",
-          image: "",
+          imageUrl: "",
         }}
       />
     </AdminModal>

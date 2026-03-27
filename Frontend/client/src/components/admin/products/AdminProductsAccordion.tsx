@@ -4,13 +4,13 @@ import "./AdminProductsAccordion.css";
 
 export type AdminProductItem = {
   id: number;
-  category: string;
+  categoryId: string;
   name: string;
   ingredients: string;
   price: string;
   sauce?: string;
   altText?: string;
-  image?: string;
+  imageUrl?: string;
 };
 
 type Props = {
@@ -163,12 +163,12 @@ export default function AdminProductsAccordion({
                     </div>
                   ) : null}
 
-                  {product.image ? (
+                  {product.imageUrl ? (
                     <div className="adminProductAccordionWide">
                       <span className="adminProductAccordionLabel">Bild</span>
                       <img
                         className="adminProductAccordionImage"
-                        src={product.image}
+                        src={product.imageUrl}
                         alt={product.altText || product.name}
                       />
                     </div>

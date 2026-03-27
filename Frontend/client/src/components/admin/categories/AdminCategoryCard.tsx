@@ -6,7 +6,7 @@ type Category = {
   name: string;
   slug: string;
   description: string;
-  imageUrl?: string;
+  imageUrl?: string | null;
 };
 
 type Props = {
