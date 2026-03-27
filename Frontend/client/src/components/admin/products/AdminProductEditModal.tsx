@@ -13,13 +13,13 @@ type Props = {
   categories: ProductCategoryOption[];
   product?: {
     id?: number;
-    category: ProductFormValues["category"];
+    categoryId: ProductFormValues["categoryId"];
     name: string;
     ingredients: string;
     price: string;
     sauce: string;
     altText: string;
-    image?: string;
+    imageUrl?: string;
   } | null;
 };
 
@@ -32,27 +32,27 @@ export default function AdminProductEditModal({
 }: Props) {
   const initialValues = useMemo(
     () => ({
-      category: product?.category ?? "",
+      categoryId: product?.categoryId ?? "",
       name: product?.name ?? "",
       ingredients: product?.ingredients ?? "",
       price: product?.price ?? "",
       sauce: product?.sauce ?? "",
       altText: product?.altText ?? "",
-      image: product?.image ?? "",
+      imageUrl: product?.imageUrl ?? "",
     }),
     [
-      product?.category,
+      product?.categoryId,
       product?.name,
       product?.ingredients,
       product?.price,
       product?.sauce,
       product?.altText,
-      product?.image,
+      product?.imageUrl,
     ]
   );
 
   const formKey = `${isOpen ? "open" : "closed"}-${product?.id ?? "new"}-${
-    product?.image ?? "no-image"
+    product?.imageUrl ?? "no-image"
   }`;
 
   return (
