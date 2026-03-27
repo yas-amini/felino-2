@@ -1,6 +1,8 @@
 ﻿using Felino.Api.Data;
 using Felino.Api.Domain.Entities;
 using Felino.Api.Dtos.Products;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,20 +20,27 @@ namespace Felino.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts(
-            int page = 1,
-            int pageSize = 10,
-            string? slug = null)
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? slug = null)
         {
-            if (!string.IsNullOrEmpty(slug))
+            if (!string.IsNullOrWhiteSpace(slug))
             {
-                var product = await _context.Products
+                var productsBySlug = await _context.Products
                     .Where(p => p.Slug == slug)
                     .Select(p => MapToDto(p))
                     .ToListAsync();
 
-                return Ok(product);
+                return Ok(productsBySlug);
             }
+
+            if (page < 1)
+                page = 1;
+
+            if (pageSize < 1)
+                pageSize = 10;
 
             var products = await _context.Products
                 .Skip((page - 1) * pageSize)
@@ -42,7 +51,9 @@ namespace Felino.Api.Controllers
             return Ok(products);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
+        [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductDto>> GetProduct(int id)
         {
             var product = await _context.Products
@@ -56,18 +67,23 @@ namespace Felino.Api.Controllers
             return Ok(product);
         }
 
+        [Authorize]
         [HttpPost]
-        public async Task<ActionResult<ProductDto>> CreateProduct(CreateProductDto dto)
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(ProductDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ProductDto>> CreateProduct([FromBody] CreateProductDto dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.Name))
-                return BadRequest("Name is required");
+            if (!ModelState.IsValid)
+                return ValidationProblem(ModelState);
 
-            var slug = GenerateSlug(dto.Name);
+            if (string.IsNullOrWhiteSpace(dto.Name))
+                return BadRequest();
 
             var product = new Product
             {
-                Name = dto.Name,
-                Slug = slug,
+                Name = dto.Name.Trim(),
+                Slug = GenerateSlug(dto.Name),
                 Ingredients = dto.Ingredients,
                 Price = dto.Price,
                 Sauce = dto.Sauce,
@@ -82,7 +98,64 @@ namespace Felino.Api.Controllers
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, MapToDto(product));
         }
 
-        [HttpDelete("{id}")]
+        [Authorize]
+        [HttpPatch("{id:int}")]
+        [Consumes("application/json-patch+json")]
+        [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ProductDto>> PatchProduct(
+            int id,
+            [FromBody] JsonPatchDocument<UpdateProductDto> patchDoc)
+        {
+            if (patchDoc == null)
+                return BadRequest();
+
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+
+            if (product == null)
+                return NotFound();
+
+            var productToPatch = new UpdateProductDto
+            {
+                Name = product.Name,
+                Ingredients = product.Ingredients,
+                Price = product.Price,
+                Sauce = product.Sauce,
+                AltText = product.AltText,
+                ImageUrl = product.ImageUrl,
+                CategoryId = product.CategoryId
+            };
+
+            patchDoc.ApplyTo(productToPatch, ModelState);
+
+            if (!ModelState.IsValid)
+                return ValidationProblem(ModelState);
+
+            if (!TryValidateModel(productToPatch))
+                return ValidationProblem(ModelState);
+
+            if (string.IsNullOrWhiteSpace(productToPatch.Name))
+                return BadRequest();
+
+            product.Name = productToPatch.Name.Trim();
+            product.Slug = GenerateSlug(productToPatch.Name);
+            product.Ingredients = productToPatch.Ingredients;
+            product.Price = productToPatch.Price;
+            product.Sauce = productToPatch.Sauce;
+            product.AltText = productToPatch.AltText;
+            product.ImageUrl = productToPatch.ImageUrl;
+            product.CategoryId = productToPatch.CategoryId;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(MapToDto(product));
+        }
+
+        [Authorize]
+        [HttpDelete("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var product = await _context.Products.FindAsync(id);

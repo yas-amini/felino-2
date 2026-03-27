@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Felino.Api.Domain.Entities;
 using Felino.Api.Domain.Enums;
+
 namespace Felino.Api.Data
 {
     public class AppDbContext : DbContext
@@ -8,6 +9,7 @@ namespace Felino.Api.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
+
         public DbSet<Customer> Customers => Set<Customer>();
         public DbSet<Booking> Bookings => Set<Booking>();
         public DbSet<Table> Tables => Set<Table>();
@@ -18,12 +20,13 @@ namespace Felino.Api.Data
         public DbSet<Payment> Payments => Set<Payment>();
         public DbSet<Product> Products => Set<Product>();
 
+        public DbSet<User> Users => Set<User>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         }
-
     }
 }
