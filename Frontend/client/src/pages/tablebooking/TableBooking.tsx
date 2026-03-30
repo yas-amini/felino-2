@@ -31,6 +31,7 @@ type FoundBooking = {
   numberOfGuests: number;
   outdoorSeating: boolean;
   status: string;
+  email: string;
 };
 
 export default function TableBooking() {
@@ -69,6 +70,8 @@ export default function TableBooking() {
   const [findError, setFindError] = useState("");
   const [isFindingBooking, setIsFindingBooking] = useState(false);
   const [foundBooking, setFoundBooking] = useState<FoundBooking | null>(null);
+
+  const [isCancellingBooking, setIsCancellingBooking] = useState(false);
 
   const handleCreateBookingChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -254,6 +257,7 @@ export default function TableBooking() {
         numberOfGuests: result.numberOfGuests,
         outdoorSeating: result.outdoorSeating,
         status: result.status,
+        email: result.email,
       });
 
       setManageErrors({});
@@ -266,6 +270,51 @@ export default function TableBooking() {
       }
     } finally {
       setIsFindingBooking(false);
+    }
+  };
+
+  const handleCancelBooking = async () => {
+    if (!foundBooking) return;
+
+    setFindError("");
+    setIsCancellingBooking(true);
+
+    try {
+      const response = await fetch("/api/bookings/cancel", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bookingId: foundBooking.bookingId,
+          email: foundBooking.email,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Kunde inte avboka bokningen.");
+      }
+
+      const result = await response.json();
+
+      setFoundBooking({
+        bookingId: result.bookingId,
+        date: result.date,
+        time: result.time,
+        numberOfGuests: result.numberOfGuests,
+        outdoorSeating: result.outdoorSeating,
+        status: result.status,
+        email: result.email,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        setFindError(error.message);
+      } else {
+        setFindError("Något gick fel när bokningen avbokades.");
+      }
+    } finally {
+      setIsCancellingBooking(false);
     }
   };
 
@@ -550,12 +599,22 @@ export default function TableBooking() {
 
                 <div className="booking-actions">
                   <Button type="button">Ändra bokning</Button>
-                  <Button type="button" variant="secondary">
-                    Avboka
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={handleCancelBooking}
+                    disabled={isCancellingBooking || foundBooking?.status === "Cancelled"}
+                  >
+                    {isCancellingBooking ? "Avbokar..." : "Avboka"}
                   </Button>
+                  <p className="booking-id">#{foundBooking.bookingId}</p>
+                  <p className="booking-status">
+                    <strong>Status:</strong> {foundBooking.status}
+                  </p>
+                  {foundBooking.status === "Cancelled" && (
+                    <p className="field-error">Den här bokningen är avbokad.</p>
+                  )}
                 </div>
-
-                <p className="booking-id">#{foundBooking.bookingId}</p>
               </div>
             )}
           </div>
