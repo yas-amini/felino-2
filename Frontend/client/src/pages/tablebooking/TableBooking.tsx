@@ -32,7 +32,23 @@ type FoundBooking = {
   outdoorSeating: boolean;
   status: string;
   email: string;
+  name: string;
+  phone: string;
+  specialRequests: string;
 };
+type EditBookingFormState = {
+  bookingId: string;
+  name: string;
+  phone: string;
+  email: string;
+  date: string;
+  time: string;
+  numberOfGuests: string;
+  outdoorSeating: "" | "true" | "false";
+  specialRequests: string;
+};
+
+type EditBookingErrors = Partial<Record<keyof EditBookingFormState, string>>;
 
 export default function TableBooking() {
   const initialCreateBookingForm: CreateBookingFormState = {
@@ -50,6 +66,21 @@ export default function TableBooking() {
     bookingId: "",
     email: "",
   };
+
+  const initialEditBookingForm: EditBookingFormState = {
+    bookingId: "",
+    name: "",
+    phone: "",
+    email: "",
+    date: "",
+    time: "",
+    numberOfGuests: "",
+    outdoorSeating: "",
+    specialRequests: "",
+  };
+
+  const [editBookingForm, setEditBookingForm] = useState<EditBookingFormState>(initialEditBookingForm);
+  const [editErrors, setEditErrors] = useState<EditBookingErrors>({});
 
   const [step, setStep] = useState(1);
 
@@ -72,6 +103,10 @@ export default function TableBooking() {
   const [foundBooking, setFoundBooking] = useState<FoundBooking | null>(null);
 
   const [isCancellingBooking, setIsCancellingBooking] = useState(false);
+
+  const [isEditingBooking, setIsEditingBooking] = useState(false);
+  const [isUpdatingBooking, setIsUpdatingBooking] = useState(false);
+
 
   const handleCreateBookingChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -258,6 +293,9 @@ export default function TableBooking() {
         outdoorSeating: result.outdoorSeating,
         status: result.status,
         email: result.email,
+        name: result.name,
+        phone: result.phone,
+        specialRequests: result.specialRequests || "",
       });
 
       setManageErrors({});
@@ -270,6 +308,124 @@ export default function TableBooking() {
       }
     } finally {
       setIsFindingBooking(false);
+    }
+  };
+
+  const handleEditBookingClick = () => {
+    if (!foundBooking) return;
+
+    setEditBookingForm({
+      bookingId: String(foundBooking.bookingId),
+      name: foundBooking.name,
+      phone: foundBooking.phone,
+      email: foundBooking.email,
+      date: foundBooking.date,
+      time: foundBooking.time,
+      numberOfGuests: String(foundBooking.numberOfGuests),
+      outdoorSeating: foundBooking.outdoorSeating ? "true" : "false",
+      specialRequests: foundBooking.specialRequests || "",
+    });
+
+    setEditErrors({});
+    setFindError("");
+    setIsEditingBooking(true);
+  };
+
+  const handleEditBookingChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+
+    setEditBookingForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    setEditErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
+  };
+
+  const validateEditBooking = () => {
+    const newErrors: EditBookingErrors = {};
+
+    if (!editBookingForm.name.trim()) newErrors.name = "Fyll i ditt namn";
+    if (!editBookingForm.phone.trim()) newErrors.phone = "Fyll i ditt telefonnummer";
+
+    if (!editBookingForm.email.trim()) {
+      newErrors.email = "Fyll i din e-postadress";
+    } else if (!/\S+@\S+\.\S+/.test(editBookingForm.email)) {
+      newErrors.email = "Fyll i en giltig e-postadress";
+    }
+
+    if (!editBookingForm.date) newErrors.date = "Välj ett datum";
+    if (!editBookingForm.time) newErrors.time = "Välj en tid";
+    if (!editBookingForm.numberOfGuests) {
+      newErrors.numberOfGuests = "Välj antal gäster";
+    }
+    if (!editBookingForm.outdoorSeating) {
+      newErrors.outdoorSeating = "Välj plats";
+    }
+
+    setEditErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleUpdateBooking = async () => {
+    if (!validateEditBooking()) return;
+
+    setFindError("");
+    setIsUpdatingBooking(true);
+
+    try {
+      const response = await fetch("/api/bookings/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bookingId: Number(editBookingForm.bookingId),
+          email: editBookingForm.email,
+          name: editBookingForm.name,
+          phone: editBookingForm.phone,
+          date: editBookingForm.date,
+          time: editBookingForm.time,
+          numberOfGuests: Number(editBookingForm.numberOfGuests),
+          outdoorSeating: editBookingForm.outdoorSeating === "true",
+          specialRequests: editBookingForm.specialRequests || "",
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Kunde inte uppdatera bokningen.");
+      }
+
+      const result = await response.json();
+
+      setFoundBooking({
+        bookingId: result.bookingId,
+        date: result.date,
+        time: result.time,
+        numberOfGuests: result.numberOfGuests,
+        outdoorSeating: result.outdoorSeating,
+        status: result.status,
+        email: result.email,
+        name: result.name,
+        phone: result.phone,
+        specialRequests: result.specialRequests || "",
+      });
+
+      setIsEditingBooking(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        setFindError(error.message);
+      } else {
+        setFindError("Något gick fel när bokningen uppdaterades.");
+      }
+    } finally {
+      setIsUpdatingBooking(false);
     }
   };
 
@@ -306,6 +462,9 @@ export default function TableBooking() {
         outdoorSeating: result.outdoorSeating,
         status: result.status,
         email: result.email,
+        name: result.name,
+        phone: result.phone,
+        specialRequests: result.specialRequests || "",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -597,8 +756,136 @@ export default function TableBooking() {
                   <p>{foundBooking.outdoorSeating ? "Uteservering" : "Inomhus"}</p>
                 </div>
 
+                {isEditingBooking && (
+                  <div className="booking-edit-card">
+                    <h3>Ändra bokning</h3>
+
+                    <div className="form-group">
+                      <label htmlFor="edit-date">Datum</label>
+                      <input
+                        id="edit-date"
+                        name="date"
+                        type="date"
+                        value={editBookingForm.date}
+                        onChange={handleEditBookingChange}
+                      />
+                      {editErrors.date && <p className="field-error">{editErrors.date}</p>}
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="edit-time">Tid</label>
+                      <select
+                        id="edit-time"
+                        name="time"
+                        value={editBookingForm.time}
+                        onChange={handleEditBookingChange}
+                      >
+                        <option value="">Välj tid</option>
+                        <option value="17:00">17:00</option>
+                        <option value="18:00">18:00</option>
+                        <option value="19:00">19:00</option>
+                        <option value="20:00">20:00</option>
+                      </select>
+                      {editErrors.time && <p className="field-error">{editErrors.time}</p>}
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="edit-numberOfGuests">Antal gäster</label>
+                      <select
+                        id="edit-numberOfGuests"
+                        name="numberOfGuests"
+                        value={editBookingForm.numberOfGuests}
+                        onChange={handleEditBookingChange}
+                      >
+                        <option value="">Välj antal</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                      </select>
+                      {editErrors.numberOfGuests && (
+                        <p className="field-error">{editErrors.numberOfGuests}</p>
+                      )}
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="edit-outdoorSeating">Plats</label>
+                      <select
+                        id="edit-outdoorSeating"
+                        name="outdoorSeating"
+                        value={editBookingForm.outdoorSeating}
+                        onChange={handleEditBookingChange}
+                      >
+                        <option value="">Välj plats</option>
+                        <option value="true">Utomhus</option>
+                        <option value="false">Inomhus</option>
+                      </select>
+                      {editErrors.outdoorSeating && (
+                        <p className="field-error">{editErrors.outdoorSeating}</p>
+                      )}
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="edit-name">Namn</label>
+                      <input
+                        id="edit-name"
+                        name="name"
+                        type="text"
+                        value={editBookingForm.name}
+                        onChange={handleEditBookingChange}
+                      />
+                      {editErrors.name && <p className="field-error">{editErrors.name}</p>}
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="edit-phone">Telefon</label>
+                      <input
+                        id="edit-phone"
+                        name="phone"
+                        type="tel"
+                        value={editBookingForm.phone}
+                        onChange={handleEditBookingChange}
+                      />
+                      {editErrors.phone && <p className="field-error">{editErrors.phone}</p>}
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="edit-specialRequests">Speciella önskemål</label>
+                      <textarea
+                        id="edit-specialRequests"
+                        name="specialRequests"
+                        value={editBookingForm.specialRequests}
+                        onChange={handleEditBookingChange}
+                        rows={4}
+                      />
+                    </div>
+
+                    <div className="booking-actions">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => setIsEditingBooking(false)}
+                      >
+                        Avbryt
+                      </Button>
+                      <Button type="button" onClick={handleUpdateBooking} disabled={isUpdatingBooking}>
+                        {isUpdatingBooking ? "Sparar..." : "Spara ändringar"}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
                 <div className="booking-actions">
-                  <Button type="button">Ändra bokning</Button>
+                  <Button
+                    type="button"
+                    onClick={handleEditBookingClick}
+                    disabled={foundBooking?.status === "Cancelled"}
+                  >
+                    Ändra bokning
+                  </Button>
+
                   <Button
                     type="button"
                     variant="secondary"
@@ -607,7 +894,6 @@ export default function TableBooking() {
                   >
                     {isCancellingBooking ? "Avbokar..." : "Avboka"}
                   </Button>
-                  <p className="booking-id">#{foundBooking.bookingId}</p>
                   <p className="booking-status">
                     <strong>Status:</strong> {foundBooking.status}
                   </p>
