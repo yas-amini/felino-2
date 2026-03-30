@@ -181,5 +181,85 @@ public class BookingService : IBookingService
             Status = booking.Status.ToString()
         };
     }
+    public async Task<BookingDto> UpdateBookingAsync(UpdateBookingDto dto)
+    {
+        if (dto.NumberOfGuests <= 0)
+            throw new ArgumentException("Number of guests must be greater than zero.");
 
+        if (dto.Date < DateOnly.FromDateTime(DateTime.Today))
+            throw new ArgumentException("Booking date cannot be in the past.");
+
+        var booking = await _context.Bookings
+            .Include(b => b.Customer)
+            .Include(b => b.Table)
+            .FirstOrDefaultAsync(b =>
+                b.Id == dto.BookingId &&
+                b.Customer.Email == dto.Email);
+
+        if (booking == null)
+            throw new KeyNotFoundException("Ingen bokning hittades med det angivna bokningsnumret och e-postadressen.");
+
+        if (booking.Status == BookingStatus.Cancelled)
+            throw new InvalidOperationException("Det går inte att ändra en avbokad bokning.");
+
+        booking.Customer.Name = dto.Name;
+        booking.Customer.Phone = dto.Phone;
+
+        var table = await FindAvailableTableForUpdateAsync(dto, booking.Id);
+
+        if (table == null)
+            throw new InvalidOperationException("Inga lediga bord hittades för vald tid.");
+
+        booking.TableId = table.Id;
+        booking.Date = dto.Date;
+        booking.Time = dto.Time;
+        booking.NumberOfGuests = dto.NumberOfGuests;
+        booking.OutdoorSeating = dto.OutdoorSeating;
+        booking.SpecialRequests = dto.SpecialRequests;
+        booking.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return new BookingDto
+        {
+            BookingId = booking.Id,
+            Name = booking.Customer.Name,
+            Phone = booking.Customer.Phone,
+            Email = booking.Customer.Email,
+            Date = booking.Date,
+            Time = booking.Time,
+            NumberOfGuests = booking.NumberOfGuests,
+            OutdoorSeating = booking.OutdoorSeating,
+            SpecialRequests = booking.SpecialRequests,
+            TableName = table.Name,
+            Placement = table.Placement,
+            Status = booking.Status.ToString()
+        };
+    }
+    private async Task<Table?> FindAvailableTableForUpdateAsync(UpdateBookingDto dto, int bookingIdToExclude)
+    {
+        var requestedPlacement = dto.OutdoorSeating ? "Outdoor" : "Indoor";
+
+        var candidateTables = await _context.Tables
+            .Where(t => t.Placement == requestedPlacement && t.Capacity >= dto.NumberOfGuests)
+            .OrderBy(t => t.Capacity)
+            .ToListAsync();
+
+        foreach (var table in candidateTables)
+        {
+            var isBooked = await _context.Bookings.AnyAsync(b =>
+                b.Id != bookingIdToExclude &&
+                b.TableId == table.Id &&
+                b.Date == dto.Date &&
+                b.Time == dto.Time &&
+                b.Status == BookingStatus.Confirmed);
+
+            if (!isBooked)
+            {
+                return table;
+            }
+        }
+
+        return null;
+    }
 }
