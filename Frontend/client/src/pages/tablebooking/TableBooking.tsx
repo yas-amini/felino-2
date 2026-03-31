@@ -1,54 +1,24 @@
 import { useState } from "react";
 import Page from "../../components/layout/Page";
 import Button from "../../components/common/Button/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarDays, faUsers, faChair } from "@fortawesome/free-solid-svg-icons";
 import "./TableBooking.css";
-
-type CreateBookingFormState = {
-  date: string;
-  time: string;
-  numberOfGuests: string;
-  outdoorSeating: "" | "true" | "false";
-  name: string;
-  phone: string;
-  email: string;
-  specialRequests: string;
-};
-
-type ManageBookingFormState = {
-  bookingId: string;
-  email: string;
-};
-
-type CreateBookingErrors = Partial<Record<keyof CreateBookingFormState, string>>;
-type ManageBookingErrors = Partial<Record<keyof ManageBookingFormState, string>>;
-
-type FoundBooking = {
-  bookingId: number;
-  date: string;
-  time: string;
-  numberOfGuests: number;
-  outdoorSeating: boolean;
-  status: string;
-  email: string;
-  name: string;
-  phone: string;
-  specialRequests: string;
-};
-type EditBookingFormState = {
-  bookingId: string;
-  name: string;
-  phone: string;
-  email: string;
-  date: string;
-  time: string;
-  numberOfGuests: string;
-  outdoorSeating: "" | "true" | "false";
-  specialRequests: string;
-};
-
-type EditBookingErrors = Partial<Record<keyof EditBookingFormState, string>>;
+import type {
+  CreateBookingFormState,
+  ManageBookingFormState,
+  EditBookingFormState,
+  CreateBookingErrors,
+  ManageBookingErrors,
+  EditBookingErrors,
+  FoundBooking,
+} from "../../types/booking";
+import {
+  createBooking,
+  findBooking,
+  cancelBooking,
+  updateBooking,
+} from "../../api/bookingApi";
+import BookingResultCard from "../../components/booking/BookingResultCard";
+import EditBookingForm from "../../components/booking/EditBookingForm";
 
 export default function TableBooking() {
   const initialCreateBookingForm: CreateBookingFormState = {
@@ -226,20 +196,7 @@ export default function TableBooking() {
         specialRequests: createBookingForm.specialRequests || "",
       };
 
-      const response = await fetch("/api/bookings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(bookingRequest),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Kunde inte skapa bokningen.");
-      }
-
-      const result = await response.json();
+      const result = await createBooking(bookingRequest);
 
       setCreatedBookingId(result.bookingId);
       setCreateBookingForm(initialCreateBookingForm);
@@ -261,29 +218,18 @@ export default function TableBooking() {
     setFindError("");
     setFoundBooking(null);
     setShowBooking(false);
+    setIsEditingBooking(false);
+    setEditErrors({});
 
     if (!validateManageBooking()) return;
 
     setIsFindingBooking(true);
 
     try {
-      const response = await fetch("/api/bookings/find", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          bookingId: Number(manageBookingForm.bookingId),
-          email: manageBookingForm.email,
-        }),
+      const result = await findBooking({
+        bookingId: Number(manageBookingForm.bookingId),
+        email: manageBookingForm.email,
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Kunde inte hämta bokningen.");
-      }
-
-      const result = await response.json();
 
       setFoundBooking({
         bookingId: result.bookingId,
@@ -379,30 +325,17 @@ export default function TableBooking() {
     setIsUpdatingBooking(true);
 
     try {
-      const response = await fetch("/api/bookings/update", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          bookingId: Number(editBookingForm.bookingId),
-          email: editBookingForm.email,
-          name: editBookingForm.name,
-          phone: editBookingForm.phone,
-          date: editBookingForm.date,
-          time: editBookingForm.time,
-          numberOfGuests: Number(editBookingForm.numberOfGuests),
-          outdoorSeating: editBookingForm.outdoorSeating === "true",
-          specialRequests: editBookingForm.specialRequests || "",
-        }),
+      const result = await updateBooking({
+        bookingId: Number(editBookingForm.bookingId),
+        email: editBookingForm.email,
+        name: editBookingForm.name,
+        phone: editBookingForm.phone,
+        date: editBookingForm.date,
+        time: editBookingForm.time,
+        numberOfGuests: Number(editBookingForm.numberOfGuests),
+        outdoorSeating: editBookingForm.outdoorSeating === "true",
+        specialRequests: editBookingForm.specialRequests || "",
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Kunde inte uppdatera bokningen.");
-      }
-
-      const result = await response.json();
 
       setFoundBooking({
         bookingId: result.bookingId,
@@ -418,6 +351,7 @@ export default function TableBooking() {
       });
 
       setIsEditingBooking(false);
+      setEditErrors({});
     } catch (error) {
       if (error instanceof Error) {
         setFindError(error.message);
@@ -436,23 +370,10 @@ export default function TableBooking() {
     setIsCancellingBooking(true);
 
     try {
-      const response = await fetch("/api/bookings/cancel", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          bookingId: foundBooking.bookingId,
-          email: foundBooking.email,
-        }),
+      const result = await cancelBooking({
+        bookingId: foundBooking.bookingId,
+        email: foundBooking.email,
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Kunde inte avboka bokningen.");
-      }
-
-      const result = await response.json();
 
       setFoundBooking({
         bookingId: result.bookingId,
@@ -466,6 +387,9 @@ export default function TableBooking() {
         phone: result.phone,
         specialRequests: result.specialRequests || "",
       });
+
+      setIsEditingBooking(false);
+      setEditErrors({});
     } catch (error) {
       if (error instanceof Error) {
         setFindError(error.message);
@@ -736,172 +660,23 @@ export default function TableBooking() {
             {findError && <p className="field-error">{findError}</p>}
 
             {showBooking && foundBooking && (
-              <div className="booking-result-card">
-                <h3>Din bokning</h3>
+              <BookingResultCard
+                booking={foundBooking}
+                onEdit={handleEditBookingClick}
+                onCancel={handleCancelBooking}
+                isCancelling={isCancellingBooking}
+              />
+            )}
 
-                <div className="found-booking-row">
-                  <FontAwesomeIcon icon={faCalendarDays} />
-                  <p>
-                    {foundBooking.date} kl. {foundBooking.time}
-                  </p>
-                </div>
-
-                <div className="found-booking-row">
-                  <FontAwesomeIcon icon={faUsers} />
-                  <p>{foundBooking.numberOfGuests} gäster</p>
-                </div>
-
-                <div className="found-booking-row">
-                  <FontAwesomeIcon icon={faChair} />
-                  <p>{foundBooking.outdoorSeating ? "Uteservering" : "Inomhus"}</p>
-                </div>
-
-                {isEditingBooking && (
-                  <div className="booking-edit-card">
-                    <h3>Ändra bokning</h3>
-
-                    <div className="form-group">
-                      <label htmlFor="edit-date">Datum</label>
-                      <input
-                        id="edit-date"
-                        name="date"
-                        type="date"
-                        value={editBookingForm.date}
-                        onChange={handleEditBookingChange}
-                      />
-                      {editErrors.date && <p className="field-error">{editErrors.date}</p>}
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="edit-time">Tid</label>
-                      <select
-                        id="edit-time"
-                        name="time"
-                        value={editBookingForm.time}
-                        onChange={handleEditBookingChange}
-                      >
-                        <option value="">Välj tid</option>
-                        <option value="17:00">17:00</option>
-                        <option value="18:00">18:00</option>
-                        <option value="19:00">19:00</option>
-                        <option value="20:00">20:00</option>
-                      </select>
-                      {editErrors.time && <p className="field-error">{editErrors.time}</p>}
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="edit-numberOfGuests">Antal gäster</label>
-                      <select
-                        id="edit-numberOfGuests"
-                        name="numberOfGuests"
-                        value={editBookingForm.numberOfGuests}
-                        onChange={handleEditBookingChange}
-                      >
-                        <option value="">Välj antal</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                      </select>
-                      {editErrors.numberOfGuests && (
-                        <p className="field-error">{editErrors.numberOfGuests}</p>
-                      )}
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="edit-outdoorSeating">Plats</label>
-                      <select
-                        id="edit-outdoorSeating"
-                        name="outdoorSeating"
-                        value={editBookingForm.outdoorSeating}
-                        onChange={handleEditBookingChange}
-                      >
-                        <option value="">Välj plats</option>
-                        <option value="true">Utomhus</option>
-                        <option value="false">Inomhus</option>
-                      </select>
-                      {editErrors.outdoorSeating && (
-                        <p className="field-error">{editErrors.outdoorSeating}</p>
-                      )}
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="edit-name">Namn</label>
-                      <input
-                        id="edit-name"
-                        name="name"
-                        type="text"
-                        value={editBookingForm.name}
-                        onChange={handleEditBookingChange}
-                      />
-                      {editErrors.name && <p className="field-error">{editErrors.name}</p>}
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="edit-phone">Telefon</label>
-                      <input
-                        id="edit-phone"
-                        name="phone"
-                        type="tel"
-                        value={editBookingForm.phone}
-                        onChange={handleEditBookingChange}
-                      />
-                      {editErrors.phone && <p className="field-error">{editErrors.phone}</p>}
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="edit-specialRequests">Speciella önskemål</label>
-                      <textarea
-                        id="edit-specialRequests"
-                        name="specialRequests"
-                        value={editBookingForm.specialRequests}
-                        onChange={handleEditBookingChange}
-                        rows={4}
-                      />
-                    </div>
-
-                    <div className="booking-actions">
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={() => setIsEditingBooking(false)}
-                      >
-                        Avbryt
-                      </Button>
-                      <Button type="button" onClick={handleUpdateBooking} disabled={isUpdatingBooking}>
-                        {isUpdatingBooking ? "Sparar..." : "Spara ändringar"}
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                <div className="booking-actions">
-                  <Button
-                    type="button"
-                    onClick={handleEditBookingClick}
-                    disabled={foundBooking?.status === "Cancelled"}
-                  >
-                    Ändra bokning
-                  </Button>
-
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={handleCancelBooking}
-                    disabled={isCancellingBooking || foundBooking?.status === "Cancelled"}
-                  >
-                    {isCancellingBooking ? "Avbokar..." : "Avboka"}
-                  </Button>
-                  <p className="booking-status">
-                    <strong>Status:</strong> {foundBooking.status}
-                  </p>
-                  {foundBooking.status === "Cancelled" && (
-                    <p className="field-error">Den här bokningen är avbokad.</p>
-                  )}
-                </div>
-              </div>
+            {isEditingBooking && (
+              <EditBookingForm
+                form={editBookingForm}
+                errors={editErrors}
+                isUpdating={isUpdatingBooking}
+                onChange={handleEditBookingChange}
+                onCancel={() => setIsEditingBooking(false)}
+                onSave={handleUpdateBooking}
+              />
             )}
           </div>
         </section>
