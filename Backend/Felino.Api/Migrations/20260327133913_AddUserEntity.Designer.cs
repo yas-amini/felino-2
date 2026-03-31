@@ -4,6 +4,7 @@ using Felino.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,13 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Felino.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260327133913_AddUserEntity")]
+    partial class AddUserEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.5")
+                .HasAnnotation("ProductVersion", "10.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -188,7 +191,7 @@ namespace Felino.Api.Migrations
                         {
                             Id = 1,
                             Description = "Klassiska pizzor med olika toppings.",
-                            ImageUrl = "/images/admin/categories/pizzacategory.jpg",
+                            ImageUrl = "/images/products/pizzas.png",
                             Name = "Pizza",
                             Slug = "pizza"
                         },
@@ -196,15 +199,15 @@ namespace Felino.Api.Migrations
                         {
                             Id = 2,
                             Description = "Hamburgare med klassiska och moderna tillbehör.",
-                            ImageUrl = "/images/admin/categories/burgercategory.jpg",
-                            Name = "Hamburgare",
+                            ImageUrl = "/images/products/burgers.png",
+                            Name = "Burger",
                             Slug = "burger"
                         },
                         new
                         {
                             Id = 3,
                             Description = "Kebab, gyros och rullar serverade med fräscha tillbehör.",
-                            ImageUrl = "/images/admin/categories/kebabcategory.jpg",
+                            ImageUrl = "/images/products/kebab.png",
                             Name = "Kebab",
                             Slug = "kebab"
                         },
@@ -212,7 +215,7 @@ namespace Felino.Api.Migrations
                         {
                             Id = 4,
                             Description = "Pastarätter med smakrika såser och klassiska recept.",
-                            ImageUrl = "/images/admin/categories/pastacategory.jpg",
+                            ImageUrl = "/images/products/pasta.png",
                             Name = "Pasta",
                             Slug = "pasta"
                         },
@@ -220,15 +223,15 @@ namespace Felino.Api.Migrations
                         {
                             Id = 5,
                             Description = "Fräscha sallader med kyckling, ost, räkor och grönsaker.",
-                            ImageUrl = "/images/admin/categories/salladcategory.jpg",
-                            Name = "Sallader",
+                            ImageUrl = "/images/products/sallad.png",
+                            Name = "Sallad",
                             Slug = "sallad"
                         },
                         new
                         {
                             Id = 6,
                             Description = "Grillrätter serverade med pommes och goda tillbehör.",
-                            ImageUrl = "/images/admin/categories/grillcategory.jpg",
+                            ImageUrl = "/images/products/grill.png",
                             Name = "Grill",
                             Slug = "grill"
                         },
@@ -236,7 +239,7 @@ namespace Felino.Api.Migrations
                         {
                             Id = 7,
                             Description = "Pommes, såser och andra tillbehör som passar till maten.",
-                            ImageUrl = "/images/admin/categories/tillbehorcategory.jpg",
+                            ImageUrl = "/images/products/tillbehor.png",
                             Name = "Tillbehör",
                             Slug = "tillbehor"
                         },
@@ -244,7 +247,7 @@ namespace Felino.Api.Migrations
                         {
                             Id = 8,
                             Description = "Läsk, vatten och andra drycker till maten.",
-                            ImageUrl = "/images/admin/categories/dryckcategory.jpg",
+                            ImageUrl = "/images/products/dryck.png",
                             Name = "Dryck",
                             Slug = "dryck"
                         });
@@ -414,7 +417,7 @@ namespace Felino.Api.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
@@ -423,8 +426,7 @@ namespace Felino.Api.Migrations
 
                     b.Property<string>("Ingredients")
                         .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1176,7 +1178,8 @@ namespace Felino.Api.Migrations
                     b.HasOne("Felino.Api.Domain.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Category");
                 });
