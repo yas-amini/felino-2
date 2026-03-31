@@ -8,8 +8,9 @@ import type {
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (values: ProductFormValues) => void;
+  onSubmit: (values: ProductFormValues) => void | Promise<void>;
   categories: ProductCategoryOption[];
+  isSubmitting?: boolean;
 };
 
 export default function AdminProductCreateModal({
@@ -17,6 +18,7 @@ export default function AdminProductCreateModal({
   onClose,
   onSubmit,
   categories,
+  isSubmitting = false,
 }: Props) {
   return (
     <AdminModal
@@ -31,6 +33,7 @@ export default function AdminProductCreateModal({
         onCancel={onClose}
         onSubmit={onSubmit}
         categories={categories}
+        isSubmitting={isSubmitting}
         initialValues={{
           categoryId: "",
           name: "",

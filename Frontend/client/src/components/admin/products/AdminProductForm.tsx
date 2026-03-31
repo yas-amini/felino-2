@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import AdminButton from "../shared/AdminButton";
+import { uploadImage } from "../../../api/uploadApi";
 import "./AdminProductForm.css";
 
 export type ProductCategoryOption = {
@@ -21,8 +22,9 @@ type Props = {
   initialValues?: Partial<ProductFormValues>;
   submitLabel?: string;
   onCancel: () => void;
-  onSubmit: (values: ProductFormValues) => void;
+  onSubmit: (values: ProductFormValues) => void | Promise<void>;
   categories: ProductCategoryOption[];
+  isSubmitting?: boolean;
 };
 
 const NAME_MAX_LENGTH = 100;
@@ -30,17 +32,6 @@ const INGREDIENTS_MAX_LENGTH = 2000;
 const SAUCE_MAX_LENGTH = 100;
 const ALT_TEXT_MAX_LENGTH = 200;
 const IMAGE_URL_MAX_LENGTH = 300;
-
-function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = () => reject(new Error("Kunde inte läsa filen"));
-
-    reader.readAsDataURL(file);
-  });
-}
 
 function getNormalizedInitialValues(
   initialValues?: Partial<ProductFormValues>
@@ -66,6 +57,7 @@ export default function AdminProductForm({
   onCancel,
   onSubmit,
   categories,
+  isSubmitting = false,
 }: Props) {
   const normalized = getNormalizedInitialValues(initialValues);
 
@@ -77,6 +69,7 @@ export default function AdminProductForm({
   const [altText, setAltText] = useState(normalized.altText);
   const [imagePreview, setImagePreview] = useState(normalized.imageUrl ?? "");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -114,18 +107,26 @@ export default function AdminProductForm({
     if (!file) return;
 
     try {
-      const nextImageUrl = await fileToDataUrl(file);
+      setIsUploadingImage(true);
+      setErrorMessage("");
 
-      if (nextImageUrl.length > IMAGE_URL_MAX_LENGTH) {
-        setErrorMessage(`Bildens data är för lång. Max ${IMAGE_URL_MAX_LENGTH} tecken tillåts.`);
+      const result = await uploadImage(file);
+
+      if (result.url.length > IMAGE_URL_MAX_LENGTH) {
+        setErrorMessage(
+          `Bild-URL får max vara ${IMAGE_URL_MAX_LENGTH} tecken.`
+        );
         return;
       }
 
-      setImagePreview(nextImageUrl);
-      clearError();
+      setImagePreview(result.url);
     } catch (error) {
-      console.error("Kunde inte läsa vald bild:", error);
-      setErrorMessage("Kunde inte läsa vald bild.");
+      console.error("Kunde inte ladda upp vald bild:", error);
+      setErrorMessage(
+        error instanceof Error ? error.message : "Kunde inte ladda upp bilden."
+      );
+    } finally {
+      setIsUploadingImage(false);
     }
   }
 
@@ -141,16 +142,21 @@ export default function AdminProductForm({
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
+    if (isUploadingImage) {
+      setErrorMessage("Vänta tills bilden har laddats upp klart.");
+      return;
+    }
+
     const normalizedPrice = normalizePrice(price);
 
     const values: ProductFormValues = {
-      categoryId,
+      categoryId: categoryId.trim(),
       name: name.trim(),
       ingredients: ingredients.trim(),
       price: normalizedPrice,
       sauce: sauce.trim(),
       altText: altText.trim(),
-      imageUrl: imagePreview || undefined,
+      imageUrl: imagePreview.trim() || undefined,
     };
 
     if (!values.categoryId) {
@@ -174,7 +180,9 @@ export default function AdminProductForm({
     }
 
     if (values.ingredients.length > INGREDIENTS_MAX_LENGTH) {
-      setErrorMessage("Ingredienser är för långt.");
+      setErrorMessage(
+        `Ingredienser får max vara ${INGREDIENTS_MAX_LENGTH} tecken.`
+      );
       return;
     }
 
@@ -183,8 +191,15 @@ export default function AdminProductForm({
       return;
     }
 
-    if (Number.isNaN(Number(values.price))) {
+    const parsedPrice = Number(values.price);
+
+    if (Number.isNaN(parsedPrice)) {
       setErrorMessage("Ange ett giltigt pris.");
+      return;
+    }
+
+    if (parsedPrice <= 0) {
+      setErrorMessage("Pris måste vara större än 0.");
       return;
     }
 
@@ -223,6 +238,7 @@ export default function AdminProductForm({
             name="categoryId"
             className="in select"
             value={categoryId}
+            disabled={isSubmitting || isUploadingImage}
             onChange={(e) => {
               setCategoryId(e.target.value);
               clearError();
@@ -249,6 +265,7 @@ export default function AdminProductForm({
             maxLength={NAME_MAX_LENGTH}
             placeholder="Ex. Vesuvio"
             value={name}
+            disabled={isSubmitting || isUploadingImage}
             onChange={(e) => {
               setName(e.target.value);
               clearError();
@@ -266,8 +283,9 @@ export default function AdminProductForm({
             type="text"
             className="in text"
             maxLength={INGREDIENTS_MAX_LENGTH}
-            placeholder='["ost", "skinka"] eller kommaseparerat om du mappar senare'
+            placeholder="Tomatsås, ost, skinka"
             value={ingredients}
+            disabled={isSubmitting || isUploadingImage}
             onChange={(e) => {
               setIngredients(e.target.value);
               clearError();
@@ -287,6 +305,7 @@ export default function AdminProductForm({
             inputMode="decimal"
             placeholder="99.00"
             value={price}
+            disabled={isSubmitting || isUploadingImage}
             onChange={(e) => {
               setPrice(e.target.value);
               clearError();
@@ -306,6 +325,7 @@ export default function AdminProductForm({
             maxLength={SAUCE_MAX_LENGTH}
             placeholder="bearnaisesås"
             value={sauce}
+            disabled={isSubmitting || isUploadingImage}
             onChange={(e) => {
               setSauce(e.target.value);
               clearError();
@@ -325,6 +345,7 @@ export default function AdminProductForm({
             maxLength={ALT_TEXT_MAX_LENGTH}
             placeholder="Capricciosa pizza med skinka och champinjoner"
             value={altText}
+            disabled={isSubmitting || isUploadingImage}
             onChange={(e) => {
               setAltText(e.target.value);
               clearError();
@@ -359,8 +380,13 @@ export default function AdminProductForm({
               size="sm"
               variant="primary"
               onClick={handlePickImage}
+              disabled={isSubmitting || isUploadingImage}
             >
-              {imagePreview ? "Byt bild" : "Lägg till bild"}
+              {isUploadingImage
+                ? "Laddar upp..."
+                : imagePreview
+                ? "Byt bild"
+                : "Lägg till bild"}
             </AdminButton>
 
             {imagePreview && (
@@ -369,6 +395,7 @@ export default function AdminProductForm({
                 size="sm"
                 variant="cancel"
                 onClick={removeImage}
+                disabled={isSubmitting || isUploadingImage}
               >
                 Ta bort bild
               </AdminButton>
@@ -390,11 +417,20 @@ export default function AdminProductForm({
           ) : null}
 
           <div className="btn-row-bottom">
-            <AdminButton type="submit" variant="primary">
-              {submitLabel}
+            <AdminButton
+              type="submit"
+              variant="primary"
+              disabled={isSubmitting || isUploadingImage}
+            >
+              {isSubmitting ? "Sparar..." : submitLabel}
             </AdminButton>
 
-            <AdminButton type="button" variant="cancel" onClick={onCancel}>
+            <AdminButton
+              type="button"
+              variant="cancel"
+              onClick={onCancel}
+              disabled={isSubmitting || isUploadingImage}
+            >
               Avbryt
             </AdminButton>
           </div>

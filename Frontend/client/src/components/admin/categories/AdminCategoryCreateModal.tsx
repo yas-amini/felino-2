@@ -5,13 +5,15 @@ import type { AdminCategoryFormValues } from "./AdminCategoryForm";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (values: AdminCategoryFormValues) => void;
+  onSubmit: (values: AdminCategoryFormValues) => void | Promise<void>;
+  isSubmitting?: boolean;
 };
 
 export default function AdminCategoryCreateModal({
   isOpen,
   onClose,
   onSubmit,
+  isSubmitting = false,
 }: Props) {
   return (
     <AdminModal
@@ -24,6 +26,7 @@ export default function AdminCategoryCreateModal({
         submitLabel="Lägg till kategori"
         onCancel={onClose}
         onSubmit={onSubmit}
+        isSubmitting={isSubmitting}
         initialValues={{
           name: "",
           slug: "",

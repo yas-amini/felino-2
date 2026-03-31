@@ -15,6 +15,7 @@ import {
 import AdminButton from "../shared/AdminButton";
 import AdminConfirmModal from "../shared/AdminConfirmModal";
 import { useAdminQuickActions } from "../shared/AdminQuickActionsContext";
+import { removeToken } from "../../../utils/authStorage";
 import "./AdminPageHeader.css";
 
 type Props = {
@@ -33,6 +34,7 @@ export default function AdminPageHeader({ title }: Props) {
   } = useAdminQuickActions();
 
   function confirmLogout() {
+    removeToken();
     setOpenLogout(false);
     navigate("/");
   }

@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Modal from "../Modal/Modal";
 import AdminButton from "../../admin/shared/AdminButton";
+import { loginAdmin } from "../../../api/authApi";
+import { saveToken } from "../../../utils/authStorage";
 import "./AdminProfileModal.css";
 
 type AdminProfileModalProps = {
@@ -12,10 +15,43 @@ export default function AdminProfileModal({
   isOpen,
   onClose,
 }: AdminProfileModalProps) {
-  const [email, setEmail] = useState("");
+  const navigate = useNavigate();
+
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showReset, setShowReset] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    setErrorMessage("");
+    setIsLoading(true);
+
+    try {
+      const result = await loginAdmin({
+        username,
+        password,
+      });
+
+      console.log("LOGIN RESPONSE:", result);
+
+      saveToken((result as any).access_token ?? (result as any).accessToken);
+
+      onClose();
+      navigate("/admin/profile");
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Något gick fel vid inloggning.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="default">
@@ -25,28 +61,22 @@ export default function AdminProfileModal({
           <h2>Logga in</h2>
           <p className="adminProfileModal__text">
             Logga in för att komma åt adminsidorna för Felino Pizza.
-
-            (Klicka på Logga in för att komma till Admin-sidorna, inget behöver fyllas i just nu)
           </p>
         </div>
 
-        <form
-          className="adminProfileModal__form"
-          onSubmit={(e) => e.preventDefault()}
-        >
-          {/* EMAIL */}
+        <form className="adminProfileModal__form" onSubmit={handleSubmit}>
           <div className="adminProfileModal__field">
-            <label htmlFor="admin-email">E-post</label>
+            <label htmlFor="admin-username">Användarnamn</label>
             <input
-              id="admin-email"
-              type="email"
-              placeholder="namn@felinopizza.se"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="admin-username"
+              type="text"
+              placeholder="Ange användarnamn"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="username"
             />
           </div>
 
-          {/* PASSWORD */}
           <div className="adminProfileModal__field">
             <label htmlFor="admin-password">Lösenord</label>
             <input
@@ -55,6 +85,7 @@ export default function AdminProfileModal({
               placeholder="Skriv ditt lösenord"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
             />
 
             <button
@@ -66,7 +97,10 @@ export default function AdminProfileModal({
             </button>
           </div>
 
-          {/* RESET (email istället) */}
+          {errorMessage && (
+            <p className="adminProfileModal__error">{errorMessage}</p>
+          )}
+
           {showReset && (
             <div className="adminProfileModal__resetBox">
               <div className="adminProfileModal__field">
@@ -83,22 +117,22 @@ export default function AdminProfileModal({
               </div>
 
               <p className="adminProfileModal__note">
-                (Design just nu — senare skickar vi återställningslänk)
+                Design just nu — senare skickar vi återställningslänk.
               </p>
 
-              <AdminButton size="sm">
+              <AdminButton size="sm" type="button">
                 Skicka återställningslänk
               </AdminButton>
             </div>
           )}
 
           <div className="adminProfileModal__actions">
-            <AdminButton variant="ghost" onClick={onClose}>
+            <AdminButton variant="ghost" onClick={onClose} type="button">
               Avbryt
             </AdminButton>
 
-            <AdminButton to="/admin/profile" onClick={onClose}>
-              Logga in
+            <AdminButton type="submit" disabled={isLoading}>
+              {isLoading ? "Loggar in..." : "Logga in"}
             </AdminButton>
           </div>
         </form>

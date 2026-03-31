@@ -15,7 +15,7 @@
   font-size: 0.8rem;
   font-weight: 500;
   line-height: 1;
-  text-decoration: none;  
+  text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
   transition:
@@ -26,7 +26,6 @@
     transform 0.14s ease;
   -webkit-tap-highlight-color: transparent;
 }
-
 
 .fpAdminBtn:focus-visible {
   outline: 2px solid rgba(56, 102, 66, 0.18);
@@ -52,7 +51,6 @@
   font-size: 0.75rem;
   border-radius: 6px;
 }
-
 
 .fpAdminBtn--primary {
   background: #eceff1;
@@ -96,11 +94,12 @@
   color: #374151;
 }
 
-/*  List icon buttons  */
+/* List icon buttons */
 .fpAdminBtn--icon-edit,
 .fpAdminBtn--icon-delete,
 .fpAdminBtn--icon-save,
-.fpAdminBtn--icon-toggle {
+.fpAdminBtn--icon-toggle,
+.fpAdminBtn--icon-add {
   background: transparent;
   border: none;
   padding: 0;
@@ -128,9 +127,14 @@
   color: #4b5563;
 }
 
+.fpAdminBtn--icon-add {
+  color: #4b5563;
+}
+
 .fpAdminBtn--icon-edit:hover,
 .fpAdminBtn--icon-delete:hover,
-.fpAdminBtn--icon-save:hover {
+.fpAdminBtn--icon-save:hover,
+.fpAdminBtn--icon-add:hover {
   background: transparent;
   border: none;
   transform: none;
@@ -138,13 +142,15 @@
 
 .fpAdminBtn--icon-edit:hover,
 .fpAdminBtn--icon-save:hover,
-.fpAdminBtn--icon-toggle:hover {
+.fpAdminBtn--icon-toggle:hover,
+.fpAdminBtn--icon-add:hover {
   color: #111827;
 }
 
 .fpAdminBtn--icon-delete:hover {
   color: #991b1b;
 }
+
 .fpAdminBtn svg {
   font-size: 1.3em;
   flex: 0 0 auto;
