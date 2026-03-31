@@ -21,7 +21,8 @@ namespace Felino.Api.Infrastructure.Persistence.Configurations
                 .HasMaxLength(120);
 
             builder.Property(x => x.Ingredients)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(2000);
 
             builder.Property(x => x.Price)
                 .HasColumnType("decimal(18,2)");
@@ -38,6 +39,7 @@ namespace Felino.Api.Infrastructure.Persistence.Configurations
             builder.HasOne(x => x.Category)
                 .WithMany(x => x.Products)
                 .HasForeignKey(x => x.CategoryId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasIndex(x => x.Slug)
@@ -102,17 +104,17 @@ namespace Felino.Api.Infrastructure.Persistence.Configurations
                 new Product { Id = 43, Name = "Vitlökssås", Slug = "vitlokssas", Ingredients = "[\"vitlökssås\"]", Price = 20.00m, ImageUrl = "/images/products/vitloksas.png", AltText = "Vitlökssås", Sauce = null, CategoryId = 7 },
                 new Product { Id = 44, Name = "Chilisås", Slug = "chilisas", Ingredients = "[\"chilisås\"]", Price = 20.00m, ImageUrl = "/images/products/chilisas.png", AltText = "Chilisås", Sauce = null, CategoryId = 7 },
 
-               // Dryck (CategoryId = 8)
-               new Product { Id = 45, Name = "Cola Classic", Slug = "cola-classic", Ingredients = "[\"cola\"]", Price = 20.00m, ImageUrl = "/images/products/cola-classic.png", AltText = "Cola Classic", Sauce = null, CategoryId = 8 },
-               new Product { Id = 46, Name = "Limonade Spritz", Slug = "limonade-spritz", Ingredients = "[\"citrus soda\"]", Price = 20.00m, ImageUrl = "/images/products/limonade-spritz.png", AltText = "Limonade Spritz", Sauce = null, CategoryId = 8 },
-               new Product { Id = 47, Name = "Grape Sensation", Slug = "grape-sensation", Ingredients = "[\"grape soda\"]", Price = 20.00m, ImageUrl = "/images/products/grape-sensation.png", AltText = "Grape Sensation", Sauce = null, CategoryId = 8 },
-               new Product { Id = 48, Name = "Tropical Punch", Slug = "tropical-punch", Ingredients = "[\"tropical soda\"]", Price = 20.00m, ImageUrl = "/images/products/tropical-punch.png", AltText = "Tropical Punch", Sauce = null, CategoryId = 8 },
-               new Product { Id = 49, Name = "Dr. Cherry", Slug = "dr-cherry", Ingredients = "[\"cherry cola\"]", Price = 20.00m, ImageUrl = "/images/products/dr-cherry.png", AltText = "Dr. Cherry", Sauce = null, CategoryId = 8 },
-               new Product { Id = 50, Name = "Root Beer Tradition", Slug = "root-beer-tradition", Ingredients = "[\"root beer\"]", Price = 20.00m, ImageUrl = "/images/products/root-beer.png", AltText = "Root Beer Tradition", Sauce = null, CategoryId = 8 },
-               new Product { Id = 51, Name = "Cream Soda Delight", Slug = "cream-soda-delight", Ingredients = "[\"cream soda\"]", Price = 20.00m, ImageUrl = "/images/products/cream-soda.png", AltText = "Cream Soda Delight", Sauce = null, CategoryId = 8 },
-               new Product { Id = 52, Name = "Lemon Tea Refresh", Slug = "lemon-tea-refresh", Ingredients = "[\"lemon iced tea\"]", Price = 20.00m, ImageUrl = "/images/products/lemon-tea.png", AltText = "Lemon Tea Refresh", Sauce = null, CategoryId = 8 },
-               new Product { Id = 53, Name = "Ginger Ale Extra", Slug = "ginger-ale-extra", Ingredients = "[\"ginger ale\"]", Price = 20.00m, ImageUrl = "/images/products/ginger-ale.png", AltText = "Ginger Ale Extra", Sauce = null, CategoryId = 8 },
-               new Product { Id = 54, Name = "Orange Burst", Slug = "orange-burst", Ingredients = "[\"orange soda\"]", Price = 20.00m, ImageUrl = "/images/products/orange-burst.png", AltText = "Orange Burst", Sauce = null, CategoryId = 8 }
+                // Dryck (CategoryId = 8)
+                new Product { Id = 45, Name = "Cola Classic", Slug = "cola-classic", Ingredients = "[\"cola\"]", Price = 20.00m, ImageUrl = "/images/products/cola-classic.png", AltText = "Cola Classic", Sauce = null, CategoryId = 8 },
+                new Product { Id = 46, Name = "Limonade Spritz", Slug = "limonade-spritz", Ingredients = "[\"citrus soda\"]", Price = 20.00m, ImageUrl = "/images/products/limonade-spritz.png", AltText = "Limonade Spritz", Sauce = null, CategoryId = 8 },
+                new Product { Id = 47, Name = "Grape Sensation", Slug = "grape-sensation", Ingredients = "[\"grape soda\"]", Price = 20.00m, ImageUrl = "/images/products/grape-sensation.png", AltText = "Grape Sensation", Sauce = null, CategoryId = 8 },
+                new Product { Id = 48, Name = "Tropical Punch", Slug = "tropical-punch", Ingredients = "[\"tropical soda\"]", Price = 20.00m, ImageUrl = "/images/products/tropical-punch.png", AltText = "Tropical Punch", Sauce = null, CategoryId = 8 },
+                new Product { Id = 49, Name = "Dr. Cherry", Slug = "dr-cherry", Ingredients = "[\"cherry cola\"]", Price = 20.00m, ImageUrl = "/images/products/dr-cherry.png", AltText = "Dr. Cherry", Sauce = null, CategoryId = 8 },
+                new Product { Id = 50, Name = "Root Beer Tradition", Slug = "root-beer-tradition", Ingredients = "[\"root beer\"]", Price = 20.00m, ImageUrl = "/images/products/root-beer.png", AltText = "Root Beer Tradition", Sauce = null, CategoryId = 8 },
+                new Product { Id = 51, Name = "Cream Soda Delight", Slug = "cream-soda-delight", Ingredients = "[\"cream soda\"]", Price = 20.00m, ImageUrl = "/images/products/cream-soda.png", AltText = "Cream Soda Delight", Sauce = null, CategoryId = 8 },
+                new Product { Id = 52, Name = "Lemon Tea Refresh", Slug = "lemon-tea-refresh", Ingredients = "[\"lemon iced tea\"]", Price = 20.00m, ImageUrl = "/images/products/lemon-tea.png", AltText = "Lemon Tea Refresh", Sauce = null, CategoryId = 8 },
+                new Product { Id = 53, Name = "Ginger Ale Extra", Slug = "ginger-ale-extra", Ingredients = "[\"ginger ale\"]", Price = 20.00m, ImageUrl = "/images/products/ginger-ale.png", AltText = "Ginger Ale Extra", Sauce = null, CategoryId = 8 },
+                new Product { Id = 54, Name = "Orange Burst", Slug = "orange-burst", Ingredients = "[\"orange soda\"]", Price = 20.00m, ImageUrl = "/images/products/orange-burst.png", AltText = "Orange Burst", Sauce = null, CategoryId = 8 }
             );
         }
     }

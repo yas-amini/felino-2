@@ -42,15 +42,15 @@ namespace Felino.Api.Infrastructure.Persistence.Configurations
                     Name = "Pizza",
                     Slug = "pizza",
                     Description = "Klassiska pizzor med olika toppings.",
-                    ImageUrl = "/images/products/pizzas.png"
+                    ImageUrl = "/images/admin/categories/pizzacategory.jpg"
                 },
                 new Category
                 {
                     Id = 2,
-                    Name = "Burger",
+                    Name = "Hamburgare",
                     Slug = "burger",
                     Description = "Hamburgare med klassiska och moderna tillbehör.",
-                    ImageUrl = "/images/products/burgers.png"
+                    ImageUrl = "/images/admin/categories/burgercategory.jpg"
                 },
                 new Category
                 {
@@ -58,7 +58,7 @@ namespace Felino.Api.Infrastructure.Persistence.Configurations
                     Name = "Kebab",
                     Slug = "kebab",
                     Description = "Kebab, gyros och rullar serverade med fräscha tillbehör.",
-                    ImageUrl = "/images/products/kebab.png"
+                    ImageUrl = "/images/admin/categories/kebabcategory.jpg"
                 },
                 new Category
                 {
@@ -66,15 +66,15 @@ namespace Felino.Api.Infrastructure.Persistence.Configurations
                     Name = "Pasta",
                     Slug = "pasta",
                     Description = "Pastarätter med smakrika såser och klassiska recept.",
-                    ImageUrl = "/images/products/pasta.png"
+                    ImageUrl = "/images/admin/categories/pastacategory.jpg"
                 },
                 new Category
                 {
                     Id = 5,
-                    Name = "Sallad",
+                    Name = "Sallader",
                     Slug = "sallad",
                     Description = "Fräscha sallader med kyckling, ost, räkor och grönsaker.",
-                    ImageUrl = "/images/products/sallad.png"
+                    ImageUrl = "/images/admin/categories/salladcategory.jpg"
                 },
                 new Category
                 {
@@ -82,7 +82,7 @@ namespace Felino.Api.Infrastructure.Persistence.Configurations
                     Name = "Grill",
                     Slug = "grill",
                     Description = "Grillrätter serverade med pommes och goda tillbehör.",
-                    ImageUrl = "/images/products/grill.png"
+                    ImageUrl = "/images/admin/categories/grillcategory.jpg"
                 },
                 new Category
                 {
@@ -90,7 +90,7 @@ namespace Felino.Api.Infrastructure.Persistence.Configurations
                     Name = "Tillbehör",
                     Slug = "tillbehor",
                     Description = "Pommes, såser och andra tillbehör som passar till maten.",
-                    ImageUrl = "/images/products/tillbehor.png"
+                    ImageUrl = "/images/admin/categories/tillbehorcategory.jpg"
                 },
                 new Category
                 {
@@ -98,7 +98,7 @@ namespace Felino.Api.Infrastructure.Persistence.Configurations
                     Name = "Dryck",
                     Slug = "dryck",
                     Description = "Läsk, vatten och andra drycker till maten.",
-                    ImageUrl = "/images/products/dryck.png"
+                    ImageUrl = "/images/admin/categories/dryckcategory.jpg"
                 }
             );
         }
