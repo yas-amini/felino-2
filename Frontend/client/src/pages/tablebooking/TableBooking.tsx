@@ -1,26 +1,27 @@
 import { useState } from "react";
 import Page from "../../components/layout/Page";
 import Button from "../../components/common/Button/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarDays, faUsers, faChair } from "@fortawesome/free-solid-svg-icons";
-import "./TableBooking.css"
-
-type FormState = {
-  date: string;
-  time: string;
-  numberOfGuests: string;
-  outdoorSeating: "" | "true" | "false";
-  name: string;
-  phone: string;
-  email: string;
-  specialRequests: string;
-  bookingId: string;
-};
-
-type FormErrors = Partial<Record<keyof FormState, string>>;
+import "./TableBooking.css";
+import type {
+  CreateBookingFormState,
+  ManageBookingFormState,
+  EditBookingFormState,
+  CreateBookingErrors,
+  ManageBookingErrors,
+  EditBookingErrors,
+  FoundBooking,
+} from "../../types/booking";
+import {
+  createBooking,
+  findBooking,
+  cancelBooking,
+  updateBooking,
+} from "../../api/bookingApi";
+import BookingResultCard from "../../components/booking/BookingResultCard";
+import EditBookingForm from "../../components/booking/EditBookingForm";
 
 export default function TableBooking() {
-  const initialForm: FormState = {
+  const initialCreateBookingForm: CreateBookingFormState = {
     date: "",
     time: "",
     numberOfGuests: "",
@@ -29,59 +30,136 @@ export default function TableBooking() {
     phone: "",
     email: "",
     specialRequests: "",
-    bookingId: "",
   };
 
+  const initialManageBookingForm: ManageBookingFormState = {
+    bookingId: "",
+    email: "",
+  };
+
+  const initialEditBookingForm: EditBookingFormState = {
+    bookingId: "",
+    name: "",
+    phone: "",
+    email: "",
+    date: "",
+    time: "",
+    numberOfGuests: "",
+    outdoorSeating: "",
+    specialRequests: "",
+  };
+
+  const [editBookingForm, setEditBookingForm] = useState<EditBookingFormState>(initialEditBookingForm);
+  const [editErrors, setEditErrors] = useState<EditBookingErrors>({});
+
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState<FormState>(initialForm);
-  const [errors, setErrors] = useState<FormErrors>({});
+
+  const [createBookingForm, setCreateBookingForm] =
+    useState<CreateBookingFormState>(initialCreateBookingForm);
+  const [manageBookingForm, setManageBookingForm] =
+    useState<ManageBookingFormState>(initialManageBookingForm);
+
+  const [createErrors, setCreateErrors] = useState<CreateBookingErrors>({});
+  const [manageErrors, setManageErrors] = useState<ManageBookingErrors>({});
+
   const [showBooking, setShowBooking] = useState(false);
 
   const [apiError, setApiError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdBookingId, setCreatedBookingId] = useState<number | null>(null);
 
+  const [findError, setFindError] = useState("");
+  const [isFindingBooking, setIsFindingBooking] = useState(false);
+  const [foundBooking, setFoundBooking] = useState<FoundBooking | null>(null);
 
-  const handleChange = (
+  const [isCancellingBooking, setIsCancellingBooking] = useState(false);
+
+  const [isEditingBooking, setIsEditingBooking] = useState(false);
+  const [isUpdatingBooking, setIsUpdatingBooking] = useState(false);
+
+
+  const handleCreateBookingChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
 
-    setForm((prev) => ({
+    setCreateBookingForm((prev) => ({
       ...prev,
       [name]: value,
     }));
 
-    setErrors((prev) => ({
+    setCreateErrors((prev) => ({
       ...prev,
       [name]: "",
     }));
   };
 
+  const handleManageBookingChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+
+    setManageBookingForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    setManageErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
+
+    setFindError("");
+  };
+
   const validateStepOne = () => {
-    const newErrors: FormErrors = {};
+    const newErrors: CreateBookingErrors = {};
 
-    if (!form.date) newErrors.date = "Välj ett datum";
-    if (!form.time) newErrors.time = "Välj en tid";
-    if (!form.numberOfGuests) newErrors.numberOfGuests = "Välj antal gäster";
-    if (!form.outdoorSeating) newErrors.outdoorSeating = "Välj plats";
+    if (!createBookingForm.date) newErrors.date = "Välj ett datum";
+    if (!createBookingForm.time) newErrors.time = "Välj en tid";
+    if (!createBookingForm.numberOfGuests) {
+      newErrors.numberOfGuests = "Välj antal gäster";
+    }
+    if (!createBookingForm.outdoorSeating) {
+      newErrors.outdoorSeating = "Välj plats";
+    }
 
-    setErrors(newErrors);
+    setCreateErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const validateStepTwo = () => {
-    const newErrors: FormErrors = {};
+    const newErrors: CreateBookingErrors = {};
 
-    if (!form.name.trim()) newErrors.name = "Fyll i ditt namn";
-    if (!form.phone.trim()) newErrors.phone = "Fyll i ditt telefonnummer";
-    if (!form.email.trim()) {
+    if (!createBookingForm.name.trim()) newErrors.name = "Fyll i ditt namn";
+    if (!createBookingForm.phone.trim()) {
+      newErrors.phone = "Fyll i ditt telefonnummer";
+    }
+
+    if (!createBookingForm.email.trim()) {
       newErrors.email = "Fyll i din e-postadress";
-    } else if (!/\S+@\S+\.\S+/.test(form.email)) {
+    } else if (!/\S+@\S+\.\S+/.test(createBookingForm.email)) {
       newErrors.email = "Fyll i en giltig e-postadress";
     }
 
-    setErrors(newErrors);
+    setCreateErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateManageBooking = () => {
+    const newErrors: ManageBookingErrors = {};
+
+    if (!manageBookingForm.bookingId.trim()) {
+      newErrors.bookingId = "Fyll i bokningsnummer.";
+    }
+
+    if (!manageBookingForm.email.trim()) {
+      newErrors.email = "Fyll i e-postadress.";
+    } else if (!/\S+@\S+\.\S+/.test(manageBookingForm.email)) {
+      newErrors.email = "Fyll i en giltig e-postadress";
+    }
+
+    setManageErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -108,36 +186,22 @@ export default function TableBooking() {
 
     try {
       const bookingRequest = {
-        name: form.name,
-        phone: form.phone,
-        email: form.email,
-        date: form.date,
-        time: form.time,
-        numberOfGuests: Number(form.numberOfGuests),
-        outdoorSeating: form.outdoorSeating === "true",
-        specialRequests: form.specialRequests || "",
+        name: createBookingForm.name,
+        phone: createBookingForm.phone,
+        email: createBookingForm.email,
+        date: createBookingForm.date,
+        time: createBookingForm.time,
+        numberOfGuests: Number(createBookingForm.numberOfGuests),
+        outdoorSeating: createBookingForm.outdoorSeating === "true",
+        specialRequests: createBookingForm.specialRequests || "",
       };
 
-      const response = await fetch("/api/bookings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(bookingRequest),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Kunde inte skapa bokningen.");
-      }
-
-      const result = await response.json();
+      const result = await createBooking(bookingRequest);
 
       setCreatedBookingId(result.bookingId);
-
-      // Reset form
-      setForm(initialForm);
-      setErrors({});
+      setCreateBookingForm(initialCreateBookingForm);
+      setCreateErrors({});
+      setApiError("");
       setStep(1);
     } catch (error) {
       if (error instanceof Error) {
@@ -150,6 +214,192 @@ export default function TableBooking() {
     }
   };
 
+  const handleFindBooking = async () => {
+    setFindError("");
+    setFoundBooking(null);
+    setShowBooking(false);
+    setIsEditingBooking(false);
+    setEditErrors({});
+
+    if (!validateManageBooking()) return;
+
+    setIsFindingBooking(true);
+
+    try {
+      const result = await findBooking({
+        bookingId: Number(manageBookingForm.bookingId),
+        email: manageBookingForm.email,
+      });
+
+      setFoundBooking({
+        bookingId: result.bookingId,
+        date: result.date,
+        time: result.time,
+        numberOfGuests: result.numberOfGuests,
+        outdoorSeating: result.outdoorSeating,
+        status: result.status,
+        email: result.email,
+        name: result.name,
+        phone: result.phone,
+        specialRequests: result.specialRequests || "",
+      });
+
+      setManageErrors({});
+      setShowBooking(true);
+    } catch (error) {
+      if (error instanceof Error) {
+        setFindError(error.message);
+      } else {
+        setFindError("Något gick fel när bokningen hämtades.");
+      }
+    } finally {
+      setIsFindingBooking(false);
+    }
+  };
+
+  const handleEditBookingClick = () => {
+    if (!foundBooking) return;
+
+    setEditBookingForm({
+      bookingId: String(foundBooking.bookingId),
+      name: foundBooking.name,
+      phone: foundBooking.phone,
+      email: foundBooking.email,
+      date: foundBooking.date,
+      time: foundBooking.time,
+      numberOfGuests: String(foundBooking.numberOfGuests),
+      outdoorSeating: foundBooking.outdoorSeating ? "true" : "false",
+      specialRequests: foundBooking.specialRequests || "",
+    });
+
+    setEditErrors({});
+    setFindError("");
+    setIsEditingBooking(true);
+  };
+
+  const handleEditBookingChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+
+    setEditBookingForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    setEditErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
+  };
+
+  const validateEditBooking = () => {
+    const newErrors: EditBookingErrors = {};
+
+    if (!editBookingForm.name.trim()) newErrors.name = "Fyll i ditt namn";
+    if (!editBookingForm.phone.trim()) newErrors.phone = "Fyll i ditt telefonnummer";
+
+    if (!editBookingForm.email.trim()) {
+      newErrors.email = "Fyll i din e-postadress";
+    } else if (!/\S+@\S+\.\S+/.test(editBookingForm.email)) {
+      newErrors.email = "Fyll i en giltig e-postadress";
+    }
+
+    if (!editBookingForm.date) newErrors.date = "Välj ett datum";
+    if (!editBookingForm.time) newErrors.time = "Välj en tid";
+    if (!editBookingForm.numberOfGuests) {
+      newErrors.numberOfGuests = "Välj antal gäster";
+    }
+    if (!editBookingForm.outdoorSeating) {
+      newErrors.outdoorSeating = "Välj plats";
+    }
+
+    setEditErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleUpdateBooking = async () => {
+    if (!validateEditBooking()) return;
+
+    setFindError("");
+    setIsUpdatingBooking(true);
+
+    try {
+      const result = await updateBooking({
+        bookingId: Number(editBookingForm.bookingId),
+        email: editBookingForm.email,
+        name: editBookingForm.name,
+        phone: editBookingForm.phone,
+        date: editBookingForm.date,
+        time: editBookingForm.time,
+        numberOfGuests: Number(editBookingForm.numberOfGuests),
+        outdoorSeating: editBookingForm.outdoorSeating === "true",
+        specialRequests: editBookingForm.specialRequests || "",
+      });
+
+      setFoundBooking({
+        bookingId: result.bookingId,
+        date: result.date,
+        time: result.time,
+        numberOfGuests: result.numberOfGuests,
+        outdoorSeating: result.outdoorSeating,
+        status: result.status,
+        email: result.email,
+        name: result.name,
+        phone: result.phone,
+        specialRequests: result.specialRequests || "",
+      });
+
+      setIsEditingBooking(false);
+      setEditErrors({});
+    } catch (error) {
+      if (error instanceof Error) {
+        setFindError(error.message);
+      } else {
+        setFindError("Något gick fel när bokningen uppdaterades.");
+      }
+    } finally {
+      setIsUpdatingBooking(false);
+    }
+  };
+
+  const handleCancelBooking = async () => {
+    if (!foundBooking) return;
+
+    setFindError("");
+    setIsCancellingBooking(true);
+
+    try {
+      const result = await cancelBooking({
+        bookingId: foundBooking.bookingId,
+        email: foundBooking.email,
+      });
+
+      setFoundBooking({
+        bookingId: result.bookingId,
+        date: result.date,
+        time: result.time,
+        numberOfGuests: result.numberOfGuests,
+        outdoorSeating: result.outdoorSeating,
+        status: result.status,
+        email: result.email,
+        name: result.name,
+        phone: result.phone,
+        specialRequests: result.specialRequests || "",
+      });
+
+      setIsEditingBooking(false);
+      setEditErrors({});
+    } catch (error) {
+      if (error instanceof Error) {
+        setFindError(error.message);
+      } else {
+        setFindError("Något gick fel när bokningen avbokades.");
+      }
+    } finally {
+      setIsCancellingBooking(false);
+    }
+  };
 
   return (
     <Page>
@@ -167,11 +417,13 @@ export default function TableBooking() {
                   <h2>Boka bord</h2>
                   <p>Välj datum och antal gäster för att boka bord hos oss.</p>
                 </div>
+
                 {createdBookingId && (
                   <div className="booking-success-message">
                     Din bokning är skapad. Ditt bokningsnummer är #{createdBookingId}.
                   </div>
                 )}
+
                 <form className="booking-card" onSubmit={handleSubmit} noValidate>
                   <div className="booking-step">Steg {step} av 2</div>
 
@@ -183,11 +435,13 @@ export default function TableBooking() {
                           id="date"
                           name="date"
                           type="date"
-                          value={form.date}
-                          onChange={handleChange}
+                          value={createBookingForm.date}
+                          onChange={handleCreateBookingChange}
                           min={new Date().toISOString().split("T")[0]}
                         />
-                        {errors.date && <p className="field-error">{errors.date}</p>}
+                        {createErrors.date && (
+                          <p className="field-error">{createErrors.date}</p>
+                        )}
                       </div>
 
                       <div className="form-group">
@@ -195,8 +449,8 @@ export default function TableBooking() {
                         <select
                           id="time"
                           name="time"
-                          value={form.time}
-                          onChange={handleChange}
+                          value={createBookingForm.time}
+                          onChange={handleCreateBookingChange}
                         >
                           <option value="">Välj tid</option>
                           <option value="17:00">17:00</option>
@@ -204,7 +458,9 @@ export default function TableBooking() {
                           <option value="19:00">19:00</option>
                           <option value="20:00">20:00</option>
                         </select>
-                        {errors.time && <p className="field-error">{errors.time}</p>}
+                        {createErrors.time && (
+                          <p className="field-error">{createErrors.time}</p>
+                        )}
                       </div>
 
                       <div className="form-group">
@@ -212,8 +468,8 @@ export default function TableBooking() {
                         <select
                           id="numberOfGuests"
                           name="numberOfGuests"
-                          value={form.numberOfGuests}
-                          onChange={handleChange}
+                          value={createBookingForm.numberOfGuests}
+                          onChange={handleCreateBookingChange}
                         >
                           <option value="">Välj antal</option>
                           <option value="1">1</option>
@@ -223,7 +479,11 @@ export default function TableBooking() {
                           <option value="5">5</option>
                           <option value="6">6</option>
                         </select>
-                        {errors.numberOfGuests && <p className="field-error">{errors.numberOfGuests}</p>}
+                        {createErrors.numberOfGuests && (
+                          <p className="field-error">
+                            {createErrors.numberOfGuests}
+                          </p>
+                        )}
                       </div>
 
                       <div className="form-group">
@@ -231,15 +491,17 @@ export default function TableBooking() {
                         <select
                           id="outdoorSeating"
                           name="outdoorSeating"
-                          value={form.outdoorSeating}
-                          onChange={handleChange}
+                          value={createBookingForm.outdoorSeating}
+                          onChange={handleCreateBookingChange}
                         >
                           <option value="">Välj plats</option>
                           <option value="true">Utomhus</option>
                           <option value="false">Inomhus</option>
                         </select>
-                        {errors.outdoorSeating && (
-                          <p className="field-error">{errors.outdoorSeating}</p>
+                        {createErrors.outdoorSeating && (
+                          <p className="field-error">
+                            {createErrors.outdoorSeating}
+                          </p>
                         )}
                       </div>
 
@@ -252,14 +514,17 @@ export default function TableBooking() {
                   {step === 2 && (
                     <>
                       <div className="booking-summary">
-                        <p><strong>Datum:</strong> {form.date || "-"}</p>
-                        <p><strong>Tid:</strong> {form.time || "-"}</p>
-                        <p><strong>Gäster:</strong> {form.numberOfGuests || "-"}</p>
+                        <p><strong>Datum:</strong> {createBookingForm.date || "-"}</p>
+                        <p><strong>Tid:</strong> {createBookingForm.time || "-"}</p>
+                        <p>
+                          <strong>Gäster:</strong>{" "}
+                          {createBookingForm.numberOfGuests || "-"}
+                        </p>
                         <p>
                           <strong>Plats:</strong>{" "}
-                          {form.outdoorSeating === "true"
+                          {createBookingForm.outdoorSeating === "true"
                             ? "Utomhus"
-                            : form.outdoorSeating === "false"
+                            : createBookingForm.outdoorSeating === "false"
                               ? "Inomhus"
                               : "-"}
                         </p>
@@ -271,10 +536,12 @@ export default function TableBooking() {
                           id="name"
                           name="name"
                           type="text"
-                          value={form.name}
-                          onChange={handleChange}
+                          value={createBookingForm.name}
+                          onChange={handleCreateBookingChange}
                         />
-                        {errors.name && <p className="field-error">{errors.name}</p>}
+                        {createErrors.name && (
+                          <p className="field-error">{createErrors.name}</p>
+                        )}
                       </div>
 
                       <div className="form-group">
@@ -283,10 +550,12 @@ export default function TableBooking() {
                           id="phone"
                           name="phone"
                           type="tel"
-                          value={form.phone}
-                          onChange={handleChange}
+                          value={createBookingForm.phone}
+                          onChange={handleCreateBookingChange}
                         />
-                        {errors.phone && <p className="field-error">{errors.phone}</p>}
+                        {createErrors.phone && (
+                          <p className="field-error">{createErrors.phone}</p>
+                        )}
                       </div>
 
                       <div className="form-group">
@@ -295,10 +564,12 @@ export default function TableBooking() {
                           id="email"
                           name="email"
                           type="email"
-                          value={form.email}
-                          onChange={handleChange}
+                          value={createBookingForm.email}
+                          onChange={handleCreateBookingChange}
                         />
-                        {errors.email && <p className="field-error">{errors.email}</p>}
+                        {createErrors.email && (
+                          <p className="field-error">{createErrors.email}</p>
+                        )}
                       </div>
 
                       <div className="form-group">
@@ -306,17 +577,20 @@ export default function TableBooking() {
                         <textarea
                           id="specialRequests"
                           name="specialRequests"
-                          value={form.specialRequests}
-                          onChange={handleChange}
+                          value={createBookingForm.specialRequests}
+                          onChange={handleCreateBookingChange}
                           rows={4}
                         />
                       </div>
 
                       {apiError && <p className="field-error">{apiError}</p>}
 
-
                       <div className="booking-actions">
-                        <Button type="button" variant="secondary" onClick={handlePreviousStep}>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={handlePreviousStep}
+                        >
                           Tillbaka
                         </Button>
                         <Button type="submit" disabled={isSubmitting}>
@@ -328,7 +602,6 @@ export default function TableBooking() {
                 </form>
               </div>
 
-
               <div className="booking-image">
                 <img
                   src="/images/table-booking-hero.jpg"
@@ -339,6 +612,7 @@ export default function TableBooking() {
             </div>
           </div>
         </section>
+
         <section className="handle-booking-section">
           <div className="section-divider" />
           <h2>Hantera bokning</h2>
@@ -353,9 +627,12 @@ export default function TableBooking() {
                 id="bookingId"
                 name="bookingId"
                 type="text"
-                value={form.bookingId}
-                onChange={handleChange}
+                value={manageBookingForm.bookingId}
+                onChange={handleManageBookingChange}
               />
+              {manageErrors.bookingId && (
+                <p className="field-error">{manageErrors.bookingId}</p>
+              )}
             </div>
 
             <div className="form-group">
@@ -364,46 +641,46 @@ export default function TableBooking() {
                 id="manage-email"
                 name="email"
                 type="email"
-                value={form.email}
-                onChange={handleChange}
+                value={manageBookingForm.email}
+                onChange={handleManageBookingChange}
               />
+              {manageErrors.email && (
+                <p className="field-error">{manageErrors.email}</p>
+              )}
             </div>
 
-            <Button type="button" onClick={() => setShowBooking(true)}>
-              Hämta bokning
+            <Button
+              type="button"
+              onClick={handleFindBooking}
+              disabled={isFindingBooking}
+            >
+              {isFindingBooking ? "Hämtar..." : "Hämta bokning"}
             </Button>
 
-            {showBooking && (
-              <div className="booking-result-card">
-                <h3>Din bokning</h3>
+            {findError && <p className="field-error">{findError}</p>}
 
-                <div className="found-booking-row">
-                  <FontAwesomeIcon icon={faCalendarDays} />
-                  <p>Fredag 10 Maj 2026 kl. 18:00</p>
-                </div>
+            {showBooking && foundBooking && (
+              <BookingResultCard
+                booking={foundBooking}
+                onEdit={handleEditBookingClick}
+                onCancel={handleCancelBooking}
+                isCancelling={isCancellingBooking}
+              />
+            )}
 
-                <div className="found-booking-row">
-                  <FontAwesomeIcon icon={faUsers} />
-                  <p>2 gäster</p>
-                </div>
-
-                <div className="found-booking-row">
-                  <FontAwesomeIcon icon={faChair} />
-                  <p>Uteservering</p>
-                </div>
-
-                <div className="booking-actions">
-                  <Button type="button" >Ändra bokning</Button>
-                  <Button type="button" variant="secondary">Avboka</Button>
-                </div>
-
-                <p className="booking-id">#A12345678</p>
-              </div>
+            {isEditingBooking && (
+              <EditBookingForm
+                form={editBookingForm}
+                errors={editErrors}
+                isUpdating={isUpdatingBooking}
+                onChange={handleEditBookingChange}
+                onCancel={() => setIsEditingBooking(false)}
+                onSave={handleUpdateBooking}
+              />
             )}
           </div>
         </section>
       </div>
-
     </Page>
   );
 }

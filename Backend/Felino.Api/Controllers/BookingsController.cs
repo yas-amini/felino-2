@@ -45,5 +45,43 @@ namespace Felino.Api.Controllers
                 return NotFound(ex.Message);
             }
         }
+        [HttpPut("cancel")]
+        public async Task<IActionResult> CancelBooking(CancelBookingDto dto)
+        {
+            try
+            {
+                var result = await _bookingService.CancelBookingAsync(dto);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateBooking(UpdateBookingDto dto)
+        {
+            try
+            {
+                var result = await _bookingService.UpdateBookingAsync(dto);
+                return Ok(result);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

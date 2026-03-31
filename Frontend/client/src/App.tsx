@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import Notification from "./components/common/Notification";
+import RequireAuth from "./components/auth/RequireAuth";
 
 // Layouts
 import SiteLayout from "./layouts/SiteLayout";
@@ -49,24 +50,30 @@ export default function App() {
             <Route element={<SiteLayout />}>
               <Route path="/" element={<HomePage />} />
 
-              {/* OrderPage was deleted, redirecting to bestall for now */}
               <Route path="/meny" element={<Navigate to="/bestall" replace />} />
-              <Route path="/bestall" element={<BestallHem products={sampleProducts} />} />
+              <Route
+                path="/bestall"
+                element={<BestallHem products={sampleProducts} />}
+              />
 
               <Route path="/boka-bord" element={<TableBooking />} />
-
               <Route path="/varukorg" element={<CartPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
-
               <Route path="/order" element={<Navigate to="/bestall" replace />} />
 
-              {/* 404 */}
               <Route path="*" element={<NotFound />} />
             </Route>
 
             {/* ADMIN */}
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route path="" element={<AdminHomePage />} />
+            <Route
+              path="/admin"
+              element={
+                <RequireAuth>
+                  <AdminLayout />
+                </RequireAuth>
+              }
+            >
+              <Route index element={<AdminHomePage />} />
               <Route path="orders" element={<AdminOrdersPage />} />
               <Route path="booking" element={<AdminBookingPage />} />
               <Route path="products" element={<AdminProductsPage />} />

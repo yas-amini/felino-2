@@ -1,32 +1,27 @@
 import AdminButton from "../shared/AdminButton";
 import AdminEntityCard from "../shared/AdminEntityCard";
-
-type Category = {
-  id: number;
-  name: string;
-  slug: string;
-  description: string;
-  imageUrl?: string | null;
-};
+import type { Category } from "../../../types/category";
 
 type Props = {
   category: Category;
-  productCount: number;
   onEdit: () => void;
   onDelete: () => void;
 };
 
 export default function AdminCategoryCard({
   category,
-  productCount,
   onEdit,
   onDelete,
 }: Props) {
+  const productCount = category.products?.length ?? 0;
+
   return (
     <AdminEntityCard
       media={
         <>
-          <span className="category-card__count">{productCount} produkter</span>
+          <span className="category-card__count">
+            {productCount} produkter
+          </span>
 
           {category.imageUrl ? (
             <img
@@ -48,7 +43,9 @@ export default function AdminCategoryCard({
         </div>
       }
       description={
-        <p className="category-card__description">{category.description}</p>
+        <p className="category-card__description">
+          {category.description}
+        </p>
       }
       actions={
         <>
