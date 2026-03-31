@@ -4,13 +4,13 @@ import "./AdminProductsAccordion.css";
 
 export type AdminProductItem = {
   id: number;
-  categoryId: string;
+  categoryId?: string | null;
   name: string;
   ingredients: string;
   price: string;
-  sauce?: string;
-  altText?: string;
-  imageUrl?: string;
+  sauce?: string | null;
+  altText?: string | null;
+  imageUrl?: string | null;
 };
 
 type Props = {
@@ -140,7 +140,9 @@ export default function AdminProductsAccordion({
               <div className="adminProductAccordionBody">
                 <div className="adminProductAccordionGrid">
                   <div>
-                    <span className="adminProductAccordionLabel">Ingredienser</span>
+                    <span className="adminProductAccordionLabel">
+                      Ingredienser
+                    </span>
                     <p>{product.ingredients || "—"}</p>
                   </div>
 
@@ -158,7 +160,9 @@ export default function AdminProductsAccordion({
 
                   {product.altText ? (
                     <div>
-                      <span className="adminProductAccordionLabel">Alt-text</span>
+                      <span className="adminProductAccordionLabel">
+                        Alt-text
+                      </span>
                       <p>{product.altText}</p>
                     </div>
                   ) : null}

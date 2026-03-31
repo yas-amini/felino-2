@@ -1,6 +1,10 @@
 /* KNAPPGUIDE MED FÄRDIGA KODSNUTTAR FINNS I templates/AdminButtons.txt OCH förhandsvisas på AdminSettingsPage tills vi ska fixa den sidan*/
 
-import type { ReactNode, ButtonHTMLAttributes, AnchorHTMLAttributes } from "react";
+import type {
+  ReactNode,
+  ButtonHTMLAttributes,
+  AnchorHTMLAttributes,
+} from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,6 +12,7 @@ import {
   faTrash,
   faPenToSquare,
   faChevronDown,
+  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import "./AdminButton.css";
 
@@ -22,10 +27,11 @@ type CommonProps = {
     | "icon-edit"
     | "icon-save"
     | "icon-toggle"
-    | "icon-header";
-    
+    | "icon-header"
+    | "icon-add";
+
   size?: "md" | "sm";
-  preset?: "save" | "delete" | "edit" | "icon-save" | "toggle";
+  preset?: "save" | "delete" | "edit" | "icon-save" | "toggle" | "add";
   className?: string;
   children?: ReactNode;
 };
@@ -67,7 +73,7 @@ export default function AdminButton({
     variant = "icon-save";
   }
 
-    if (preset === "toggle") {
+  if (preset === "toggle") {
     content = <FontAwesomeIcon icon={faChevronDown} />;
     variant = "icon-toggle";
   }
@@ -81,7 +87,12 @@ export default function AdminButton({
     content = <FontAwesomeIcon icon={faPenToSquare} />;
     variant = "icon-edit";
   }
-  
+
+  if (preset === "add") {
+    content = <FontAwesomeIcon icon={faPlus} />;
+    variant = "icon-add";
+  }
+
   const classes = [
     "fpAdminBtn",
     `fpAdminBtn--${variant}`,

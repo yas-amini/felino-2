@@ -9,8 +9,9 @@ import type {
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (values: ProductFormValues) => void;
+  onSubmit: (values: ProductFormValues) => void | Promise<void>;
   categories: ProductCategoryOption[];
+  isSubmitting?: boolean;
   product?: {
     id?: number;
     categoryId: ProductFormValues["categoryId"];
@@ -19,7 +20,7 @@ type Props = {
     price: string;
     sauce: string;
     altText: string;
-    imageUrl?: string;
+    imageUrl?: string | null;
   } | null;
 };
 
@@ -28,6 +29,7 @@ export default function AdminProductEditModal({
   onClose,
   onSubmit,
   categories,
+  isSubmitting = false,
   product,
 }: Props) {
   const initialValues = useMemo(
@@ -68,6 +70,7 @@ export default function AdminProductEditModal({
         onCancel={onClose}
         onSubmit={onSubmit}
         categories={categories}
+        isSubmitting={isSubmitting}
         initialValues={initialValues}
       />
     </AdminModal>
