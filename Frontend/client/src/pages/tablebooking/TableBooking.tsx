@@ -2,6 +2,7 @@ import { useState } from "react";
 import Page from "../../components/layout/Page";
 import Button from "../../components/common/Button/Button";
 import "./TableBooking.css";
+import { getAvailableTimesForDate } from "../../utils/bookingTimeSlots";
 import type {
   CreateBookingFormState,
   ManageBookingFormState,
@@ -77,6 +78,7 @@ export default function TableBooking() {
   const [isEditingBooking, setIsEditingBooking] = useState(false);
   const [isUpdatingBooking, setIsUpdatingBooking] = useState(false);
 
+  const availableCreateBookingTimes = getAvailableTimesForDate(createBookingForm.date, 60);
 
   const handleCreateBookingChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -453,10 +455,11 @@ export default function TableBooking() {
                           onChange={handleCreateBookingChange}
                         >
                           <option value="">Välj tid</option>
-                          <option value="17:00">17:00</option>
-                          <option value="18:00">18:00</option>
-                          <option value="19:00">19:00</option>
-                          <option value="20:00">20:00</option>
+                          {availableCreateBookingTimes.map((time) => (
+                            <option key={time} value={time}>
+                              {time}
+                            </option>
+                          ))}
                         </select>
                         {createErrors.time && (
                           <p className="field-error">{createErrors.time}</p>

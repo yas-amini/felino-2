@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using Pizzeria.Api.Services.Implementations;
+using Felino.Api.Services.Implementations;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
