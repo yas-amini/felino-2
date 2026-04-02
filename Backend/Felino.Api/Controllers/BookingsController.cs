@@ -83,5 +83,11 @@ namespace Felino.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("admin")]
+        public async Task<IActionResult> GetBookingsByDate([FromQuery] DateOnly date)
+        {
+            var bookings = await _bookingService.GetBookingsByDateAsync(date);
+            return Ok(bookings);
+        }
     }
 }

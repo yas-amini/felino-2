@@ -299,4 +299,30 @@ public class BookingService : IBookingService
 
         return null;
     }
+    public async Task<List<BookingDto>> GetBookingsByDateAsync(DateOnly date)
+    {
+        var bookings = await _context.Bookings
+            .Include(b => b.Customer)
+            .Include(b => b.Table)
+            .Where(b => b.Date == date)
+            .OrderBy(b => b.Time)
+            .ToListAsync();
+
+        return bookings.Select(b => new BookingDto
+        {
+            BookingId = b.Id,
+            Name = b.Customer.Name,
+            Phone = b.Customer.Phone,
+            Email = b.Customer.Email,
+            Date = b.Date,
+            Time = b.Time,
+            NumberOfGuests = b.NumberOfGuests,
+            OutdoorSeating = b.OutdoorSeating,
+            SpecialRequests = b.SpecialRequests,
+            TableName = b.Table.Name,
+            Placement = b.Table.Placement,
+            Status = b.Status.ToString()
+        }).ToList();
+    }
+
 }
