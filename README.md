@@ -5,12 +5,14 @@ Felino is a modern, full-stack web application designed for pizzeria management.
 ## 🚀 Features
 
 ### **For Customers**
+
 - **Dynamic Menu**: Browsable menu categories and products fetched from the live backend API.
 - **Cart & Checkout**: Seamless shopping experience with a real-time order creation flow.
 - **Table Booking**: Easy reservations for in-house dining.
 - **Payment Integration**: Simulated payment processing using the backend Payments API.
 
 ### **For Administrators**
+
 - **Real-time Order Dashboard**: A Kanban-style board to track and update order status (New, Preparing, Ready, Completed).
 - **Product Management**: Ability to manage the pizzeria's menu items and categories.
 - **Order Analytics**: View detailed customer information, order totals, and payment status.
@@ -26,11 +28,13 @@ Felino is a modern, full-stack web application designed for pizzeria management.
 ## 🏁 Getting Started
 
 ### **1. Prerequisites**
+
 - [.NET 10.0 SDK](https://dotnet.microsoft.com/download)
 - [Node.js (v18+)](https://nodejs.org/)
 - [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) or VS Code.
 
 ### **2. Backend Setup**
+
 1. Navigate to the backend directory:
    ```bash
    cd Felino/Backend/Felino.Api
@@ -50,9 +54,10 @@ Felino is a modern, full-stack web application designed for pizzeria management.
      ```bash
      dotnet run
      ```
-   The backend will be available at `http://localhost:8000`.
+     The backend will be available at `http://localhost:8000`.
 
 ### **3. Frontend Setup**
+
 1. Navigate to the frontend directory:
    ```bash
    cd Felino/Frontend/client
@@ -73,5 +78,14 @@ Felino is a modern, full-stack web application designed for pizzeria management.
 - **/frontend**: React application with context-based state management.
 - **/data**: Initial migration seed data (pizzas, burgers, kebabs).
 
+## 👥 Contributors
+
+This is a group project developed by:
+
+- **Sanna Olsson** ([@sannabananaband](https://github.com/sannabananaband))
+- **Jessica Eriksson** ([@jessicasofia816](https://github.com/jessicasofia816))
+- **Yasamin Amini** ([@yas-amini](https://github.com/yas-amini))
+
 ## 📄 License
+
 This project is licensed under the MIT License.
