@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import AdminPage from "../../../components/admin/layout/AdminPage";
 import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import AdminButton from "../../../components/admin/shared/AdminButton";
@@ -53,62 +53,7 @@ const ANCHORS: Record<OrderStatus, string> = {
   canceled: "avbruten",
 };
 
-const INITIAL_ORDERS: Order[] = [
-  {
-    id: 1001,
-    status: "new",
-    total: 149,
-    createdAt: "2026-03-06T10:10:00",
-    customerName: "Anna Svensson",
-    customerAddress: "Storgatan 1, Malmö",
-    customerPhone: "070-123 45 67",
-    customerEmail: "anna@email.se",
-    delivery: 29,
-    comment: "Ingen lök tack.",
-    items: [
-      { qty: 1, name: "Vesuvio", price: 109 },
-      { qty: 1, name: "Coca-Cola", price: 11 },
-    ],
-  },
-  {
-    id: 1002,
-    status: "preparing",
-    total: 228,
-    createdAt: "2026-03-06T10:05:00",
-    customerName: "Erik Nilsson",
-    customerPhone: "070-555 44 33",
-    items: [
-      { qty: 2, name: "Capricciosa", price: 99 },
-      { qty: 1, name: "Vitlökssås", price: 15 },
-    ],
-  },
-  {
-    id: 1003,
-    status: "ready",
-    total: 119,
-    createdAt: "2026-03-06T09:55:00",
-    customerName: "Sara Karlsson",
-    customerAddress: "Hamngatan 12, Lund",
-    items: [{ qty: 1, name: "Kebabpizza", price: 119 }],
-  },
-  {
-    id: 1004,
-    status: "new",
-    total: 189,
-    createdAt: "2026-03-06T10:20:00",
-    customerName: "Johan Persson",
-    customerAddress: "Kungsgatan 8, Malmö",
-    customerPhone: "070-987 65 43",
-    customerEmail: "johan@email.se",
-    delivery: 19,
-    comment: "Ring när ni är utanför.",
-    items: [
-      { qty: 1, name: "Mexicana", price: 125 },
-      { qty: 1, name: "Vitlökssås", price: 15 },
-      { qty: 1, name: "Fanta", price: 30 },
-    ],
-  },
-];
+const INITIAL_ORDERS: Order[] = [];
 
 function formatPrice(value: number) {
   return `${value.toFixed(2)} kr`;
@@ -121,9 +66,45 @@ function formatDate(value: string) {
 export default function AdminOrdersPage() {
   useAdminTopbar("Beställningar");
 
-  const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [draggedId, setDraggedId] = useState<number | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+
+  const fetchOrders = async () => {
+    try {
+      const res = await fetch("/api/orders");
+      if (!res.ok) throw new Error("Kunde inte hämta ordrar.");
+      const data = await res.json();
+      
+      const mappedOrders: Order[] = data.map((o: any) => ({
+        id: o.id,
+        // Map backend enum string/value to frontend status
+        status: o.status.toString().toLowerCase() === "cancelled" ? "canceled" : o.status.toString().toLowerCase(),
+        total: o.total,
+        createdAt: o.createdAt,
+        customerName: o.customerName,
+        customerAddress: o.customerAddress,
+        customerPhone: o.customerPhone,
+        customerEmail: o.customerEmail,
+        items: o.items.map((it: any) => ({
+          qty: it.quantity,
+          name: it.productName,
+          price: it.price
+        }))
+      }));
+      
+      setOrders(mappedOrders);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   const groups = useMemo(() => {
     const result: Record<OrderStatus, Order[]> = {
@@ -148,14 +129,6 @@ export default function AdminOrdersPage() {
     return result;
   }, [orders]);
 
-  function updateOrderStatus(orderId: number, newStatus: OrderStatus) {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
-    );
-  }
-
   function handleNextStatus(order: Order) {
     const currentIndex = STATUS_ORDER.indexOf(order.status);
     const next = STATUS_ORDER[currentIndex + 1];
@@ -163,10 +136,42 @@ export default function AdminOrdersPage() {
     updateOrderStatus(order.id, next);
   }
 
-  function handleDeleteConfirm() {
+  async function updateOrderStatus(orderId: number, newStatus: OrderStatus) {
+    try {
+      // Map back to backend naming for Cancelled
+      const backendStatus = newStatus === "canceled" ? "Cancelled" : newStatus;
+      
+      const res = await fetch(`/api/orders/${orderId}/status`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(backendStatus)
+      });
+
+      if (!res.ok) throw new Error("Kunde inte uppdatera status.");
+      
+      setOrders((prev) =>
+        prev.map((order) =>
+          order.id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function handleDeleteConfirm() {
     if (deleteId == null) return;
-    setOrders((prev) => prev.filter((o) => o.id !== deleteId));
-    setDeleteId(null);
+    try {
+      const res = await fetch(`/api/orders/${deleteId}`, {
+        method: "DELETE"
+      });
+      if (!res.ok) throw new Error("Kunde inte ta bort order.");
+
+      setOrders((prev) => prev.filter((o) => o.id !== deleteId));
+      setDeleteId(null);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   function onDragStart(orderId: number) {

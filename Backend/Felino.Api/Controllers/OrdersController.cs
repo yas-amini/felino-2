@@ -51,5 +51,13 @@ namespace Felino.Api.Controllers
             if (!success) return BadRequest("Invalid status or order not found.");
             return NoContent();
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteOrder(int id)
+        {
+            var success = await _orderService.DeleteOrderAsync(id);
+            if (!success) return NotFound();
+            return NoContent();
+        }
     }
 }
