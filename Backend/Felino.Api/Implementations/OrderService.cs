@@ -106,6 +106,10 @@ namespace Felino.Api.Implementations
             {
                 Id = order.Id,
                 CustomerName = order.CustomerName,
+                CustomerAddress = order.CustomerAddress,
+                CustomerPhone = order.CustomerPhone,
+                CustomerEmail = order.CustomerEmail,
+                Comment = order.Comment,
                 Total = order.Total,
                 Status = order.Status,
                 CreatedAt = order.CreatedAt,

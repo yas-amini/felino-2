@@ -76,22 +76,34 @@ export default function AdminOrdersPage() {
       if (!res.ok) throw new Error("Kunde inte hämta ordrar.");
       const data = await res.json();
       
-      const mappedOrders: Order[] = data.map((o: any) => ({
-        id: o.id,
-        // Map backend enum string/value to frontend status
-        status: o.status.toString().toLowerCase() === "cancelled" ? "canceled" : o.status.toString().toLowerCase(),
-        total: o.total,
-        createdAt: o.createdAt,
-        customerName: o.customerName,
-        customerAddress: o.customerAddress,
-        customerPhone: o.customerPhone,
-        customerEmail: o.customerEmail,
-        items: o.items.map((it: any) => ({
-          qty: it.quantity,
-          name: it.productName,
-          price: it.price
-        }))
-      }));
+      const mappedOrders: Order[] = data.map((o: any) => {
+        // Handle backend OrderStatus enum (0-4 or strings)
+        let status: OrderStatus = "new";
+        const rawStatus = o.status.toString().toLowerCase();
+        
+        if (rawStatus === "0" || rawStatus === "new") status = "new";
+        else if (rawStatus === "1" || rawStatus === "preparing") status = "preparing";
+        else if (rawStatus === "2" || rawStatus === "ready") status = "ready";
+        else if (rawStatus === "3" || rawStatus === "completed") status = "completed";
+        else if (rawStatus === "4" || rawStatus === "cancelled" || rawStatus === "canceled") status = "canceled";
+        
+        return {
+          id: o.id,
+          status,
+          total: o.total,
+          createdAt: o.createdAt,
+          customerName: o.customerName,
+          customerAddress: o.customerAddress,
+          customerPhone: o.customerPhone,
+          customerEmail: o.customerEmail,
+          comment: o.comment,
+          items: o.items.map((it: any) => ({
+            qty: it.quantity,
+            name: it.productName,
+            price: it.price
+          }))
+        };
+      });
       
       setOrders(mappedOrders);
     } catch (err) {
@@ -113,7 +125,9 @@ export default function AdminOrdersPage() {
     };
 
     for (const order of orders) {
-      result[order.status].push(order);
+      if (result[order.status]) {
+        result[order.status].push(order);
+      }
     }
 
     for (const status of STATUS_ORDER) {

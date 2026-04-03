@@ -43,6 +43,10 @@ public class OrderDto
 {
     public int Id { get; set; }
     public string CustomerName { get; set; } = null!;
+    public string CustomerAddress { get; set; } = null!;
+    public string CustomerPhone { get; set; } = null!;
+    public string CustomerEmail { get; set; } = null!;
+    public string? Comment { get; set; }
     public decimal Total { get; set; }
     public OrderStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
