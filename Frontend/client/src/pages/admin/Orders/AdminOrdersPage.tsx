@@ -53,7 +53,7 @@ const ANCHORS: Record<OrderStatus, string> = {
   canceled: "avbruten",
 };
 
-const INITIAL_ORDERS: Order[] = [];
+
 
 function formatPrice(value: number) {
   return `${value.toFixed(2)} kr`;
@@ -67,7 +67,6 @@ export default function AdminOrdersPage() {
   useAdminTopbar("Beställningar");
 
   const [orders, setOrders] = useState<Order[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [draggedId, setDraggedId] = useState<number | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
@@ -97,8 +96,6 @@ export default function AdminOrdersPage() {
       setOrders(mappedOrders);
     } catch (err) {
       console.error(err);
-    } finally {
-      setIsLoading(false);
     }
   };
 

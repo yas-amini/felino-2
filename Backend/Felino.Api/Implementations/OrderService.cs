@@ -90,6 +90,16 @@ namespace Felino.Api.Implementations
             return false;
         }
 
+        public async Task<bool> DeleteOrderAsync(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null) return false;
+
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         private static OrderDto MapToDto(Order order)
         {
             return new OrderDto

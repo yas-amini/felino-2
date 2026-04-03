@@ -8,5 +8,6 @@ namespace Felino.Api.Services.Interfaces
         Task<OrderDto?> GetOrderByIdAsync(int id);
         Task<IEnumerable<OrderDto>> GetAllOrdersAsync();
         Task<bool> UpdateOrderStatusAsync(int id, string status);
+        Task<bool> DeleteOrderAsync(int id);
     }
 }
