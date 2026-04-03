@@ -105,10 +105,10 @@ namespace Felino.Api.Implementations
             return new OrderDto
             {
                 Id = order.Id,
-                CustomerName = order.CustomerName,
-                CustomerAddress = order.CustomerAddress,
-                CustomerPhone = order.CustomerPhone,
-                CustomerEmail = order.CustomerEmail,
+                CustomerName = order.CustomerName ?? string.Empty,
+                CustomerAddress = order.CustomerAddress ?? string.Empty,
+                CustomerPhone = order.CustomerPhone ?? string.Empty,
+                CustomerEmail = order.CustomerEmail ?? string.Empty,
                 Comment = order.Comment,
                 Total = order.Total,
                 Status = order.Status,
