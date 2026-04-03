@@ -123,10 +123,6 @@ export default function MenuPage() {
                   <p>{selectedProduct.ingredients.join(", ")}</p>
                 )}
 
-                {selectedProduct.sides && (
-                  <p>Tillbehör: {selectedProduct.sides.join(", ")}</p>
-                )}
-
                 {selectedProduct.sauce && <p>Sås: {selectedProduct.sauce}</p>}
 
                 <div className="modal-price">{selectedProduct.price} SEK</div>
