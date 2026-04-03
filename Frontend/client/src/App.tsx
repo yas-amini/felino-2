@@ -16,7 +16,6 @@ import Container from "./components/layout/Container";
 import HomePage from "./pages/homepage/HomePage";
 import TableBooking from "./pages/tablebooking/TableBooking";
 import BestallHem from "./pages/bestall-hem/MenuPage";
-import { sampleProducts } from "./data/products";
 import CartPage from "./pages/cartpage/CartPage";
 import CheckoutPage from "./pages/checkoutpage/CheckoutPage";
 
@@ -53,7 +52,7 @@ export default function App() {
               <Route path="/meny" element={<Navigate to="/bestall" replace />} />
               <Route
                 path="/bestall"
-                element={<BestallHem products={sampleProducts} />}
+                element={<BestallHem />}
               />
 
               <Route path="/boka-bord" element={<TableBooking />} />
