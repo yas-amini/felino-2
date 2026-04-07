@@ -97,3 +97,8 @@ export async function updateBooking(
 
   return handleResponse<BookingResponse>(response);
 }
+
+export async function getBookingsByDate(date: string): Promise<BookingResponse[]> {
+  const response = await fetch(`/api/bookings/admin?date=${date}`);
+  return handleResponse<BookingResponse[]>(response);
+}

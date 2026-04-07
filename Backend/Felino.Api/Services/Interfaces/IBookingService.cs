@@ -8,5 +8,6 @@ namespace Felino.Api.Services.Interfaces
         Task<BookingDto> FindBookingAsync(FindBookingDto dto);
         Task<BookingDto> CancelBookingAsync(CancelBookingDto dto);
         Task<BookingDto> UpdateBookingAsync(UpdateBookingDto dto);
+        Task<List<BookingDto>> GetBookingsByDateAsync(DateOnly date);
     }
 }

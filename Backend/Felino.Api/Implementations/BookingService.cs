@@ -2,11 +2,10 @@
 using Felino.Api.Domain.Entities;
 using Felino.Api.Domain.Enums;
 using Felino.Api.DTOs.Bookings;
-using Felino.Api.Implementations;
 using Felino.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Pizzeria.Api.Services.Implementations;
+namespace Felino.Api.Services.Implementations;
 
 public class BookingService : IBookingService
 {
@@ -17,6 +16,32 @@ public class BookingService : IBookingService
         _context = context;
     }
 
+    private static readonly Dictionary<DayOfWeek, (TimeOnly Start, TimeOnly End)> BookableHours = new()
+{
+    { DayOfWeek.Monday,    (new TimeOnly(11, 0), new TimeOnly(21, 0)) },
+    { DayOfWeek.Tuesday,   (new TimeOnly(11, 0), new TimeOnly(21, 0)) },
+    { DayOfWeek.Wednesday, (new TimeOnly(11, 0), new TimeOnly(21, 0)) },
+    { DayOfWeek.Thursday,  (new TimeOnly(11, 0), new TimeOnly(21, 0)) },
+    { DayOfWeek.Friday,    (new TimeOnly(11, 0), new TimeOnly(22, 0)) },
+    { DayOfWeek.Saturday,  (new TimeOnly(11, 0), new TimeOnly(22, 0)) },
+    { DayOfWeek.Sunday,    (new TimeOnly(12, 0), new TimeOnly(21, 0)) }
+};
+
+    private bool IsBookingTimeValid(DateOnly date, TimeOnly time)
+    {
+        var dayOfWeek = date.ToDateTime(TimeOnly.MinValue).DayOfWeek;
+
+        if (!BookableHours.TryGetValue(dayOfWeek, out var hours))
+            return false;
+
+        return time >= hours.Start && time <= hours.End;
+    }
+
+    private bool IsBookingIntervalValid(TimeOnly time)
+    {
+        return time.Minute == 0;
+    }
+
     public async Task<BookingDto> CreateBookingAsync(CreateBookingDto dto)
     {
         if (dto.NumberOfGuests <= 0)
@@ -24,6 +49,12 @@ public class BookingService : IBookingService
 
         if (dto.Date < DateOnly.FromDateTime(DateTime.Today))
             throw new ArgumentException("Booking date cannot be in the past.");
+
+        if (!IsBookingTimeValid(dto.Date, dto.Time))
+            throw new ArgumentException("Vald tid ligger utanför bokningsbara tider.");
+
+        if (!IsBookingIntervalValid(dto.Time))
+            throw new ArgumentException("Vald tid är inte ett giltigt bokningsintervall.");
 
         var customer = await GetOrCreateCustomerAsync(dto);
         var table = await FindAvailableTableAsync(dto);
@@ -189,6 +220,12 @@ public class BookingService : IBookingService
         if (dto.Date < DateOnly.FromDateTime(DateTime.Today))
             throw new ArgumentException("Booking date cannot be in the past.");
 
+        if (!IsBookingTimeValid(dto.Date, dto.Time))
+            throw new ArgumentException("Vald tid ligger utanför bokningsbara tider.");
+
+        if (!IsBookingIntervalValid(dto.Time))
+            throw new ArgumentException("Vald tid är inte ett giltigt bokningsintervall.");
+
         var booking = await _context.Bookings
             .Include(b => b.Customer)
             .Include(b => b.Table)
@@ -262,4 +299,30 @@ public class BookingService : IBookingService
 
         return null;
     }
+    public async Task<List<BookingDto>> GetBookingsByDateAsync(DateOnly date)
+    {
+        var bookings = await _context.Bookings
+            .Include(b => b.Customer)
+            .Include(b => b.Table)
+            .Where(b => b.Date == date)
+            .OrderBy(b => b.Time)
+            .ToListAsync();
+
+        return bookings.Select(b => new BookingDto
+        {
+            BookingId = b.Id,
+            Name = b.Customer.Name,
+            Phone = b.Customer.Phone,
+            Email = b.Customer.Email,
+            Date = b.Date,
+            Time = b.Time,
+            NumberOfGuests = b.NumberOfGuests,
+            OutdoorSeating = b.OutdoorSeating,
+            SpecialRequests = b.SpecialRequests,
+            TableName = b.Table.Name,
+            Placement = b.Table.Placement,
+            Status = b.Status.ToString()
+        }).ToList();
+    }
+
 }

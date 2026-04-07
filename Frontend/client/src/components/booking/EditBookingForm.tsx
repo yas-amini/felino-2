@@ -1,5 +1,6 @@
 import Button from "../common/Button/Button";
 import "../../pages/tablebooking/TableBooking.css";
+import { getAvailableTimesForDate } from "../../utils/bookingTimeSlots";
 import type {
   EditBookingErrors,
   EditBookingFormState,
@@ -24,6 +25,7 @@ export default function EditBookingForm({
   onCancel,
   onSave,
 }: Props) {
+  const availableTimes = getAvailableTimesForDate(form.date, 60);
   return (
     <div className="booking-edit-card">
       <h3>Ändra bokning</h3>
@@ -50,10 +52,11 @@ export default function EditBookingForm({
           onChange={onChange}
         >
           <option value="">Välj tid</option>
-          <option value="17:00">17:00</option>
-          <option value="18:00">18:00</option>
-          <option value="19:00">19:00</option>
-          <option value="20:00">20:00</option>
+          {availableTimes.map((time) => (
+            <option key={time} value={time}>
+              {time}
+            </option>
+          ))}
         </select>
         {errors.time && <p className="field-error">{errors.time}</p>}
       </div>
