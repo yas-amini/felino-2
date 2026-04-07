@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminPage from "../../../components/admin/layout/AdminPage";
 import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import BookingTabs from "../../../components/admin/booking/BookingTabs";
-import BookingToolBar from "../../../components/admin/booking/BookingToolBar";
 import BookingCalendar from "../../../components/admin/booking/BookingCalendar";
 import AdminSectionHead from "../../../components/admin/shared/AdminSectionHead";
+import { getBookingsByDate } from "../../../api/bookingApi";
+import type { BookingResponse } from "../../../types/booking";
 import "./AdminBookingPage.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -22,26 +23,13 @@ export default function AdminBookingPage() {
 
   const [activeTab, setActiveTab] = useState<BookingTab>("kalender");
 
-  const bookings = [
-    {
-      name: "Andersson",
-      time: "17:00 - 19:00",
-      people: 4,
-      phone: "+46 70 123 4567",
-      email: "andersson@example.com",
-      table: "Nr 11",
-      status: "Bekräftad",
-    },
-    {
-      name: "Svensson",
-      time: "17:00 - 19:00",
-      people: 6,
-      phone: "+46 70 123 4567",
-      email: "andersson@example.com",
-      table: "Nr 2",
-      status: "Bekräftad",
-    },
-  ];
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [bookings, setBookings] = useState<BookingResponse[]>([]);
+  const [isLoadingBookings, setIsLoadingBookings] = useState(false);
+  const [bookingsError, setBookingsError] = useState("");
+
 
   const tables = [
     { name: "Nr 1", capacity: 4, location: "Utomhus", status: "Tillgänglig" },
@@ -53,6 +41,30 @@ export default function AdminBookingPage() {
     { name: "Nr 7", capacity: 2, location: "Utomhus", status: "Tillgänglig" },
     { name: "Nr 8", capacity: 4, location: "Utomhus", status: "Tillgänglig" },
   ];
+  useEffect(() => {
+    const loadBookings = async () => {
+      if (!selectedDate) return;
+
+      setIsLoadingBookings(true);
+      setBookingsError("");
+
+      try {
+        const result = await getBookingsByDate(selectedDate);
+        setBookings(result);
+      } catch (error) {
+        if (error instanceof Error) {
+          setBookingsError(error.message);
+        } else {
+          setBookingsError("Kunde inte hämta bokningar.");
+        }
+      } finally {
+        setIsLoadingBookings(false);
+      }
+    };
+
+    loadBookings();
+  }, [selectedDate]);
+
 
   return (
     <AdminPage>
@@ -61,7 +73,21 @@ export default function AdminBookingPage() {
           level={1}
           title="Hantera bokningar"
           description="Här kan du se, skapa och hantera restaurangens bokningar."
-          actions={<BookingToolBar />}
+          actions={<div className="booking-toolbar">
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            />
+
+
+            <button
+              type="button"
+              className="fpAdminBtn fpAdminBtn--primary fpAdminBtn--field"
+            >
+              + Ny bokning
+            </button>
+          </div>}
         />
 
         <section className="admin-booking-tabs-section">
@@ -79,36 +105,32 @@ export default function AdminBookingPage() {
                 description="Översikt över aktuella bokningar."
               />
 
-              {bookings.map((booking, i) => (
-                <div className="booking-item" key={i}>
-                  <div className="booking-header">
-                    <strong>{booking.name}</strong>
-                    <span className="badge confirmed">{booking.status}</span>
+              {isLoadingBookings && <p>Laddar bokningar...</p>}
+              {bookingsError && <p className="field-error">{bookingsError}</p>}
+
+              {!isLoadingBookings && !bookingsError && bookings.length === 0 && (
+                <p>Inga bokningar för valt datum.</p>
+              )}
+
+              {bookings.map((booking) => (
+                <div key={booking.bookingId} className="admin-booking-item">
+                  <div className="admin-booking-header">
+                    <h3>{booking.name}</h3>
+                    <span>{booking.status}</span>
                   </div>
 
-                  <div className="booking-info">
-                    <span>
-                      <FontAwesomeIcon icon={faClock} /> {booking.time}
-                    </span>
-                    <span>
-                      <FontAwesomeIcon icon={faUsers} /> {booking.people} personer
-                    </span>
-                  </div>
+                  <p>
+                    {booking.time} • {booking.numberOfGuests} personer
+                  </p>
 
-                  {booking.phone && (
-                    <div className="booking-info">
-                      <span>
-                        <FontAwesomeIcon icon={faPhone} /> {booking.phone}
-                      </span>
-                      <span>
-                        <FontAwesomeIcon icon={faMailBulk} /> {booking.email}
-                      </span>
-                    </div>
-                  )}
+                  <p>
+                    {booking.phone} • {booking.email}
+                  </p>
 
-                  <div className="booking-table">Bord: {booking.table}</div>
+                  <p>Bord: {booking.tableName}</p>
                 </div>
               ))}
+
             </section>
           )}
 
