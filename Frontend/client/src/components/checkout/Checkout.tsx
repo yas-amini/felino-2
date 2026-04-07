@@ -63,48 +63,61 @@ export default function Checkout() {
     setIsSubmitting(true);
 
     try {
-      const customer = {
-        name: form.name.trim(),
-        address: form.address.trim(),
-        phone: form.phone.trim(),
-        email: form.email.trim(),
+      const orderData = {
+        customerName: form.name.trim(),
+        customerAddress: form.address.trim(),
+        customerPhone: form.phone.trim(),
+        customerEmail: form.email.trim(),
+        items: cartItems.map((item) => ({
+          productId: item.id,
+          quantity: item.quantity,
+          extras: item.specialInstructions || ""
+        }))
       };
 
-      // ─── TODO: replace simulated success with real API call when backend is ready ───
-      // const items = cartItems.map((it) => ({
-      //   product_id: it.id,
-      //   name: it.name,
-      //   price: it.price,
-      //   qty: it.quantity,
-      //   extras: it.specialInstructions ? { notes: it.specialInstructions } : null,
-      // }));
-      // const delivery = 0;
-      // const subtotal = cartTotal;
-      // const total = subtotal + delivery;
-      // const res = await fetch("/api/orders", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ customer, items, subtotal, delivery, total }),
-      // });
-      // const data = await res.json();
-      // if (!res.ok || !data.ok) throw new Error(data.error || "Fel vid orderläggning");
-      // const orderId = data.orderId;
+      // 1. Create the Order
+      const orderRes = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      });
 
-      // ─── Simulated success (remove this block once backend is live) ───
-      await new Promise((r) => setTimeout(r, 800)); // fake network delay
-      const orderId = Math.floor(Math.random() * 90000) + 10000;
+      if (!orderRes.ok) {
+        const error = await orderRes.text();
+        throw new Error(error || "Misslyckades att skapa order.");
+      }
+
+      const order = await orderRes.json();
+
+      // 2. Process the Payment (Simulated as "Card")
+      const paymentData = {
+        orderId: order.id,
+        amount: order.total,
+        paymentMethod: "Card"
+      };
+
+      const paymentRes = await fetch("/api/payments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(paymentData),
+      });
+
+      if (!paymentRes.ok) {
+        // We still have the order, but the payment failed. 
+        const error = await paymentRes.text();
+        console.error("Payment failed:", error);
+      }
 
       // ─── Success ───
       clearCart();
-      showNotification(`Tack ${customer.name}! Din order är mottagen.`);
+      showNotification(`Tack ${form.name}! Din order #${order.id} är mottagen.`);
       navigate("/");
     } catch (err) {
       console.error(err);
-      const msg = "Något gick fel – försök igen.";
+      const msg = err instanceof Error ? err.message : "Något gick fel – försök igen.";
       setErrorMsg(msg);
       showNotification(msg, "error");
     } finally {
-
       setIsSubmitting(false);
     }
   }

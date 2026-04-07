@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProductCard from "./ProductCard";
 import "./MenuPage.css";
 import Container from "../../components/layout/Container";
 import { useCart } from "../../context/CartContext";
 import { useNotification } from "../../context/NotificationContext";
-
 
 type Product = {
   id: number;
@@ -12,12 +11,12 @@ type Product = {
   image: string;
   category: string;
   ingredients?: string[];
-  sides?: string[];
-  sauce?: string;
   price: number;
+  sauce?: string;
 };
 
-type Props = {
+type CategoryData = {
+  name: string;
   products: Product[];
 };
 
@@ -30,12 +29,47 @@ const categoryTranslations: Record<string, string> = {
   pasta: "Pasta",
 };
 
-export default function MenuPage({ products = [] }: Props) {
+export default function MenuPage() {
+  const [categories, setCategories] = useState<CategoryData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [specialInstructions, setSpecialInstructions] = useState("");
   const { addToCart } = useCart();
   const { showNotification } = useNotification();
+
+  useEffect(() => {
+    async function fetchMenu() {
+      try {
+        const response = await fetch("/api/categories");
+        if (!response.ok) throw new Error("Kunde inte hämta menyn.");
+        const data = await response.json();
+
+        // Map CategoryResponseDto to our CategoryData structure
+        const mappedCategories: CategoryData[] = data.map((cat: any) => ({
+          name: cat.name,
+          products: cat.products.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            price: p.price,
+            image: p.imageUrl || "/images/placeholder.png",
+            category: cat.slug,
+            sauce: p.sauce,
+            ingredients: p.ingredients ? JSON.parse(p.ingredients) : []
+          }))
+        }));
+
+        setCategories(mappedCategories.filter(c => c.products.length > 0));
+      } catch (err) {
+        console.error(err);
+        showNotification("Fel vid hämtning av menyn.", "error");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchMenu();
+  }, [showNotification]);
 
   function openProduct(product: Product) {
     setSelectedProduct(product);
@@ -43,25 +77,29 @@ export default function MenuPage({ products = [] }: Props) {
     setSpecialInstructions("");
   }
 
-  const categories = [...new Set(products.map((p) => p.category))];
+  if (isLoading) {
+    return (
+      <Container>
+        <div className="menu-loading">Laddar menyn...</div>
+      </Container>
+    );
+  }
 
   return (
     <Container>
       <div className="menu-content">
         {categories.map((category) => (
-          <section key={category}>
-            <h2>{categoryTranslations[category] || category}</h2>
+          <section key={category.name}>
+            <h2>{categoryTranslations[category.name.toLowerCase()] || category.name}</h2>
 
             <div className="product-container">
-              {products
-                .filter((p) => p.category === category)
-                .map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    onOpen={openProduct}
-                  />
-                ))}
+              {category.products.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product as any}
+                  onOpen={openProduct}
+                />
+              ))}
             </div>
           </section>
         ))}
@@ -83,10 +121,6 @@ export default function MenuPage({ products = [] }: Props) {
 
                 {selectedProduct.ingredients && (
                   <p>{selectedProduct.ingredients.join(", ")}</p>
-                )}
-
-                {selectedProduct.sides && (
-                  <p>Tillbehör: {selectedProduct.sides.join(", ")}</p>
                 )}
 
                 {selectedProduct.sauce && <p>Sås: {selectedProduct.sauce}</p>}
