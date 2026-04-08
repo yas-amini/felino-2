@@ -1,7 +1,8 @@
-﻿using System.Text.RegularExpressions;
-using Felino.Api.Data;
+﻿using Felino.Api.Data;
 using Felino.Api.Domain.Entities;
 using Felino.Api.Dtos.Products;
+using Felino.Api.Helpers;
+using Felino.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,12 @@ namespace Felino.Api.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IProductService _productService;
 
-        public ProductsController(AppDbContext context)
+        public ProductsController(AppDbContext context, IProductService productService)
         {
             _context = context;
+            _productService = productService;
         }
 
         [HttpGet]
@@ -30,15 +33,14 @@ namespace Felino.Api.Controllers
         {
             if (!string.IsNullOrWhiteSpace(slug))
             {
-                var normalizedSlug = GenerateSlug(slug);
+                var normalizedSlug = SlugHelper.Normalize(slug);
 
                 var productsBySlug = await _context.Products
                     .AsNoTracking()
                     .Where(p => p.Slug == normalizedSlug)
-                    .Select(p => MapToDto(p))
                     .ToListAsync();
 
-                return Ok(productsBySlug);
+                return Ok(productsBySlug.Select(MapToDto));
             }
 
             if (page < 1)
@@ -52,10 +54,23 @@ namespace Felino.Api.Controllers
                 .OrderBy(p => p.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Select(p => MapToDto(p))
                 .ToListAsync();
 
-            return Ok(products);
+            return Ok(products.Select(MapToDto));
+        }
+
+        [HttpGet("featured")]
+        [AllowAnonymous]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(IEnumerable<FeaturedProductDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<FeaturedProductDto>>> GetFeaturedProducts(
+            [FromQuery] int take = 6)
+        {
+            if (take < 1)
+                take = 6;
+
+            var result = await _productService.GetFeaturedProductsAsync(take);
+            return Ok(result);
         }
 
         [HttpGet("{id:int}")]
@@ -66,14 +81,12 @@ namespace Felino.Api.Controllers
         {
             var product = await _context.Products
                 .AsNoTracking()
-                .Where(p => p.Id == id)
-                .Select(p => MapToDto(p))
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
                 return NotFound();
 
-            return Ok(product);
+            return Ok(MapToDto(product));
         }
 
         [Authorize(Roles = "Admin")]
@@ -101,7 +114,7 @@ namespace Felino.Api.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            var slug = GenerateSlug(dto.Name);
+            var slug = SlugHelper.Normalize(dto.Name);
 
             if (string.IsNullOrWhiteSpace(slug))
             {
@@ -127,7 +140,7 @@ namespace Felino.Api.Controllers
             {
                 Name = dto.Name.Trim(),
                 Slug = slug,
-                Ingredients = dto.Ingredients.Trim(),
+                Ingredients = IngredientsHelper.Normalize(dto.Ingredients),
                 Price = dto.Price,
                 Sauce = string.IsNullOrWhiteSpace(dto.Sauce)
                     ? null
@@ -171,7 +184,7 @@ namespace Felino.Api.Controllers
             var productToPatch = new UpdateProductDto
             {
                 Name = product.Name,
-                Ingredients = product.Ingredients,
+                Ingredients = IngredientsHelper.Normalize(product.Ingredients),
                 Price = product.Price,
                 Sauce = product.Sauce,
                 AltText = product.AltText,
@@ -199,7 +212,7 @@ namespace Felino.Api.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            var nextSlug = GenerateSlug(productToPatch.Name);
+            var nextSlug = SlugHelper.Normalize(productToPatch.Name);
 
             if (string.IsNullOrWhiteSpace(nextSlug))
             {
@@ -230,7 +243,7 @@ namespace Felino.Api.Controllers
 
             product.Name = productToPatch.Name.Trim();
             product.Slug = nextSlug;
-            product.Ingredients = productToPatch.Ingredients.Trim();
+            product.Ingredients = IngredientsHelper.Normalize(productToPatch.Ingredients);
             product.Price = productToPatch.Price;
             product.Sauce = string.IsNullOrWhiteSpace(productToPatch.Sauce)
                 ? null
@@ -272,28 +285,12 @@ namespace Felino.Api.Controllers
             Id = p.Id,
             Name = p.Name,
             Slug = p.Slug,
-            Ingredients = p.Ingredients,
+            Ingredients = IngredientsHelper.Normalize(p.Ingredients),
             Price = p.Price,
             Sauce = p.Sauce,
             AltText = p.AltText,
             ImageUrl = p.ImageUrl,
             CategoryId = p.CategoryId
         };
-
-        private static string GenerateSlug(string value)
-        {
-            value = value
-                .Trim()
-                .ToLower()
-                .Replace("å", "a")
-                .Replace("ä", "a")
-                .Replace("ö", "o");
-
-            value = Regex.Replace(value, @"[^a-z0-9\s-]", "");
-            value = Regex.Replace(value, @"\s+", "-");
-            value = Regex.Replace(value, @"-+", "-");
-
-            return value.Trim('-');
-        }
     }
 }
