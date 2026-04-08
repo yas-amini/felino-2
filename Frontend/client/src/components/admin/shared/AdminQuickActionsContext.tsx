@@ -21,17 +21,10 @@ import {
   createProduct,
   ProductApiError,
 } from "../../../api/admin/productApi";
-
-type StoredCampaign = {
-  id: number;
-  title: string;
-  body: string;
-  image?: string;
-  altText?: string;
-  startDate: string;
-  endDate: string;
-  status: "active" | "upcoming";
-};
+import {
+  createCampaign,
+  CampaignApiError,
+} from "../../../api/admin/campaignsApi";
 
 type AdminQuickActionsContextType = {
   openCreateProductModal: () => void;
@@ -40,29 +33,11 @@ type AdminQuickActionsContextType = {
   canCreateCampaign: boolean;
 };
 
-const CAMPAIGN_STORAGE_KEY = "admin_campaigns";
-
 const AdminQuickActionsContext =
   createContext<AdminQuickActionsContextType | null>(null);
 
-function getStoredCampaigns(): StoredCampaign[] {
-  if (typeof window === "undefined") {
-    return [];
-  }
-
-  try {
-    const saved = window.localStorage.getItem(CAMPAIGN_STORAGE_KEY);
-    if (!saved) return [];
-
-    const parsed = JSON.parse(saved) as unknown;
-    return Array.isArray(parsed) ? (parsed as StoredCampaign[]) : [];
-  } catch {
-    return [];
-  }
-}
-
 function getErrorMessage(error: unknown, fallbackMessage: string) {
-  if (error instanceof ProductApiError) {
+  if (error instanceof ProductApiError || error instanceof CampaignApiError) {
     if (error.errors) {
       const firstErrorGroup = Object.values(error.errors)[0];
       const firstErrorMessage = firstErrorGroup?.[0];
@@ -85,6 +60,70 @@ function getErrorMessage(error: unknown, fallbackMessage: string) {
   return fallbackMessage;
 }
 
+function validateCampaign(values: CampaignFormValues) {
+  const title = values.title.trim();
+  const body = values.body.trim();
+  const imageUrl = values.imageUrl.trim();
+  const altText = values.altText.trim();
+  const startDate = values.startDate.trim();
+  const endDate = values.endDate.trim();
+
+  if (!title) {
+    window.alert("Rubrik är obligatorisk.");
+    return false;
+  }
+
+  if (title.length > 100) {
+    window.alert("Rubrik får max vara 100 tecken.");
+    return false;
+  }
+
+  if (!body) {
+    window.alert("Brödtext är obligatorisk.");
+    return false;
+  }
+
+  if (body.length > 200) {
+    window.alert("Brödtext får max vara 200 tecken.");
+    return false;
+  }
+
+  if (imageUrl.length > 300) {
+    window.alert("Bild-URL får max vara 300 tecken.");
+    return false;
+  }
+
+  if (altText.length > 200) {
+    window.alert("Alt-text får max vara 200 tecken.");
+    return false;
+  }
+
+  if (!startDate) {
+    window.alert("Startdatum är obligatoriskt.");
+    return false;
+  }
+
+  if (!endDate) {
+    window.alert("Slutdatum är obligatoriskt.");
+    return false;
+  }
+
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    window.alert("Ange giltiga datum.");
+    return false;
+  }
+
+  if (end < start) {
+    window.alert("Slutdatum kan inte vara tidigare än startdatum.");
+    return false;
+  }
+
+  return true;
+}
+
 export function AdminQuickActionsProvider({
   children,
 }: {
@@ -95,6 +134,7 @@ export function AdminQuickActionsProvider({
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(false);
   const [isCreatingProduct, setIsCreatingProduct] = useState(false);
+  const [isCreatingCampaign, setIsCreatingCampaign] = useState(false);
 
   useEffect(() => {
     async function loadCategories() {
@@ -209,46 +249,33 @@ export function AdminQuickActionsProvider({
   }
 
   function closeCreateCampaignModal() {
+    if (isCreatingCampaign) return;
     setIsCreateCampaignOpen(false);
   }
 
-  function handleCreateCampaign(values: CampaignFormValues) {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const existingCampaigns = getStoredCampaigns();
-    const now = new Date();
-    const start = values.startDate ? new Date(values.startDate) : null;
-
-    const newCampaign: StoredCampaign = {
-      id: Date.now(),
-      title: values.title,
-      body: values.body,
-      image: values.image || undefined,
-      altText: values.altText || "",
-      startDate: values.startDate,
-      endDate: values.endDate,
-      status: start && start > now ? "upcoming" : "active",
-    };
-
-    const nextCampaigns = [newCampaign, ...existingCampaigns];
+  async function handleCreateCampaign(values: CampaignFormValues) {
+    if (!validateCampaign(values)) return;
 
     try {
-      window.localStorage.setItem(
-        CAMPAIGN_STORAGE_KEY,
-        JSON.stringify(nextCampaigns)
-      );
-    } catch (error) {
-      console.error("Kunde inte spara kampanj i localStorage:", error);
-      window.alert(
-        "Kampanjen kunde inte sparas eftersom lokal lagring är full. Rensa sparade bilder/data i localStorage och försök igen."
-      );
-      return;
-    }
+      setIsCreatingCampaign(true);
 
-    window.dispatchEvent(new Event("admin-campaigns-updated"));
-    setIsCreateCampaignOpen(false);
+      await createCampaign({
+        title: values.title.trim(),
+        body: values.body.trim(),
+        imageUrl: values.imageUrl.trim() || null,
+        altText: values.altText.trim() || null,
+        startDate: values.startDate,
+        endDate: values.endDate,
+      });
+
+      window.dispatchEvent(new Event("admin-campaigns-updated"));
+      setIsCreateCampaignOpen(false);
+    } catch (error) {
+      console.error("Kunde inte skapa kampanj via quick actions:", error);
+      window.alert(getErrorMessage(error, "Det gick inte att skapa kampanjen."));
+    } finally {
+      setIsCreatingCampaign(false);
+    }
   }
 
   return (
@@ -274,6 +301,7 @@ export function AdminQuickActionsProvider({
         isOpen={isCreateCampaignOpen}
         onClose={closeCreateCampaignModal}
         onSubmit={handleCreateCampaign}
+        isSubmitting={isCreatingCampaign}
       />
     </AdminQuickActionsContext.Provider>
   );

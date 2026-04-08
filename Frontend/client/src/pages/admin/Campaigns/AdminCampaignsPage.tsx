@@ -9,108 +9,140 @@ import AdminSectionHead from "../../../components/admin/shared/AdminSectionHead"
 import type { CampaignFormValues } from "../../../components/admin/campaigns/AdminCampaignForm";
 import { useAdminQuickActions } from "../../../components/admin/shared/AdminQuickActionsContext";
 
+import type { Campaign } from "../../../types/campaign";
+import {
+  deleteCampaign,
+  getCampaigns,
+  updateCampaign,
+} from "../../../api/admin/campaignsApi";
+import { mapCampaignFromApi } from "../../../utils/campaignUtils";
+
 import "./AdminCampaignsPage.css";
 
-type Campaign = {
-  id: number;
-  title: string;
-  body: string;
-  image?: string;
-  altText?: string;
-  startDate: string;
-  endDate: string;
-  status: "active" | "upcoming";
-};
+function toDateTimeLocalValue(dateString: string) {
+  if (!dateString) return "";
 
-const CAMPAIGN_STORAGE_KEY = "admin_campaigns";
+  const date = new Date(dateString);
 
-const fallbackCampaigns: Campaign[] = [
-  {
-    id: 1,
-    title: "2 för 1 på valfria pizzor",
-    body: "Gäller måndag till torsdag mellan 14:00 och 20:00.",
-    image: "/images/site/campaigns/cheeseburger.jpg",
-    altText: "Två pizzor på ett bord",
-    startDate: "2026-03-01T14:00",
-    endDate: "2026-03-31T20:00",
-    status: "active",
-  },
-  {
-    id: 2,
-    title: "Gratis dryck till familjepizza",
-    body: "Vid köp av familjepizza ingår valfri 33 cl dryck.",
-    image: "/images/site/campaigns/pizzaaaa.jpg",
-    altText: "Familjepizza med dryck",
-    startDate: "2026-03-10T11:00",
-    endDate: "2026-03-25T22:00",
-    status: "active",
-  },
-  {
-    id: 3,
-    title: "Helgerbjudande med dessert",
-    body: "Beställ två huvudrätter och få en dessert på köpet.",
-    image: "/images/site/campaigns/pizzeria1.jpg",
-    altText: "Dessert bredvid pizza",
-    startDate: "2026-04-05T12:00",
-    endDate: "2026-04-20T22:00",
-    status: "upcoming",
-  },
-  {
-    id: 4,
-    title: "Studentkampanj",
-    body: "Visa studentlegitimation och få 15% rabatt på utvalda pizzor.",
-    image: "/images/site/campaigns/cheeseburger.jpg",
-    altText: "Student med pizzakartong",
-    startDate: "2026-04-15T11:00",
-    endDate: "2026-05-01T22:00",
-    status: "upcoming",
-  },
-];
-
-function getStoredCampaigns(): Campaign[] {
-  if (typeof window === "undefined") {
-    return fallbackCampaigns;
+  if (Number.isNaN(date.getTime())) {
+    return "";
   }
 
-  try {
-    const saved = window.localStorage.getItem(CAMPAIGN_STORAGE_KEY);
-    if (!saved) return fallbackCampaigns;
+  const pad = (value: number) => String(value).padStart(2, "0");
 
-    const parsed = JSON.parse(saved) as unknown;
-    return Array.isArray(parsed) ? (parsed as Campaign[]) : fallbackCampaigns;
-  } catch {
-    return fallbackCampaigns;
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+function validateCampaign(values: CampaignFormValues) {
+  const title = values.title.trim();
+  const body = values.body.trim();
+  const imageUrl = values.imageUrl.trim();
+  const altText = values.altText.trim();
+  const startDate = values.startDate.trim();
+  const endDate = values.endDate.trim();
+
+  if (!title) {
+    window.alert("Rubrik är obligatorisk.");
+    return false;
   }
+
+  if (title.length > 100) {
+    window.alert("Rubrik får max vara 100 tecken.");
+    return false;
+  }
+
+  if (!body) {
+    window.alert("Brödtext är obligatorisk.");
+    return false;
+  }
+
+  if (body.length > 200) {
+    window.alert("Brödtext får max vara 200 tecken.");
+    return false;
+  }
+
+  if (imageUrl.length > 300) {
+    window.alert("Bild-URL får max vara 300 tecken.");
+    return false;
+  }
+
+  if (altText.length > 200) {
+    window.alert("Alt-text får max vara 200 tecken.");
+    return false;
+  }
+
+  if (!startDate) {
+    window.alert("Startdatum är obligatoriskt.");
+    return false;
+  }
+
+  if (!endDate) {
+    window.alert("Slutdatum är obligatoriskt.");
+    return false;
+  }
+
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    window.alert("Ange giltiga datum.");
+    return false;
+  }
+
+  if (end < start) {
+    window.alert("Slutdatum kan inte vara tidigare än startdatum.");
+    return false;
+  }
+
+  return true;
 }
 
-function saveCampaigns(nextCampaigns: Campaign[]) {
-  if (typeof window === "undefined") return;
+function getErrorMessage(error: unknown, fallbackMessage: string) {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
 
-  window.localStorage.setItem(
-    CAMPAIGN_STORAGE_KEY,
-    JSON.stringify(nextCampaigns)
-  );
-  window.dispatchEvent(new Event("admin-campaigns-updated"));
+  return fallbackMessage;
 }
 
-function AdminCampaignsPageContent() {
-  const [campaigns, setCampaigns] = useState<Campaign[]>(() =>
-    getStoredCampaigns()
-  );
+function CampaignsPageContent() {
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(
-    null
-  );
+  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { openCreateCampaignModal } = useAdminQuickActions();
 
-  useEffect(() => {
-    const syncCampaigns = () => {
-      setCampaigns(getStoredCampaigns());
-    };
+  async function loadData() {
+    try {
+      setIsLoading(true);
 
-    syncCampaigns();
+      const result = await getCampaigns();
+      setCampaigns(result.map(mapCampaignFromApi));
+    } catch (error) {
+      console.error("Kunde inte hämta kampanjer:", error);
+      window.alert(getErrorMessage(error, "Det gick inte att hämta kampanjer."));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadData();
+
+    const syncCampaigns = () => {
+      loadData();
+    };
 
     window.addEventListener("focus", syncCampaigns);
     window.addEventListener(
@@ -132,34 +164,33 @@ function AdminCampaignsPageContent() {
     setOpenEdit(true);
   }
 
-  function handleEditSubmit(values: CampaignFormValues) {
+  async function handleEditSubmit(values: CampaignFormValues) {
     if (!selectedCampaign) return;
+    if (!validateCampaign(values)) return;
 
-    const now = new Date();
-    const start = values.startDate ? new Date(values.startDate) : null;
-    const nextStatus: Campaign["status"] =
-      start && start > now ? "upcoming" : "active";
+    try {
+      setIsUpdating(true);
 
-    const nextCampaigns: Campaign[] = campaigns.map((campaign) =>
-      campaign.id === selectedCampaign.id
-        ? {
-            ...campaign,
-            title: values.title,
-            body: values.body,
-            image: values.image || undefined,
-            altText: values.altText || "",
-            startDate: values.startDate,
-            endDate: values.endDate,
-            status: nextStatus,
-          }
-        : campaign
-    );
+      await updateCampaign(selectedCampaign.id, {
+        title: values.title.trim(),
+        body: values.body.trim(),
+        imageUrl: values.imageUrl.trim() || null,
+        altText: values.altText.trim() || null,
+        startDate: values.startDate,
+        endDate: values.endDate,
+      });
 
-    setCampaigns(nextCampaigns);
-    saveCampaigns(nextCampaigns);
-
-    setOpenEdit(false);
-    setSelectedCampaign(null);
+      await loadData();
+      setOpenEdit(false);
+      setSelectedCampaign(null);
+    } catch (error) {
+      console.error("Kunde inte uppdatera kampanj:", error);
+      window.alert(
+        getErrorMessage(error, "Det gick inte att uppdatera kampanjen.")
+      );
+    } finally {
+      setIsUpdating(false);
+    }
   }
 
   function handleOpenDelete(campaign: Campaign) {
@@ -167,16 +198,33 @@ function AdminCampaignsPageContent() {
     setOpenDelete(true);
   }
 
-  function confirmDelete() {
+  async function confirmDelete() {
     if (!selectedCampaign) return;
 
-    const nextCampaigns: Campaign[] = campaigns.filter(
-      (campaign) => campaign.id !== selectedCampaign.id
-    );
+    try {
+      setIsDeleting(true);
 
-    setCampaigns(nextCampaigns);
-    saveCampaigns(nextCampaigns);
+      await deleteCampaign(selectedCampaign.id);
+      await loadData();
 
+      setOpenDelete(false);
+      setSelectedCampaign(null);
+    } catch (error) {
+      console.error("Kunde inte ta bort kampanj:", error);
+      window.alert(getErrorMessage(error, "Det gick inte att ta bort kampanjen."));
+    } finally {
+      setIsDeleting(false);
+    }
+  }
+
+  function closeEditModal() {
+    if (isUpdating) return;
+    setOpenEdit(false);
+    setSelectedCampaign(null);
+  }
+
+  function closeDeleteModal() {
+    if (isDeleting) return;
     setOpenDelete(false);
     setSelectedCampaign(null);
   }
@@ -200,39 +248,49 @@ function AdminCampaignsPageContent() {
       />
 
       <section className="admin-campaigns-content">
-        <div className="campaigns-grid">
-          {campaigns.map((campaign) => (
-            <AdminCampaignCard
-              key={campaign.id}
-              campaign={campaign}
-              onEdit={() => handleOpenEdit(campaign)}
-              onDelete={() => handleOpenDelete(campaign)}
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <section className="campaigns-empty-state">
+            <p className="campaigns-empty-message">Laddar kampanjer...</p>
+          </section>
+        ) : campaigns.length === 0 ? (
+          <section className="campaigns-empty-state">
+            <p className="campaigns-empty-message">
+              Det finns inga kampanjer ännu.
+            </p>
+          </section>
+        ) : (
+          <div className="campaigns-grid">
+            {campaigns.map((campaign) => (
+              <AdminCampaignCard
+                key={campaign.id}
+                campaign={campaign}
+                onEdit={() => handleOpenEdit(campaign)}
+                onDelete={() => handleOpenDelete(campaign)}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       <AdminCampaignEditModal
         isOpen={openEdit}
-        onClose={() => {
-          setOpenEdit(false);
-          setSelectedCampaign(null);
-        }}
+        onClose={closeEditModal}
         onSubmit={handleEditSubmit}
+        isSubmitting={isUpdating}
         initialValues={
           selectedCampaign
             ? {
                 title: selectedCampaign.title,
                 body: selectedCampaign.body,
-                image: selectedCampaign.image ?? "",
+                imageUrl: selectedCampaign.image ?? "",
                 altText: selectedCampaign.altText ?? "",
-                startDate: selectedCampaign.startDate,
-                endDate: selectedCampaign.endDate,
+                startDate: toDateTimeLocalValue(selectedCampaign.startDate),
+                endDate: toDateTimeLocalValue(selectedCampaign.endDate),
               }
             : {
                 title: "",
                 body: "",
-                image: "",
+                imageUrl: "",
                 altText: "",
                 startDate: "",
                 endDate: "",
@@ -242,16 +300,13 @@ function AdminCampaignsPageContent() {
 
       <AdminConfirmModal
         isOpen={openDelete}
-        onClose={() => {
-          setOpenDelete(false);
-          setSelectedCampaign(null);
-        }}
+        onClose={closeDeleteModal}
         onConfirm={confirmDelete}
         title="Ta bort kampanj"
         message={`Är du säker på att du vill ta bort ${
           selectedCampaign?.title ?? "kampanjen"
         }?`}
-        confirmText="Ja, ta bort"
+        confirmText={isDeleting ? "Tar bort..." : "Ja, ta bort"}
         cancelText="Nej"
         confirmVariant="danger"
       />
@@ -264,7 +319,7 @@ export default function AdminCampaignsPage() {
 
   return (
     <AdminPage>
-      <AdminCampaignsPageContent />
+      <CampaignsPageContent />
     </AdminPage>
   );
 }
