@@ -173,6 +173,43 @@
 .table-card-actions > * {
   min-width: 0;
 }
+.admin-booking-header {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 1rem;
+}
+.admin-booking-header h3 {
+  margin: 0;
+  padding: 0;
+}
+.admin-booking-details, .admin-booking-contact {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 0;
+  color: #4b5563;
+}
+.admin-booking-details p, .admin-booking-contact p {
+  margin: 0;
+  padding: 0;
+}
+
+.booking-status {
+  font-size: x-small;
+  padding: 3px 8px;
+  border-radius: 0.5rem;
+  flex-shrink: 0;
+}
+
+.booking-status.button {
+  background: #000000;
+  color: #ffffff;
+}
+.table-assigned {
+  font-size: small;
+  color: #4b5563;
+}
 
 @media (max-width: 900px) {
   .tables-grid {

@@ -116,18 +116,32 @@ export default function AdminBookingPage() {
                 <div key={booking.bookingId} className="admin-booking-item">
                   <div className="admin-booking-header">
                     <h3>{booking.name}</h3>
-                    <span>{booking.status}</span>
+                    <span className="booking-status button">
+                      {booking.status}
+                    </span>
+                  </div>
+                  <div className="admin-booking-details">
+                    <FontAwesomeIcon icon={faClock} />
+                    <p>
+                      {booking.time.slice(0, 5)}
+                    </p>
+                    <FontAwesomeIcon icon={faUsers} />
+                    <p>{booking.numberOfGuests} personer
+                    </p>
                   </div>
 
-                  <p>
-                    {booking.time} • {booking.numberOfGuests} personer
-                  </p>
+                  <div className="admin-booking-contact">
+                    <FontAwesomeIcon icon={faPhone} />
+                    <p>
+                      {booking.phone}
+                    </p>
+                    <FontAwesomeIcon icon={faMailBulk} /> 
+                    <p>{booking.email}
+                    </p>
+                  </div>
 
-                  <p>
-                    {booking.phone} • {booking.email}
-                  </p>
 
-                  <p>Bord: {booking.tableName}</p>
+                  <p className="table-assigned">Bord: {booking.tableName}</p>
                 </div>
               ))}
 
