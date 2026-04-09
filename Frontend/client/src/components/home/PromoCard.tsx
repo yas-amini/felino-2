@@ -3,9 +3,10 @@ import "./Promo.css";
 type PromoCardProps = {
   image: string;
   alt: string;
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   text: string;
+  dateBadge?: string;
 };
 
 export default function PromoCard({
@@ -14,16 +15,21 @@ export default function PromoCard({
   eyebrow,
   title,
   text,
+  dateBadge,
 }: PromoCardProps) {
   return (
-    <div className="contentBox heroPromoBox">
-      <div className="promoInner">
-        <img src={image} alt={alt} className="promoImage" />
-        <div className="promoOverlay" />
-        <div className="promoContent">
-          <h3>{eyebrow}</h3>
-          <p className="promoTitle">{title}</p>
-          <p className="promoText">{text}</p>
+    <div className="promoCardItem">
+      {dateBadge ? <div className="promoDateBadge">{dateBadge}</div> : null}
+
+      <div className="contentBox heroPromoBox">
+        <div className="promoInner">
+          <img src={image} alt={alt} className="promoImage" />
+          <div className="promoOverlay" />
+          <div className="promoContent">
+            {eyebrow && <h3>{eyebrow}</h3>}
+            <p className="promoTitle">{title}</p>
+            <p className="promoText">{text}</p>
+          </div>
         </div>
       </div>
     </div>

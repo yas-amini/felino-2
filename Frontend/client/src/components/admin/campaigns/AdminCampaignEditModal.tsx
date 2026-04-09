@@ -4,8 +4,9 @@ import AdminCampaignForm, { type CampaignFormValues } from "./AdminCampaignForm"
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (values: CampaignFormValues) => void;
+  onSubmit: (values: CampaignFormValues) => void | Promise<void>;
   initialValues: CampaignFormValues;
+  isSubmitting?: boolean;
 };
 
 export default function AdminCampaignEditModal({
@@ -13,6 +14,7 @@ export default function AdminCampaignEditModal({
   onClose,
   onSubmit,
   initialValues,
+  isSubmitting = false,
 }: Props) {
   return (
     <AdminModal
@@ -27,6 +29,7 @@ export default function AdminCampaignEditModal({
         onSubmit={onSubmit}
         submitLabel="Spara ändringar"
         initialValues={initialValues}
+        isSubmitting={isSubmitting}
       />
     </AdminModal>
   );
