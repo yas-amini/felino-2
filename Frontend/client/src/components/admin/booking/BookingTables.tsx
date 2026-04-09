@@ -1,5 +1,6 @@
 import AdminSectionHead from "../../../components/admin/shared/AdminSectionHead";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import "../../../pages/admin/Booking/AdminBookingPage.css";
 import {
     faUsers,
     faMapPin,
