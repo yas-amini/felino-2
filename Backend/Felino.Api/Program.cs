@@ -1,7 +1,7 @@
-using System.Text;
 using Felino.Api.Data;
 using Felino.Api.Domain.Entities;
 using Felino.Api.Implementations;
+using Felino.Api.Services.Implementations;
 using Felino.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -9,8 +9,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using Felino.Api.Services.Implementations;
+using Pizzeria.Api.Services.Implementations;
 using Scalar.AspNetCore;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,8 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<ITableService, TableService>();
+
 
 // Controllers + JSON Patch support
 builder.Services.AddControllers()
