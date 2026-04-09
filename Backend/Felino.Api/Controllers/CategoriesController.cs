@@ -1,6 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Felino.Api.Data;
+﻿using Felino.Api.Data;
 using Felino.Api.Domain.Entities;
+using Felino.Api.Dtos.Categories;
+using Felino.Api.Helpers;
+using Felino.Api.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -20,8 +22,8 @@ namespace Felino.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<CategoryResponseDto>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<CategoryResponseDto>>> GetCategories([FromQuery] string? slug)
+        [ProducesResponseType(typeof(IEnumerable<CategoryDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories([FromQuery] string? slug)
         {
             IQueryable<Category> query = _context.Categories
                 .Include(c => c.Products)
@@ -29,27 +31,105 @@ namespace Felino.Api.Controllers
 
             if (!string.IsNullOrWhiteSpace(slug))
             {
-                string normalizedSlug = NormalizeSlug(slug);
+                string normalizedSlug = SlugHelper.Normalize(slug);
 
                 var filteredCategories = await query
                     .Where(c => c.Slug == normalizedSlug)
-                    .Select(c => MapCategoryToResponse(c))
                     .ToListAsync();
 
-                return Ok(filteredCategories);
+                return Ok(filteredCategories.Select(c => c.ToDto()));
             }
 
-            var categories = await query
-                .Select(c => MapCategoryToResponse(c))
+            var categories = await query.ToListAsync();
+
+            return Ok(categories.Select(c => c.ToDto()));
+        }
+
+        [HttpGet("featured-preview")]
+        [ProducesResponseType(typeof(IEnumerable<MenuPreviewCategoryDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<MenuPreviewCategoryDto>>> GetFeaturedPreview(
+            [FromQuery] int takePerCategory = 5)
+        {
+            if (takePerCategory < 1)
+                takePerCategory = 1;
+
+            if (takePerCategory > 5)
+                takePerCategory = 5;
+
+            var categories = await _context.Categories
+                .Include(c => c.Products)
+                .AsNoTracking()
                 .ToListAsync();
 
-            return Ok(categories);
+            var orderStats = await _context.OrderItems
+                .Where(oi => oi.ProductId != null)
+                .GroupBy(oi => oi.ProductId)
+                .Select(g => new
+                {
+                    ProductId = g.Key!.Value,
+                    TotalSold = g.Sum(x => x.Quantity)
+                })
+                .ToListAsync();
+
+            var statsLookup = orderStats.ToDictionary(x => x.ProductId, x => x.TotalSold);
+            var random = new Random();
+
+            var result = categories
+                .Select(category =>
+                {
+                    var productsWithStats = category.Products
+                        .Select(p => new
+                        {
+                            p.Id,
+                            p.Name,
+                            p.Price,
+                            TotalSold = statsLookup.GetValueOrDefault(p.Id, 0)
+                        })
+                        .ToList();
+
+                    var featured = productsWithStats
+                        .Where(p => p.TotalSold > 0)
+                        .OrderByDescending(p => p.TotalSold)
+                        .Take(takePerCategory)
+                        .ToList();
+
+                    if (featured.Count < takePerCategory)
+                    {
+                        var missing = takePerCategory - featured.Count;
+
+                        var fallback = productsWithStats
+                            .Where(p => featured.All(fp => fp.Id != p.Id))
+                            .OrderBy(_ => random.Next())
+                            .Take(missing)
+                            .ToList();
+
+                        featured.AddRange(fallback);
+                    }
+
+                    return new MenuPreviewCategoryDto
+                    {
+                        Title = category.Name,
+                        Items = featured
+                            .Take(takePerCategory)
+                            .Select(p => new MenuPreviewItemDto
+                            {
+                                Id = p.Id,
+                                Name = p.Name,
+                                Price = p.Price
+                            })
+                            .ToList()
+                    };
+                })
+                .Where(c => c.Items.Count >= 1)
+                .ToList();
+
+            return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CategoryResponseDto>> GetCategoryById(int id)
+        public async Task<ActionResult<CategoryDto>> GetCategoryById(int id)
         {
             var category = await _context.Categories
                 .Include(c => c.Products)
@@ -59,18 +139,18 @@ namespace Felino.Api.Controllers
             if (category == null)
                 return NotFound();
 
-            return Ok(MapCategoryToResponse(category));
+            return Ok(category.ToDto());
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [Consumes("application/json")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(CategoryResponseDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<ActionResult<CategoryResponseDto>> CreateCategory([FromBody] CreateCategoryDto dto)
+        public async Task<ActionResult<CategoryDto>> CreateCategory([FromBody] CreateCategoryDto dto)
         {
             if (!ModelState.IsValid)
                 return ValidationProblem(ModelState);
@@ -79,8 +159,8 @@ namespace Felino.Api.Controllers
                 return BadRequest();
 
             string slug = string.IsNullOrWhiteSpace(dto.Slug)
-                ? NormalizeSlug(dto.Name)
-                : NormalizeSlug(dto.Slug);
+                ? SlugHelper.Normalize(dto.Name)
+                : SlugHelper.Normalize(dto.Slug);
 
             bool slugExists = await _context.Categories.AnyAsync(c => c.Slug == slug);
             if (slugExists)
@@ -102,7 +182,7 @@ namespace Felino.Api.Controllers
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetCategoryById), new { id = category.Id }, MapCategoryToResponse(category));
+            return CreatedAtAction(nameof(GetCategoryById), new { id = category.Id }, category.ToDto());
         }
 
         [Authorize(Roles = "Admin")]
@@ -145,8 +225,8 @@ namespace Felino.Api.Controllers
                 return BadRequest();
 
             string normalizedSlug = string.IsNullOrWhiteSpace(categoryToPatch.Slug)
-                ? NormalizeSlug(categoryToPatch.Name)
-                : NormalizeSlug(categoryToPatch.Slug);
+                ? SlugHelper.Normalize(categoryToPatch.Name)
+                : SlugHelper.Normalize(categoryToPatch.Slug);
 
             bool slugExists = await _context.Categories
                 .AnyAsync(c => c.Id != id && c.Slug == normalizedSlug);
@@ -218,97 +298,5 @@ namespace Felino.Api.Controllers
 
             return NoContent();
         }
-
-        private static CategoryResponseDto MapCategoryToResponse(Category category)
-        {
-            return new CategoryResponseDto
-            {
-                Id = category.Id,
-                Name = category.Name,
-                Slug = category.Slug,
-                Description = category.Description,
-                ImageUrl = category.ImageUrl,
-                Products = category.Products.Select(p => new ProductListItemDto
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Slug = p.Slug,
-                    Ingredients = p.Ingredients,
-                    Price = p.Price,
-                    Sauce = p.Sauce,
-                    AltText = p.AltText,
-                    ImageUrl = p.ImageUrl,
-                    CategoryId = p.CategoryId
-                }).ToList()
-            };
-        }
-
-        private static string NormalizeSlug(string value)
-        {
-            return value
-                .Trim()
-                .ToLower()
-                .Replace("å", "a")
-                .Replace("ä", "a")
-                .Replace("ö", "o")
-                .Replace(" ", "-");
-        }
-    }
-
-    public class CreateCategoryDto
-    {
-        [Required]
-        [MaxLength(100)]
-        public string Name { get; set; } = string.Empty;
-
-        [MaxLength(120)]
-        public string? Slug { get; set; }
-
-        [Required]
-        [MaxLength(300)]
-        public string Description { get; set; } = string.Empty;
-
-        [MaxLength(300)]
-        public string? ImageUrl { get; set; }
-    }
-
-    public class UpdateCategoryDto
-    {
-        [Required]
-        [MaxLength(100)]
-        public string Name { get; set; } = string.Empty;
-
-        [MaxLength(120)]
-        public string? Slug { get; set; }
-
-        [Required]
-        [MaxLength(300)]
-        public string Description { get; set; } = string.Empty;
-
-        [MaxLength(300)]
-        public string? ImageUrl { get; set; }
-    }
-
-    public class CategoryResponseDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Slug { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string? ImageUrl { get; set; }
-        public List<ProductListItemDto> Products { get; set; } = new();
-    }
-
-    public class ProductListItemDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Slug { get; set; } = string.Empty;
-        public string? Ingredients { get; set; }
-        public decimal Price { get; set; }
-        public string? Sauce { get; set; }
-        public string? AltText { get; set; }
-        public string? ImageUrl { get; set; }
-        public int? CategoryId { get; set; }
     }
 }
