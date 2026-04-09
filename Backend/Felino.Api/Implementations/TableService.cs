@@ -1,6 +1,30 @@
-﻿namespace Felino.Api.Implementations
+﻿using Microsoft.EntityFrameworkCore;
+using Felino.Api.Data;
+using Felino.Api.DTOs.Tables;
+using Felino.Api.Services.Interfaces;
+
+namespace Pizzeria.Api.Services.Implementations;
+
+public class TableService : ITableService
 {
-    public class TableService
+    private readonly AppDbContext _context;
+
+    public TableService(AppDbContext context)
     {
+        _context = context;
+    }
+
+    public async Task<List<TableDto>> GetAllTablesAsync()
+    {
+        return await _context.Tables
+            .OrderBy(t => t.Id)
+            .Select(t => new TableDto
+            {
+                Id = t.Id,
+                Name = t.Name,
+                Capacity = t.Capacity,
+                Placement = t.Placement
+            })
+            .ToListAsync();
     }
 }
