@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using Pizzeria.Api.Services.Implementations;
+using Felino.Api.Data.Seed;
 using Scalar.AspNetCore;
 using System.Text;
 
@@ -144,6 +144,9 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    await context.Database.MigrateAsync();
+    await DbSeeder.SeedTablesAsync(context);
 
     if (!context.Users.Any())
     {

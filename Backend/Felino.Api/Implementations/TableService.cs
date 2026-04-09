@@ -3,7 +3,7 @@ using Felino.Api.Data;
 using Felino.Api.DTOs.Tables;
 using Felino.Api.Services.Interfaces;
 
-namespace Pizzeria.Api.Services.Implementations;
+namespace Felino.Api.Services.Implementations;
 
 public class TableService : ITableService
 {
