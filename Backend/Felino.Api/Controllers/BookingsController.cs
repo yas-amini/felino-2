@@ -16,7 +16,7 @@ namespace Felino.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBooking(CreateBookingDto dto)
+        public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto dto)
         {
             try
             {
