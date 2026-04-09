@@ -1,39 +1,58 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminHomeToday.css";
 
-const adminEvents = [
-  {
-    label: "Ordrar",
-    text: "Ny order inkom från hemleverans.",
-    meta: 'Order #1001: "Vesuvio + Coca-Cola".',
-    route: "/admin/orders",
-    variant: "orders",
-  },
-  {
-    label: "Bokningar",
-    text: "Ny bokning registrerad för idag.",
-    meta: "7 bokningar ligger just nu inlagda.",
-    route: "/admin/booking",
-    variant: "booking",
-  },
-  {
-    label: "Produkter",
-    text: 'Produkten "Kebabpizza Special" har lagts till.',
-    meta: "Senaste ändringen gjordes i menyn.",
-    route: "/admin/products",
-    variant: "products",
-  },
-  {
-    label: "Kampanjer",
-    text: "Ny kampanj skapad: Familjepizza fredag.",
-    meta: "Kampanjen är aktiv just nu.",
-    route: "/admin/campaigns",
-    variant: "campaigns",
-  },
-];
+type AdminTodayEvent = {
+  label: string;
+  text: string;
+  meta: string;
+  route: string;
+  variant: string;
+};
 
 export default function AdminHomeToday() {
   const navigate = useNavigate();
+  const [adminEvents, setAdminEvents] = useState<AdminTodayEvent[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const response = await fetch("/api/admin/dashboard/today", {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error("Kunde inte hämta senaste händelser.");
+        }
+
+        const data: AdminTodayEvent[] = await response.json();
+        setAdminEvents(data);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Något gick fel.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
+
+  if (loading) {
+    return <p>Laddar senaste händelser...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div className="admin-home-today-grid">

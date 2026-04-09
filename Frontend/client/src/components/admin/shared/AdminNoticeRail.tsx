@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminNoticeRail.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,56 +11,43 @@ type AdminNotice = {
   to: string;
 };
 
-const INITIAL_NOTICES: AdminNotice[] = [
-  {
-    id: 1,
-    type: "order",
-    text: "Ny beställning från Elin Andersson",
-    to: "/admin/orders",
-  },
-  {
-    id: 2,
-    type: "booking",
-    text: "Ny bordsbokning för 4 personer kl. 19:30",
-    to: "/admin/booking",
-  },
-  {
-    id: 3,
-    type: "order",
-    text: "Beställning #1042 väntar på bekräftelse",
-    to: "/admin/orders",
-  },
-  {
-    id: 4,
-    type: "campaign",
-    text: "Kampanjen Studentkampanj startar imorgon",
-    to: "/admin/campaigns",
-  },
-  {
-    id: 5,
-    type: "system",
-    text: "Systemet väntar på uppdatering",
-    to: "/admin/settings",
-  },
-  {
-    id: 6,
-    type: "booking",
-    text: "Ny bokning för 2 personer kl. 20:00",
-    to: "/admin/booking",
-  },
-  {
-    id: 7,
-    type: "booking",
-    text: "Ny bokning för 2 personer kl. 20:00",
-    to: "/admin/booking",
-  },
-];
-
 const MAX_VISIBLE_NOTICES = 6;
 
 export default function AdminNoticeRail() {
   const navigate = useNavigate();
-  const [notices, setNotices] = useState<AdminNotice[]>(INITIAL_NOTICES);
+  const [notices, setNotices] = useState<AdminNotice[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    const fetchNotices = async () => {
+      try {
+        const response = await fetch("/api/admin/dashboard/notices", {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error("Kunde inte hämta notiser.");
+        }
+
+        const data: AdminNotice[] = await response.json();
+        setNotices(data);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Något gick fel.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotices();
+  }, []);
 
   function dismissNotice(id: number) {
     setNotices((prev) => prev.filter((notice) => notice.id !== id));
@@ -76,6 +63,26 @@ export default function AdminNoticeRail() {
     () => notices.slice(0, MAX_VISIBLE_NOTICES),
     [notices]
   );
+
+  if (loading) {
+    return (
+      <div id="admin-subbar" className="admin-subbar" aria-label="Undermenyn">
+        <div className="admin-notice-rail" aria-label="Nya händelser">
+          <span className="admin-notice-chip__text">Laddar notiser...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div id="admin-subbar" className="admin-subbar" aria-label="Undermenyn">
+        <div className="admin-notice-rail" aria-label="Nya händelser">
+          <span className="admin-notice-chip__text">{error}</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div id="admin-subbar" className="admin-subbar" aria-label="Undermenyn">

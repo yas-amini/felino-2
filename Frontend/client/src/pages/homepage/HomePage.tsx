@@ -6,6 +6,7 @@ import Hero from "../../components/home/Hero"
 import OpeningHours from "../../components/home/OpeningHours";
 import Favorites from "../../components/home/Favorites";
 import Promo from "../../components/home/Promo";
+import Collage from "../../components/home/Collage";
 import "./HomePage.css";
 
 export default function HomePage() {
@@ -18,7 +19,7 @@ export default function HomePage() {
   ];
 
   return (
-   <Page>
+    <Page>
       <div className="homePage">
         <div className="homeBox homeBoxHours">
           <OpeningHours hours={openingHours} />
@@ -27,9 +28,14 @@ export default function HomePage() {
         <div className="homeBox homeBoxHero">
           <Hero onOpenMenu={() => setMenuOpen(true)} />
         </div>
-        
 
-         <div className="homeBox homeBoxPromo">
+        <div className="homeBox homeBoxCollage">
+          <Collage />
+        </div>
+
+
+
+        <div className="homeBox homeBoxPromo">
           <Promo />
         </div>
 
@@ -37,7 +43,7 @@ export default function HomePage() {
           <Favorites />
         </div>
 
-       
+
       </div>
 
       <MenuModal isOpen={menuOpen} onClose={() => setMenuOpen(false)} />

@@ -54,6 +54,13 @@
   box-sizing: border-box;
 }
 
+.homeBoxCollage {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
 .sectionCornerLabel {
   display: inline-block;
   color: #000;
@@ -88,11 +95,6 @@
 }
 
 @media (max-width: 768px) {
-  .homePage {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
   .homeBoxHero {
     order: 1;
   }
@@ -101,27 +103,23 @@
     order: 2;
   }
 
-  .homeBoxFavorites {
+  .homeBoxCollage {
     order: 3;
   }
 
-  .homeBoxPromo {
+  .homeBoxFavorites {
     order: 4;
+  }
+
+  .homeBoxPromo {
+    order: 5;
   }
 
   .homeBoxHours,
   .homeBoxHero,
+  .homeBoxCollage,
   .homeBoxFavorites,
   .homeBoxPromo {
     grid-column: 1;
-  }
-
-  .homeBoxHours,
-  .homeBoxHero {
-    aspect-ratio: auto;
-  }
-
-  .homeBoxFavorites {
-    display: none;
   }
 }
