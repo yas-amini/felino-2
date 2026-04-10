@@ -9,11 +9,13 @@ import "./AdminProfileModal.css";
 type AdminProfileModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  redirectTo?: string;
 };
 
 export default function AdminProfileModal({
   isOpen,
   onClose,
+  redirectTo = "/admin",
 }: AdminProfileModalProps) {
   const navigate = useNavigate();
 
@@ -36,12 +38,19 @@ export default function AdminProfileModal({
         password,
       });
 
-      console.log("LOGIN RESPONSE:", result);
+      const token =
+        (result as any).access_token ?? (result as any).accessToken;
 
-      saveToken((result as any).access_token ?? (result as any).accessToken);
+      if (!token) {
+        throw new Error("Ingen token mottogs från servern");
+      }
+
+      console.log("TOKEN:", token);
+
+      saveToken(token);
 
       onClose();
-      navigate("/admin/profile");
+      navigate(redirectTo, { replace: true });
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);

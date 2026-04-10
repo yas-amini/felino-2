@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Footer.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,7 +8,8 @@ import {
   faXTwitter,
 } from "@fortawesome/free-brands-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import AdminProfileModal from "../common/Modal/AdminProfileModal"; 
+import AdminProfileModal from "../common/Modal/AdminProfileModal";
+import { hasValidAdminToken } from "../../utils/authSession";
 
 type FooterProps = {
   onOpenMenu: () => void;
@@ -16,6 +17,25 @@ type FooterProps = {
 
 export default function Footer({ onOpenMenu }: FooterProps) {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    setIsProfileModalOpen(false);
+  }, [location.pathname]);
+
+  function handleProfileClick() {
+    if (hasValidAdminToken()) {
+      navigate("/admin");
+      return;
+    }
+
+    setIsProfileModalOpen(true);
+  }
+
+  function handleCloseModal() {
+    setIsProfileModalOpen(false);
+  }
 
   return (
     <>
@@ -105,7 +125,7 @@ export default function Footer({ onOpenMenu }: FooterProps) {
                   type="button"
                   className="footerIconButton"
                   aria-label="Profil"
-                  onClick={() => setIsProfileModalOpen(true)}
+                  onClick={handleProfileClick}
                 >
                   <FontAwesomeIcon icon={faUser} />
                 </button>
@@ -115,10 +135,13 @@ export default function Footer({ onOpenMenu }: FooterProps) {
         </div>
       </footer>
 
-      <AdminProfileModal
-        isOpen={isProfileModalOpen}
-        onClose={() => setIsProfileModalOpen(false)}
-      />
+      {isProfileModalOpen && (
+        <AdminProfileModal
+          isOpen={true}
+          onClose={handleCloseModal}
+          redirectTo="/admin"
+        />
+      )}
     </>
   );
 }
