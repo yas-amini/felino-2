@@ -7,12 +7,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { getAdminTables, type TableDto } from "../../../api/tableApi";
+import CreateTable from "./CreateTable";
 
 export default function BookingTables() {
 
     const [tables, setTables] = useState<TableDto[]>([]);
     const [isLoadingTables, setIsLoadingTables] = useState(true);
     const [tablesError, setTablesError] = useState("");
+    const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
 
     useEffect(() => {
         const loadTables = async () => {
@@ -46,12 +48,20 @@ export default function BookingTables() {
                     <button
                         type="button"
                         className="fpAdminBtn fpAdminBtn--primary"
+                        onClick={() => setIsCreateFormOpen(true)}
                     >
                         Lägg till bord
                     </button>
                 }
             />
-
+            {isCreateFormOpen && (
+                <CreateTable
+                    onClose={() => setIsCreateFormOpen(false)}
+                    onCreated={(createdTable) =>
+                        setTables((prev) => [...prev, createdTable])
+                    }
+                />
+            )}
             {isLoadingTables && <p>Laddar bord...</p>}
             {tablesError && <p className="field-error">{tablesError}</p>}
 
