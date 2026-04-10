@@ -4,6 +4,11 @@ export type TableDto = {
   capacity: number;
   placement: string;
 };
+export type CreateTableRequest = {
+  name: string;
+  capacity: number;
+  placement: string;
+};
 
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
@@ -17,4 +22,23 @@ async function handleResponse<T>(response: Response): Promise<T> {
 export async function getAdminTables(): Promise<TableDto[]> {
   const response = await fetch("/api/admin/tables");
   return handleResponse<TableDto[]>(response);
+}
+
+export async function createAdminTable(
+  data: CreateTableRequest
+): Promise<TableDto> {
+  const response = await fetch("/api/admin/tables", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || "Kunde inte skapa bord.");
+  }
+
+  return response.json();
 }

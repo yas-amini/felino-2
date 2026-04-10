@@ -2,6 +2,7 @@
 using Felino.Api.Data;
 using Felino.Api.DTOs.Tables;
 using Felino.Api.Services.Interfaces;
+using Felino.Api.Domain.Entities;
 
 namespace Felino.Api.Services.Implementations;
 
