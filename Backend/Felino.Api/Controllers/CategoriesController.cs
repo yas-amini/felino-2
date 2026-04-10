@@ -21,7 +21,11 @@ namespace Felino.Api.Controllers
             _context = context;
         }
 
+       
+        // PUBLIC (KUND)
+
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<CategoryDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories([FromQuery] string? slug)
         {
@@ -33,11 +37,11 @@ namespace Felino.Api.Controllers
             {
                 string normalizedSlug = SlugHelper.Normalize(slug);
 
-                var filteredCategories = await query
+                var filtered = await query
                     .Where(c => c.Slug == normalizedSlug)
                     .ToListAsync();
 
-                return Ok(filteredCategories.Select(c => c.ToDto()));
+                return Ok(filtered.Select(c => c.ToDto()));
             }
 
             var categories = await query.ToListAsync();
@@ -46,15 +50,12 @@ namespace Felino.Api.Controllers
         }
 
         [HttpGet("featured-preview")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<MenuPreviewCategoryDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<MenuPreviewCategoryDto>>> GetFeaturedPreview(
             [FromQuery] int takePerCategory = 5)
         {
-            if (takePerCategory < 1)
-                takePerCategory = 1;
-
-            if (takePerCategory > 5)
-                takePerCategory = 5;
+            takePerCategory = Math.Clamp(takePerCategory, 1, 5);
 
             var categories = await _context.Categories
                 .Include(c => c.Products)
@@ -95,12 +96,10 @@ namespace Felino.Api.Controllers
 
                     if (featured.Count < takePerCategory)
                     {
-                        var missing = takePerCategory - featured.Count;
-
                         var fallback = productsWithStats
                             .Where(p => featured.All(fp => fp.Id != p.Id))
                             .OrderBy(_ => random.Next())
-                            .Take(missing)
+                            .Take(takePerCategory - featured.Count)
                             .ToList();
 
                         featured.AddRange(fallback);
@@ -127,6 +126,7 @@ namespace Felino.Api.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<CategoryDto>> GetCategoryById(int id)
@@ -142,28 +142,27 @@ namespace Felino.Api.Controllers
             return Ok(category.ToDto());
         }
 
+        
+        // ADMIN ONLY
+       
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [Consumes("application/json")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult<CategoryDto>> CreateCategory([FromBody] CreateCategoryDto dto)
         {
             if (!ModelState.IsValid)
                 return ValidationProblem(ModelState);
 
             if (string.IsNullOrWhiteSpace(dto.Name))
-                return BadRequest();
+                return BadRequest("Namn är obligatoriskt.");
 
             string slug = string.IsNullOrWhiteSpace(dto.Slug)
                 ? SlugHelper.Normalize(dto.Name)
                 : SlugHelper.Normalize(dto.Slug);
 
-            bool slugExists = await _context.Categories.AnyAsync(c => c.Slug == slug);
-            if (slugExists)
+            if (await _context.Categories.AnyAsync(c => c.Slug == slug))
             {
                 ModelState.AddModelError(nameof(dto.Slug), "Slug används redan.");
                 return ValidationProblem(ModelState);
@@ -173,7 +172,7 @@ namespace Felino.Api.Controllers
             {
                 Name = dto.Name.Trim(),
                 Slug = slug,
-                Description = dto.Description.Trim(),
+                Description = dto.Description?.Trim() ?? "",
                 ImageUrl = string.IsNullOrWhiteSpace(dto.ImageUrl)
                     ? null
                     : dto.ImageUrl.Trim()
@@ -188,12 +187,6 @@ namespace Felino.Api.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPatch("{id:int}")]
         [Consumes("application/json-patch+json")]
-        [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> PatchCategory(
             int id,
             [FromBody] JsonPatchDocument<UpdateCategoryDto> patchDoc)
@@ -205,7 +198,7 @@ namespace Felino.Api.Controllers
             if (category == null)
                 return NotFound();
 
-            var categoryToPatch = new UpdateCategoryDto
+            var dto = new UpdateCategoryDto
             {
                 Name = category.Name,
                 Slug = category.Slug,
@@ -213,36 +206,30 @@ namespace Felino.Api.Controllers
                 ImageUrl = category.ImageUrl
             };
 
-            patchDoc.ApplyTo(categoryToPatch, ModelState);
+            patchDoc.ApplyTo(dto, ModelState);
 
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !TryValidateModel(dto))
                 return ValidationProblem(ModelState);
 
-            if (!TryValidateModel(categoryToPatch))
-                return ValidationProblem(ModelState);
+            if (string.IsNullOrWhiteSpace(dto.Name))
+                return BadRequest("Namn är obligatoriskt.");
 
-            if (string.IsNullOrWhiteSpace(categoryToPatch.Name))
-                return BadRequest();
+            string slug = string.IsNullOrWhiteSpace(dto.Slug)
+                ? SlugHelper.Normalize(dto.Name)
+                : SlugHelper.Normalize(dto.Slug);
 
-            string normalizedSlug = string.IsNullOrWhiteSpace(categoryToPatch.Slug)
-                ? SlugHelper.Normalize(categoryToPatch.Name)
-                : SlugHelper.Normalize(categoryToPatch.Slug);
-
-            bool slugExists = await _context.Categories
-                .AnyAsync(c => c.Id != id && c.Slug == normalizedSlug);
-
-            if (slugExists)
+            if (await _context.Categories.AnyAsync(c => c.Id != id && c.Slug == slug))
             {
-                ModelState.AddModelError(nameof(categoryToPatch.Slug), "Slug används redan.");
+                ModelState.AddModelError(nameof(dto.Slug), "Slug används redan.");
                 return ValidationProblem(ModelState);
             }
 
-            category.Name = categoryToPatch.Name.Trim();
-            category.Slug = normalizedSlug;
-            category.Description = categoryToPatch.Description.Trim();
-            category.ImageUrl = string.IsNullOrWhiteSpace(categoryToPatch.ImageUrl)
+            category.Name = dto.Name.Trim();
+            category.Slug = slug;
+            category.Description = dto.Description?.Trim() ?? "";
+            category.ImageUrl = string.IsNullOrWhiteSpace(dto.ImageUrl)
                 ? null
-                : categoryToPatch.ImageUrl.Trim();
+                : dto.ImageUrl.Trim();
 
             await _context.SaveChangesAsync();
 
@@ -251,11 +238,6 @@ namespace Felino.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> DeleteCategory(int id)
         {
             var category = await _context.Categories
@@ -281,10 +263,6 @@ namespace Felino.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{categoryId:int}/products/{productId:int}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> RemoveProductFromCategory(int categoryId, int productId)
         {
             var product = await _context.Products
