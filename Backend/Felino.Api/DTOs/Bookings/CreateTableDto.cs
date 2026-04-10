@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Felino.Api.DTOs.Bookings;
+namespace Felino.Api.DTOs.Tables;
 
 public class CreateTableDto
 {

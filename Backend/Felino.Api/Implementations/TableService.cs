@@ -27,4 +27,26 @@ public class TableService : ITableService
             })
             .ToListAsync();
     }
+    public async Task<TableDto> CreateTableAsync(CreateTableDto dto)
+    {
+        var table = new Table
+        {
+            Name = dto.Name,
+            Capacity = dto.Capacity,
+            Placement = dto.Placement,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        _context.Tables.Add(table);
+        await _context.SaveChangesAsync();
+
+        return new TableDto
+        {
+            Id = table.Id,
+            Name = table.Name,
+            Capacity = table.Capacity,
+            Placement = table.Placement
+        };
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using Felino.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Felino.Api.DTOs.Tables;
 
 namespace Felino.Api.Controllers;
 
@@ -18,6 +19,12 @@ public class AdminTablesController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var result = await _tableService.GetAllTablesAsync();
+        return Ok(result);
+    }
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateTableDto dto)
+    {
+        var result = await _tableService.CreateTableAsync(dto);
         return Ok(result);
     }
 }
