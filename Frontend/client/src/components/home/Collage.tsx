@@ -2,19 +2,19 @@ import "./Collage.css";
 
 const topStripPhotos = [
   {
-    image: "/images/site/collage/pizzeria4.jpg",
+    image: "/images/site/collage/burgerman.jpg",
     alt: "Bild från Felino Pizza",
   },
   {
-    image: "/images/site/collage/pizzeria4.jpg",
+    image: "/images/site/collage/pizzeria8.jpg",
     alt: "Bild från Felino Pizza",
   },
   {
-    image: "/images/site/collage/pizzeria4.jpg",
+    image: "/images/site/collage/klara-kulikova-WcV2YkM3Dls-unsplash.jpg",
     alt: "Bild från Felino Pizza",
   },
   {
-    image: "/images/site/collage/pizzeria4.jpg",
+    image: "/images/site/collage/PIZZERIA11.jpg",
     alt: "Bild från Felino Pizza",
   },
 ];
@@ -22,7 +22,9 @@ const topStripPhotos = [
 export default function Collage() {
   return (
     <section className="collageSection">
-      <div className="sectionCornerLabel collageSectionLabel">Om Felino</div>
+      <div className="sectionCornerLabel collageSectionLabel collageSectionLabelText">
+        Om Felino
+      </div>
 
       <div className="collageEditorial">
         <div className="collageLines" aria-hidden="true">
@@ -30,6 +32,27 @@ export default function Collage() {
             className="collageLine collageLine--leftToFeature"
             viewBox="0 0 260 140"
           >
+            <defs>
+              <marker
+                id="arrowhead-leftFeature"
+                markerWidth="6"
+                markerHeight="6"
+                refX="5"
+                refY="3"
+                orient="auto"
+                markerUnits="strokeWidth"
+              >
+                <path
+                  d="M0 0 L6 3 L0 6"
+                  fill="none"
+                  stroke="#386642"
+                  strokeWidth="1"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </marker>
+            </defs>
+
             <path
               d="M18 12 C70 128, 180 24, 232 68"
               fill="none"
@@ -37,102 +60,43 @@ export default function Collage() {
               strokeWidth="2.5"
               strokeDasharray="7 7"
               strokeLinecap="round"
-            />
-            <path
-              d="M220 54 L234 68 L216 71"
-              fill="none"
-              stroke="#386642"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              markerEnd="url(#arrowhead-leftFeature)"
             />
           </svg>
 
           <svg
             className="collageLine collageLine--rightToFeature"
-            viewBox="0 0 260 140"
+            viewBox="0 0 260 240"
           >
-            <path
-              d="M242 112 C290 28, 82 24, 30 68"
-              fill="none"
-              stroke="#386642"
-              strokeWidth="2.5"
-              strokeDasharray="7 7"
-              strokeLinecap="round"
-            />
-            <path
-              d="M44 54 L30 68 L48 71"
-              fill="none"
-              stroke="#386642"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+            <defs>
+              <marker
+                id="arrowhead-rightFeature"
+                markerWidth="6"
+                markerHeight="6"
+                refX="5"
+                refY="3"
+                orient="auto"
+                markerUnits="strokeWidth"
+              >
+                <path
+                  d="M0 0 L6 3 L0 6"
+                  fill="none"
+                  stroke="#386642"
+                  strokeWidth="1"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </marker>
+            </defs>
 
-          <svg
-            className="collageLine collageLine--featureToWide"
-            viewBox="0 0 120 150"
-          >
             <path
-              d="M62 10 C66 46, 66 80, 42 124"
+              d="M242 212 C290 28, 82 94, 30 68"
               fill="none"
               stroke="#386642"
               strokeWidth="2.5"
               strokeDasharray="7 7"
               strokeLinecap="round"
-            />
-            <path
-              d="M52 112 L42 126 L58 120"
-              fill="none"
-              stroke="#386642"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-
-          <svg
-            className="collageLine collageLine--bottomLeft"
-            viewBox="0 0 220 90"
-          >
-            <path
-              d="M16 26 C74 80, 154 78, 206 48"
-              fill="none"
-              stroke="#386642"
-              strokeWidth="2.5"
-              strokeDasharray="7 7"
-              strokeLinecap="round"
-            />
-            <path
-              d="M194 38 L208 48 L192 52"
-              fill="none"
-              stroke="#386642"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-
-          <svg
-            className="collageLine collageLine--bottomRight"
-            viewBox="0 0 220 90"
-          >
-            <path
-              d="M204 24 C146 78, 66 76, 14 48"
-              fill="none"
-              stroke="#386642"
-              strokeWidth="2.5"
-              strokeDasharray="7 7"
-              strokeLinecap="round"
-            />
-            <path
-              d="M28 38 L14 48 L30 52"
-              fill="none"
-              stroke="#386642"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              markerEnd="url(#arrowhead-rightFeature)"
             />
           </svg>
         </div>
@@ -147,9 +111,13 @@ export default function Collage() {
         </div>
 
         <div className="collageHeading">
-          <span className="collageEyebrow">Vår historia</span>
-          <h2>En kvartersrestaurang med tempo, värme och personlighet.</h2>
-          <p>
+          <span className="collageEyebrow collageHeadingEyebrowText">
+            Felino Pizza • Vår Historia
+          </span>
+          <h2 className="collageHeadingTitleText">
+            En kvartersrestaurang med tempo, värme och personlighet.
+          </h2>
+          <p className="collageHeadingBodyText">
             Felino Pizza är byggt kring en enkel idé: att det ska vara lätt att
             få riktigt god mat, men att upplevelsen ändå ska kännas mänsklig,
             personlig och levande. Vi vill vara ett ställe som passar både den
@@ -161,8 +129,10 @@ export default function Collage() {
         <div className="collageGrid">
           <aside className="collageColumn collageColumn--left">
             <div className="collageCard collageCard--text">
-              <span className="collageCardLabel">Bakom namnet</span>
-              <p>
+              <span className="collageCardLabel collageLeftNameLabelText">
+                Bakom namnet
+              </span>
+              <p className="collageLeftNameBodyText">
                 Felino startade som en tanke om att kombinera fart med känsla.
                 Inte stelt, inte överarbetat — bara en plats med bra rytm, bra
                 människor och en atmosfär som känns självklar från första
@@ -170,7 +140,7 @@ export default function Collage() {
               </p>
             </div>
 
-            <div className="collageQuote">
+            <div className="collageQuote collageLeftQuoteText">
               “Vi vill att det ska kännas varmt direkt, även när allt går
               snabbt.”
             </div>
@@ -178,15 +148,19 @@ export default function Collage() {
             <div className="collageCard collageCard--photo">
               <div className="collageCardTape" />
               <img
-                src="/images/site/collage/pizzeria4.jpg"
+                src="/images/site/collage/staff.jpg"
                 alt="Medarbetare i restaurangen"
               />
-              <p>Personalen sätter tonen lika mycket som maten gör.</p>
+              <p className="collageLeftPhotoCaptionText">
+               Här börjar din pizza.
+              </p>
             </div>
 
             <div className="collageCard collageCard--note">
-              <span className="collageCardLabel">I vardagen</span>
-              <p>
+              <span className="collageCardLabel collageLeftDailyLabelText">
+                I vardagen
+              </span>
+              <p className="collageLeftDailyBodyText">
                 Hos oss ska det kännas lätt att komma in, lätt att beställa och
                 lätt att vilja komma tillbaka. Det är den typen av vardagsställe
                 vi alltid velat bygga.
@@ -194,18 +168,22 @@ export default function Collage() {
             </div>
 
             <div className="collageMiniFacts">
-              <div className="collageFact">Lokalt tänk</div>
-              <div className="collageFact">Öppet från lunch till kväll</div>
-              <div className="collageFact">Tempo utan stresskänsla</div>
+              <div className="collageFact collageFactLocalText">Lokalt tänk</div>
+              <div className="collageFact collageFactHoursText">
+                Öppet från lunch till kväll
+              </div>
+              <div className="collageFact collageFactTempoText">
+                Tempo utan stresskänsla
+              </div>
             </div>
 
-            <div className="collageHandNote">
+            <div className="collageHandNote1 collageLeftHandNoteText">
               Bakom disken finns samma energi varje dag.
             </div>
           </aside>
 
           <main className="collageColumn collageColumn--center">
-            <div className="collageFloatingText collageFloatingText--top">
+            <div className="collageFloatingText collageFloatingText--top collageCenterTopNoteText">
               Här handlar det inte bara om maten,
               <br />
               utan om känslan runt omkring.
@@ -214,13 +192,15 @@ export default function Collage() {
             <div className="collageCard collageCard--feature">
               <div className="collageCardTape" />
               <img
-                src="/images/site/collage/pizzeria4.jpg"
+                src="/images/site/collage/gang.jpg"
                 alt="Signaturrätt från Felino Pizza"
               />
               <div className="collageFeatureText">
-                <span className="collageCount">1/3</span>
-                <h3>En plats att återvända till</h3>
-                <p>
+                <span className="collageCount collageFeatureCountText">1/3</span>
+                <h3 className="collageFeatureTitleText">
+                  En plats att återvända till
+                </h3>
+                <p className="collageFeatureBodyText">
                   För oss handlar restaurangupplevelsen inte bara om vad som
                   ligger på tallriken, utan om helheten. Ljuset, tempot,
                   bemötandet, detaljerna och känslan av att man gärna kommer
@@ -231,8 +211,10 @@ export default function Collage() {
 
             <div className="collageRowSplit">
               <div className="collageCard collageCard--note">
-                <span className="collageCardLabel">Vår vision</span>
-                <p>
+                <span className="collageCardLabel collageVisionLabelText">
+                  Vår vision
+                </span>
+                <p className="collageVisionBodyText">
                   Vi tror på vardagslyx i ett avslappnat format. Ett ställe som
                   får vara snyggt och genomtänkt utan att tappa värmen.
                 </p>
@@ -241,34 +223,38 @@ export default function Collage() {
               <div className="collageCard collageCard--photo">
                 <div className="collageCardTape" />
                 <img
-                  src="/images/site/collage/pizzeria4.jpg"
+                  src="/images/site/collage/peace.jpg"
                   alt="Teamet i restaurangen"
                 />
-                <p>Bakom disken finns samma energi varje dag.</p>
+                <p className="collageCenterPhotoCaptionText">
+                  Personalen sätter tonen lika mycket som maten gör.
+                </p>
               </div>
             </div>
 
             <div className="collageCard collageCard--widePhoto">
               <div className="collageCardTape" />
               <img
-                src="/images/site/collage/pizzeria4.jpg"
+                src="/images/site/collage/guests.jpg"
                 alt="Interiör eller restaurangmiljö"
               />
-              <p>
+              <p className="collageWidePhotoCaptionText">
                 Från lunchrush till kvällshäng vill vi att stämningen ska vara
                 densamma: enkel, levande och välkomnande.
               </p>
             </div>
 
-            <div className="collageFloatingText collageFloatingText--bottom">
-              Ett lokalt ställe att återvända till.
+            <div className="collageFloatingText collageFloatingText--bottom collageCenterBottomNoteText">
+              Ett lokalt ställe att återvända till ♥
             </div>
           </main>
 
           <aside className="collageColumn collageColumn--right">
             <div className="collageCard collageCard--text">
-              <span className="collageCardLabel">Människorna</span>
-              <p>
+              <span className="collageCardLabel collagePeopleLabelText">
+                Människorna
+              </span>
+              <p className="collagePeopleBodyText">
                 Det viktigaste hos oss är inte att allt känns perfekt — utan att
                 det känns äkta. Gäster ska känna att det finns personer bakom
                 platsen, inte bara ett koncept.
@@ -278,55 +264,73 @@ export default function Collage() {
             <div className="collageCard collageCard--photo">
               <div className="collageCardTape" />
               <img
-                src="/images/site/collage/pizzeria4.jpg"
+                src="/images/site/collage/detaljer.jpg"
                 alt="Detaljbild från kök eller servering"
               />
-              <p>Små detaljer, tydlig identitet och mycket omtanke.</p>
+              <p className="collageRightPhotoCaptionText">
+                Små detaljer, tydlig identitet och mycket omtanke.
+              </p>
             </div>
 
-            <div className="collageHandNote">
+            <div className="collageHandNote collageRightHandNoteText">
               Ett ställe som får bli en del av människors vardag.
             </div>
 
             <div className="collageCard collageCard--text collageCard--small">
-              <span className="collageCardLabel">Det vi gillar</span>
-              <ul className="collageList">
-                <li>Välkomnande service</li>
-                <li>Hög energi i lokalen</li>
-                <li>Schysst tempo</li>
-                <li>Detaljer som känns genomtänkta</li>
+              <span className="collageCardLabel collageLikesLabelText">
+                Det vi gillar
+              </span>
+              <ul className="collageList collageLikesListText">
+                <li className="collageLikesItem collageLikesItem1Text">
+                  Välkomnande service
+                </li>
+                <li className="collageLikesItem collageLikesItem2Text">
+                  Hög energi i lokalen
+                </li>
+                <li className="collageLikesItem collageLikesItem3Text">
+                  Schysst tempo
+                </li>
+                <li className="collageLikesItem collageLikesItem4Text">
+                  Detaljer som känns genomtänkta
+                </li>
               </ul>
             </div>
 
             <div className="collageCard collageCard--photo collageCard--tall">
               <div className="collageCardTape" />
               <img
-                src="/images/site/collage/pizzeria4.jpg"
+                src="/images/site/collage/restaurant.jpg"
                 alt="Bild från restaurangens vardag"
               />
-              <p>Visionen märks i både människorna, rytmen och miljön.</p>
+              <p className="collageTallPhotoCaptionText">
+                Visionen märks i både människorna, rytmen och miljön.
+              </p>
             </div>
 
-            <div className="collageStamp">Sedan 2025 • Felino Pizza</div>
+            <div className="collageStamp collageStampText">⤦</div>
           </aside>
         </div>
 
         <div className="collageBottomFill">
           <div className="collageBottomCard collageBottomCard--left">
-            <span className="collageBottomCardLabel">Teamet</span>
-            <p>
+            <span className="collageBottomCardLabel collageBottomLeftLabelText">
+              Teamet
+            </span>
+            <p className="collageBottomLeftBodyText">
               Det bästa med vardagen här är att samma människor sätter tonen om
               och om igen. Gäster lär känna oss, och vi lär känna dem tillbaka.
             </p>
           </div>
 
-          <div className="collageBottomCenterNote">
-            Lite högt tempo. Mycket värme. Alltid känsla.
+          <div className="collageBottomCenterNote collageBottomCenterNoteText">
+            Högt tempo. Mycket värme. Alltid känsla.
           </div>
 
           <div className="collageBottomCard collageBottomCard--right">
-            <span className="collageBottomCardLabel">Kvarterskänslan</span>
-            <p>
+            <span className="collageBottomCardLabel collageBottomRightLabelText">
+              Kvarterskänslan
+            </span>
+            <p className="collageBottomRightBodyText">
               Vi vill vara den där platsen man tänker på utan att behöva tänka
               så mycket — självklar för lunch, middag eller något snabbt på väg
               hem.
