@@ -8,10 +8,9 @@
   flex-direction: column;
   justify-content: center;
   text-align: center;
-  background-image: url("images/site/subwaytiles.png");
-  background-repeat: repeat;
-  background-size: 300px auto; 
-  background-position: center;
+  background: none;
+  position: relative;
+  z-index: 0;
 }
 
 .openingHoursContent {
@@ -23,10 +22,43 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.76); 
-  z-index: -1;
+  background:
+    repeating-linear-gradient(
+      to right,
+      #386642 0px,
+      #386642 6px,
+      transparent 6px,
+      transparent 12px
+    ) top,
+    repeating-linear-gradient(
+      to right,
+      #386642 0px,
+      #386642 6px,
+      transparent 6px,
+      transparent 12px
+    ) bottom,
+    repeating-linear-gradient(
+      to bottom,
+      #386642 0px,
+      #386642 6px,
+      transparent 6px,
+      transparent 12px
+    ) left,
+    repeating-linear-gradient(
+      to bottom,
+      #386642 0px,
+      #386642 6px,
+      transparent 6px,
+      transparent 12px
+    ) right;
+  background-size:
+    100% 1px,
+    100% 1px,
+    1px 100%,
+    1px 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
 }
-
 .openingTitle {
   margin: 0 0 20px;
   padding-bottom: 8px;

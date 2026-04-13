@@ -1,49 +1,91 @@
-/* FAVORITES */
+:root {
+  --favorites-green-900: #173325;
+  --favorites-green-700: #355645;
+  --favorites-ink: #173325;
+  --favorites-soft-ink: rgba(23, 51, 37, 0.76);
+}
+
 
 .favoritesSection {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 18px;
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
 }
 
-.favoritesSectionLabel {
-  display: inline-block;
-  color: #000;
-  white-space: nowrap;
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  margin: 0 0 -8px 0;
+
+.favoritesHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 520px;
+  margin-bottom: -55px;
+  position: relative;
+  z-index: 2;
 }
 
-/* BOXENS INNEHÅLL */
+
+.favoritesKicker {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--favorites-green-700);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.favoritesKicker::before {
+  content: "";
+  width: 24px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+
+.favoritesTitle {
+  margin: 10px 0 0 0;
+  color: var(--favorites-ink);
+  font-size: clamp(1.5rem, 1.1rem + 1vw, 2.2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
 
 .favoritesContent {
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  padding: 24px 24px 0;
-  background: #386642;
-  border-radius: 10px;
-  overflow: hidden; 
 }
 
-/* TABLET */
+@media (max-width: 900px) {
+  .favoritesHeader {
+    max-width: 100%;
+    margin-bottom: -28px;
+  }
 
-@media (max-width: 1024px) {
-  .favoritesContent {
-    padding: 20px 20px 0;
+  .favoritesTitle {
+    font-size: 1.4rem;
   }
 }
 
-/* SMALL TABLET */
+@media (max-width: 620px) {
+  .favoritesHeader {
+    margin-bottom: -18px;
+  }
 
-@media (max-width: 900px) {
-  .favoritesContent {
-    padding: 18px 16px 0;
+  .favoritesKicker {
+    font-size: 0.66rem;
+  }
+
+  .favoritesTitle {
+    font-size: 1.18rem;
   }
 }

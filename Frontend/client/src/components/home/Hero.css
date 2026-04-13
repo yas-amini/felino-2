@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
+
 .heroContent {
   width: 100%;
   height: 100%;
@@ -11,20 +13,22 @@
 
 .heroContent h1 {
   margin: 0;
-  font-size: 1.7rem;
-  line-height: 1;
-  font-weight: 700;
-  color: #000000;
-  letter-spacing: 0.08em;
-  padding-bottom: 25px;
+  font-size: 2.5rem;
+  line-height: 0.96;
+  font-weight: 900;
+  color: #173325;
+  letter-spacing: -0.04em;
+  padding-bottom: 22px;
+  text-wrap: balance;
+  font-family: 'Indie Flower';
 }
 
 .heroContent p {
   margin: 0 0 16px;
   max-width: 640px;
   font-size: 1.05rem;
-  line-height: 1.7;
-  color: #000000;
+  line-height: 1.68;
+  color: rgba(23, 51, 37, 0.86);
 }
 
 .heroButtons {
@@ -58,8 +62,8 @@
   padding-top: 18px;
   background-image: repeating-linear-gradient(
     to right,
-    rgba(0, 0, 0, 0.9) 0,
-    rgba(0, 0, 0, 0.9) 6px,
+    rgba(23, 51, 37, 0.55) 0,
+    rgba(23, 51, 37, 0.55) 6px,
     transparent 6px,
     transparent 12px
   );
@@ -76,20 +80,21 @@
 }
 
 .heroContactLabel {
-  font-size: 0.78rem;
-  font-weight: 700;
+  font-size: 0.76rem;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #000000;
+  color: #173325;
 }
 
 .heroContactValue {
   font-size: 1rem;
   line-height: 1.5;
-  color: #111111;
+  color: rgba(23, 51, 37, 0.92);
   text-decoration: none;
   font-weight: 500;
   word-break: break-word;
+  font-family: "Courier New", Courier, monospace;
 }
 
 a.heroContactValue:hover {
@@ -102,13 +107,13 @@ a.heroContactValue:hover {
   }
 
   .heroContent h1 {
-    font-size: 1.75rem;
+    font-size: 1.8rem;
     padding-bottom: 16px;
   }
 
   .heroContent p {
     font-size: 0.98rem;
-    line-height: 1.55;
+    line-height: 1.58;
     max-width: 100%;
   }
 
@@ -143,14 +148,14 @@ a.heroContactValue:hover {
 
   .heroContent h1 {
     font-size: 1.55rem;
-    line-height: 1.1;
-    letter-spacing: 0.04em;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
     padding-bottom: 14px;
   }
 
   .heroContent p {
     font-size: 0.95rem;
-    line-height: 1.55;
+    line-height: 1.56;
     margin-bottom: 12px;
   }
 

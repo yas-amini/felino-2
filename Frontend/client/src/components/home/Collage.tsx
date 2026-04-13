@@ -22,9 +22,7 @@ const topStripPhotos = [
 export default function Collage() {
   return (
     <section className="collageSection">
-      <div className="sectionCornerLabel collageSectionLabel collageSectionLabelText">
-        Om Felino
-      </div>
+      <p className="favoritesKicker">Om Felino</p>
 
       <div className="collageEditorial">
         <div className="collageLines" aria-hidden="true">
@@ -112,7 +110,7 @@ export default function Collage() {
 
         <div className="collageHeading">
           <span className="collageEyebrow collageHeadingEyebrowText">
-            Felino Pizza • Vår Historia
+            Felino Pizzeria • Vår Historia
           </span>
           <h2 className="collageHeadingTitleText">
             En kvartersrestaurang med tempo, värme och personlighet.

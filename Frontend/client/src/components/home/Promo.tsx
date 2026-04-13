@@ -35,8 +35,18 @@ function formatShortDate(dateString: string) {
   }).format(date);
 }
 
-function formatDateBadge(startDate: string, endDate: string) {
+function formatDateRange(startDate: string, endDate: string) {
   return `${formatShortDate(startDate)} – ${formatShortDate(endDate)}`;
+}
+
+function getPromoVariant(index: number): "a" | "b" | "c" {
+  const variants: Array<"a" | "b" | "c"> = ["a", "b", "c"];
+  return variants[index % variants.length];
+}
+
+function getPromoLabel(index: number) {
+  const labels = ["Veckans special", "Utvalt just nu", "Nytt från köket"];
+  return labels[index % labels.length];
 }
 
 export default function Promo() {
@@ -83,19 +93,24 @@ export default function Promo() {
 
   return (
     <section className="promoSection">
-      <div className="sectionCornerLabel promoSectionLabel">Schyssta deals</div>
+      <p className="favoritesKicker">Schyssta deals</p>
 
-      <div className="heroPromoRow">
-        {visiblePromos.map((promo) => (
-          <PromoCard
-            key={promo.id}
-            image={promo.imageUrl || "/images/site/campaigns/pizzaaaa.jpg"}
-            alt={promo.altText || promo.title}
-            title={promo.title}
-            text={promo.body}
-            dateBadge={formatDateBadge(promo.startDate, promo.endDate)}
-          />
-        ))}
+      <div className="promoRowShell">
+        <div className="heroPromoRow">
+          {visiblePromos.map((promo, index) => (
+            <PromoCard
+              key={promo.id}
+              image={promo.imageUrl || "/images/site/campaigns/pizzaaaa.jpg"}
+              alt={promo.altText || promo.title}
+              eyebrow={formatDateRange(promo.startDate, promo.endDate)}
+              title={promo.title}
+              text={promo.body}
+              label={getPromoLabel(index)}
+              variant={getPromoVariant(index)}
+              index={index}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

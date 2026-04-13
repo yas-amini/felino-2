@@ -23,7 +23,6 @@
   width: 100%;
   padding: 1.4rem 1.4rem 2.2rem;
   background: #ffffff;
-  
   overflow: hidden;
 }
 
@@ -568,83 +567,6 @@
   background-position: bottom;
 }
 
-@media (max-width: 1100px) {
-  .collageGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .collageTopStrip {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .collageRowSplit {
-    grid-template-columns: 1fr;
-  }
-
-  .collageBottomFill {
-    grid-template-columns: 1fr;
-    gap: 14px;
-    margin-top: 1rem;
-  }
-
-  .collageLines {
-    display: none;
-  }
-
-  .collageColumn--left .collageCard--photo,
-  .collageColumn--right .collageCard--photo,
-  .collageCard--feature,
-  .collageCard--widePhoto,
-  .collageTopPhoto,
-  .collageQuote,
-  .collageHandNote,
-  .collageStamp,
-  .collageBottomCard--left,
-  .collageBottomCard--right,
-  .collageBottomCenterNote {
-    transform: none;
-    margin-top: 0;
-  }
-
-  .collageCardTape,
-  .collageTape {
-    transform: translateX(-50%);
-  }
-}
-
-@media (max-width: 768px) {
-  .collageEditorial {
-    padding: 1rem 1rem 1.5rem;
-  }
-
-  .collageTopStrip {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .collageTopPhoto img {
-    height: 120px;
-  }
-
-  .collageHeading h2 {
-    font-size: 2.35rem;
-  }
-
-  .collageCard--feature img {
-    height: 220px;
-  }
-
-  .collageCard--widePhoto img,
-  .collageCard--photo img {
-    height: 190px;
-  }
-
-  .collageCard--tall img {
-    height: 220px;
-  }
-}
-
-/* ===== FONT OVERRIDES – ändrar ENDAST font-family ===== */
 
 .collageLeftQuoteText,
 .collageLeftPhotoCaptionText,

@@ -1,158 +1,321 @@
-/* PROMO */
+
+:root {
+  --promo-green-900: #173325;
+  --promo-green-800: #244536;
+  --promo-green-700: #355645;
+  --promo-green-600: #5d7860;
+  --promo-red-700: #8f3a32;
+  --promo-red-600: #a64c43;
+
+  --promo-paper-50: #fffdfa;
+  --promo-paper-100: #f8f1e6;
+  --promo-paper-200: #efe4d4;
+  --promo-paper-300: #e7d8c4;
+
+  --promo-ink: #173325;
+  --promo-soft-ink: rgba(23, 51, 37, 0.78);
+  --promo-line: rgba(23, 51, 37, 0.12);
+  --promo-line-strong: rgba(23, 51, 37, 0.2);
+  --promo-shadow: rgba(26, 34, 29, 0.14);
+  --promo-tape: rgba(250, 245, 232, 0.72);
+}
 
 .promoSection {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   width: 100%;
 }
 
+.promoRowShell {
+  width: 100%;
+  min-height: 540px;
+}
+
 .promoSectionLabel {
-  color: #000;
-  white-space: nowrap;
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   margin: 0;
+  color: var(--promo-ink);
+  white-space: nowrap;
+  font-size: 0.98rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .heroPromoRow {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
+  gap: 22px;
   width: 100%;
+  align-items: start;
 }
 
 .promoCardItem {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
+  position: relative;
   min-width: 0;
-}
-
-.promoDateBadge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1px 1px;
-  background: #ffffff;
-  color: #999;
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  line-height: 1;
-  white-space: nowrap;
-  text-transform: uppercase;
 }
 
 .heroPromoBox {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
   width: 100%;
+  height: 100%;
   min-width: 0;
-  box-sizing: border-box;
-  padding: 0;
-  border: none;
-  background: transparent;
-  aspect-ratio: 1 / 1;
 }
 
 .promoInner {
   position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border-radius: 0;
-  background: transparent;
-  border: 10px solid #fef8f1;
-  box-sizing: border-box;
-
-  /* ✨ Ny skugga */
+  display: grid;
+  grid-template-rows: 248px auto;
+  min-height: 100%;
+  overflow: visible;
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, var(--promo-paper-50) 0%, var(--promo-paper-100) 100%);
+  border: 1px solid var(--promo-line);
   box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.08),
-    0 2px 6px rgba(0, 0, 0, 0.06);
+    0 18px 34px var(--promo-shadow),
+    0 5px 12px rgba(26, 34, 29, 0.06);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.promoInner::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 14px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.promoTape--left {
+  left: 22px;
+  transform: rotate(-8deg);
+}
+
+.promoTape--right {
+  right: 20px;
+  transform: rotate(7deg);
+}
+
+.promoImageWrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
+  background: #d9ddd8;
+}
+
+.promoImageWrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(10, 17, 14, 0.03) 0%, rgba(10, 17, 14, 0.1) 100%),
+    linear-gradient(0deg, rgba(10, 17, 14, 0.22) 0%, rgba(10, 17, 14, 0) 40%);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .promoImage {
-  position: absolute;
-  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
+  min-height: 248px;
   object-fit: cover;
   object-position: center;
-  z-index: 1;
+  transition:
+    transform 260ms ease,
+    filter 260ms ease;
 }
 
-.promoOverlay {
-  display: none;
-}
-
-.promoContent {
+.promoEyebrow {
   position: absolute;
-  inset: 0;
+  top: 16px;
+  left: 16px;
   z-index: 3;
+  margin: 0;
+  max-width: calc(100% - 100px);
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 248, 240, 0.95);
+  border: 1px solid rgba(23, 51, 37, 0.08);
+  color: var(--promo-ink);
+  font-size: 0.68rem;
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.1);
+}
+
+.promoNumber {
+  position: absolute;
+  right: 16px;
+  bottom: 10px;
+  z-index: 3;
+  font-size: clamp(2rem, 1.1rem + 2vw, 3.1rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.08em;
+  color: rgba(255, 251, 246, 0.92);
+  text-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+}
+
+.promoBody {
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  text-align: center;
-  padding: 24px;
-  color: #ffffff;
-  background: #4765468a;
-  box-sizing: border-box;
+  gap: 12px;
+  padding: 18px 18px 16px;
+  background:
+    radial-gradient(circle at top right, rgba(93, 120, 96, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 100%);
+  z-index: 3;
 }
 
-.promoContent h3 {
-  margin: 0 0 10px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+.promoTopline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.promoToplineDot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--promo-red-600);
+  box-shadow: 0 0 0 4px rgba(166, 76, 67, 0.12);
+}
+
+.promoLabel {
+  color: var(--promo-green-700);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .promoTitle {
-  margin: 0 0 8px;
-  font-size: 1.35rem;
-  font-weight: 800;
-  line-height: 1.15;
+  margin: 0;
+  max-width: 11ch;
+  color: var(--promo-ink);
+  font-size: clamp(1.45rem, 1rem + 1vw, 2.15rem);
+  font-weight: 900;
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
 }
 
 .promoText {
   margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  max-width: 34ch;
+  color: var(--promo-soft-ink);
+  font-size: 0.9rem;
+  line-height: 1.48;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
 }
 
-@media (max-width: 1100px) {
+.promoBottomRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.promoBottomRule {
+  display: block;
+  flex: 1;
+  min-width: 24px;
+  height: 1px;
+  background: var(--promo-line-strong);
+}
+
+.promoBottomText {
+  flex-shrink: 0;
+  color: var(--promo-green-700);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.promoCardItem--a .promoInner {
+  transform: rotate(-1.1deg);
+}
+
+.promoCardItem--b .promoInner {
+  transform: rotate(0.9deg) translateY(10px);
+}
+
+.promoCardItem--c .promoInner {
+  transform: rotate(-0.45deg) translateY(2px);
+}
+
+.promoCardItem--a .promoTitle {
+  max-width: 10ch;
+}
+
+.promoCardItem--b .promoTitle {
+  max-width: 12ch;
+}
+
+.promoCardItem--c .promoTitle {
+  max-width: 9ch;
+}
+
+.promoCardItem--a .promoTape--left {
+  left: 18px;
+}
+
+.promoCardItem--b .promoTape--right {
+  right: 16px;
+  transform: rotate(9deg);
+}
+
+.promoCardItem--c .promoToplineDot {
+  background: var(--promo-green-700);
+  box-shadow: 0 0 0 4px rgba(53, 86, 69, 0.12);
+}
+
+.heroPromoBox:hover .promoInner {
+  transform: translateY(-5px) rotate(0deg);
+  border-color: rgba(23, 51, 37, 0.18);
+  box-shadow:
+    0 24px 42px rgba(26, 34, 29, 0.16),
+    0 8px 18px rgba(26, 34, 29, 0.08);
+}
+
+.heroPromoBox:hover .promoImage {
+  transform: scale(1.04);
+  filter: saturate(1.04) contrast(1.02);
+}
+
+
+@media (max-width: 1180px) {
   .heroPromoRow {
     gap: 18px;
   }
 
-  .heroPromoBox {
-    aspect-ratio: 1 / 0.82;
-    padding: 0;
-  }
-
   .promoInner {
-    border-width: 9px;
+    grid-template-rows: 224px auto;
   }
 
-  .promoContent {
-    padding: 18px;
+  .promoImage {
+    min-height: 224px;
   }
 
   .promoTitle {
-    font-size: 1.1rem;
-  }
-
-  .promoText {
-    font-size: 0.9rem;
-    line-height: 1.45;
+    font-size: 1.7rem;
   }
 }
 
@@ -162,122 +325,210 @@
     gap: 16px;
   }
 
-  .promoDateBadge {
-    font-size: 0.76rem;
-    padding: 7px 12px;
-  }
-
-  .heroPromoBox {
-    aspect-ratio: 1 / 0.78;
-    padding: 0;
-  }
-
   .promoInner {
-    border-width: 8px;
+    grid-template-rows: 208px auto;
   }
 
-  .promoContent {
+  .promoImage {
+    min-height: 208px;
+  }
+
+  .promoBody {
     padding: 16px;
   }
 
-  .promoContent h3 {
-    font-size: 0.8rem;
-  }
-
   .promoTitle {
-    font-size: 1.02rem;
-  }
-
-  .promoText {
-    font-size: 0.86rem;
-    line-height: 1.4;
-  }
-}
-
-@media (max-width: 900px) {
-  .heroPromoRow {
-    gap: 14px;
-  }
-
-  .promoDateBadge {
-    font-size: 0.72rem;
-    padding: 6px 11px;
-  }
-
-  .heroPromoBox {
-    aspect-ratio: 1 / 0.72;
-    padding: 0;
-  }
-
-  .promoInner {
-    border-width: 7px;
-  }
-
-  .promoContent {
-    padding: 14px;
-  }
-
-  .promoContent h3 {
-    font-size: 0.78rem;
-  }
-
-  .promoTitle {
-    font-size: 1rem;
+    font-size: 1.42rem;
   }
 
   .promoText {
     font-size: 0.84rem;
-    line-height: 1.35;
+  }
+
+  .promoInner::after {
+    left: 16px;
+    right: 16px;
+    bottom: 96px;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 820px) {
   .heroPromoRow {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 16px;
   }
 
-  .promoCardItem {
-    gap: 8px;
-  }
-
-  .promoDateBadge {
-    font-size: 0.78rem;
-    padding: 7px 12px;
-  }
-
-  .heroPromoBox {
-    aspect-ratio: 16 / 9;
-    padding: 0;
+  .promoInner,
+  .promoCardItem--a .promoInner,
+  .promoCardItem--b .promoInner,
+  .promoCardItem--c .promoInner {
+    transform: none;
   }
 
   .promoInner {
-    border-width: 7px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: none;
   }
 
-  .promoContent {
+  .promoImageWrap {
+    border-radius: 20px 0 0 20px;
+  }
+
+  .promoImage {
+    min-height: 100%;
+    height: 100%;
+  }
+
+  .promoInner::after {
+    top: 18px;
+    bottom: 18px;
+    left: calc(50% + 1px);
+    right: auto;
+    width: 1px;
+    border-top: none;
+    border-left: 1px dashed rgba(23, 51, 37, 0.18);
+  }
+
+  .promoBody {
+    justify-content: center;
     padding: 18px;
   }
 
-  .promoContent h3 {
-    font-size: 0.82rem;
-  }
-
-  .promoTitle {
-    font-size: 1.08rem;
-  }
-
-  .promoText {
-    font-size: 0.88rem;
+  .promoTitle,
+  .promoCardItem--a .promoTitle,
+  .promoCardItem--b .promoTitle,
+  .promoCardItem--c .promoTitle {
+    max-width: 14ch;
+    font-size: 1.52rem;
   }
 }
 
-@media (max-width: 520px) {
-  .heroPromoBox {
-    aspect-ratio: 15 / 10;
+@media (max-width: 620px) {
+  .promoInner {
+    grid-template-columns: 1fr;
+    grid-template-rows: 220px auto;
+    border-radius: 18px;
+  }
+
+  .promoImageWrap {
+    border-radius: 18px 18px 0 0;
+  }
+
+  .promoImage {
+    min-height: 220px;
+  }
+
+  .promoInner::before {
+    inset: 8px;
+    border-radius: 13px;
+  }
+
+  .promoInner::after {
+    top: auto;
+    bottom: 104px;
+    left: 14px;
+    right: 14px;
+    width: auto;
+    border-left: none;
+    border-top: 1px dashed rgba(23, 51, 37, 0.18);
+  }
+
+  .promoEyebrow {
+    top: 14px;
+    left: 14px;
+    max-width: calc(100% - 84px);
+    padding: 7px 10px;
+    font-size: 0.6rem;
+  }
+
+  .promoNumber {
+    right: 14px;
+    bottom: 10px;
+    font-size: 2rem;
+  }
+
+  .promoTape {
+    width: 62px;
+    height: 18px;
+    top: -9px;
+  }
+
+  .promoBody {
+    gap: 10px;
+    padding: 14px 14px 13px;
+  }
+
+  .promoTitle,
+  .promoCardItem--a .promoTitle,
+  .promoCardItem--b .promoTitle,
+  .promoCardItem--c .promoTitle {
+    max-width: 12ch;
+    font-size: 1.18rem;
+  }
+
+  .promoText {
+    font-size: 0.79rem;
+    line-height: 1.42;
+  }
+
+  .promoBottomText {
+    font-size: 0.64rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .promoSection {
+    gap: 14px;
+  }
+
+  .heroPromoRow {
+    gap: 14px;
   }
 
   .promoInner {
-    border-width: 6px;
+    grid-template-rows: 200px auto;
+  }
+
+  .promoImage {
+    min-height: 200px;
+  }
+
+  .promoEyebrow {
+    max-width: calc(100% - 74px);
+    font-size: 0.54rem;
+  }
+
+  .promoNumber {
+    font-size: 1.7rem;
+  }
+
+  .promoTitle,
+  .promoCardItem--a .promoTitle,
+  .promoCardItem--b .promoTitle,
+  .promoCardItem--c .promoTitle {
+    font-size: 1.03rem;
+  }
+
+  .promoText {
+    font-size: 0.75rem;
+    -webkit-line-clamp: 3;
+  }
+}
+
+@media (max-width: 1180px) {
+  .promoRowShell {
+    min-height: 500px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .promoRowShell {
+    min-height: 470px;
+  }
+}
+
+@media (max-width: 820px) {
+  .promoRowShell {
+    min-height: 0;
   }
 }

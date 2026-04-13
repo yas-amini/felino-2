@@ -29,21 +29,17 @@ export default function HomePage() {
           <Hero onOpenMenu={() => setMenuOpen(true)} />
         </div>
 
-        <div className="homeBox homeBoxCollage">
-          <Collage />
-        </div>
-
-
-
         <div className="homeBox homeBoxPromo">
           <Promo />
+        </div>
+
+        <div className="homeBox homeBoxCollage">
+          <Collage />
         </div>
 
         <div className="homeBox homeBoxFavorites">
           <Favorites />
         </div>
-
-
       </div>
 
       <MenuModal isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
