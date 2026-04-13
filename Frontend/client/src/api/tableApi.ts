@@ -9,6 +9,11 @@ export type CreateTableRequest = {
   capacity: number;
   placement: string;
 };
+export type UpdateTableRequest = {
+  name: string;
+  capacity: number;
+  placement: string;
+};
 
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
@@ -38,6 +43,25 @@ export async function createAdminTable(
   if (!response.ok) {
     const errorText = await response.text();
     throw new Error(errorText || "Kunde inte skapa bord.");
+  }
+
+  return response.json();
+}
+export async function updateAdminTable(
+  id: number,
+  data: UpdateTableRequest
+): Promise<TableDto> {
+  const response = await fetch(`/api/admin/tables/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || "Kunde inte uppdatera bord.");
   }
 
   return response.json();
