@@ -92,12 +92,6 @@ export default function BookingTables() {
                             >
                                 Redigera
                             </button>
-                            <button
-                                type="button"
-                                className="fpAdminBtn fpAdminBtn--primary fpAdminBtn--md"
-                            >
-                                Boka
-                            </button>
                         </div>
                     </div>
                 ))}
