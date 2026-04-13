@@ -50,4 +50,26 @@ public class TableService : ITableService
             Placement = table.Placement
         };
     }
+    public async Task<TableDto> UpdateTableAsync(int id, UpdateTableDto dto)
+    {
+        var table = await _context.Tables.FindAsync(id);
+
+        if (table == null)
+            throw new KeyNotFoundException("Bordet hittades inte.");
+
+        table.Name = dto.Name;
+        table.Capacity = dto.Capacity;
+        table.Placement = dto.Placement;
+        table.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return new TableDto
+        {
+            Id = table.Id,
+            Name = table.Name,
+            Capacity = table.Capacity,
+            Placement = table.Placement
+        };
+    }
 }
