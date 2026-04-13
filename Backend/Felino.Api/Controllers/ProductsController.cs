@@ -23,6 +23,7 @@ namespace Felino.Api.Controllers
             _productService = productService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
@@ -59,8 +60,8 @@ namespace Felino.Api.Controllers
             return Ok(products.Select(MapToDto));
         }
 
-        [HttpGet("featured")]
         [AllowAnonymous]
+        [HttpGet("featured")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(IEnumerable<FeaturedProductDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<FeaturedProductDto>>> GetFeaturedProducts(
@@ -73,6 +74,7 @@ namespace Felino.Api.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id:int}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
@@ -267,6 +269,7 @@ namespace Felino.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var product = await _context.Products.FindAsync(id);
@@ -274,10 +277,21 @@ namespace Felino.Api.Controllers
             if (product == null)
                 return NotFound();
 
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (DbUpdateException ex)
+            {
+                return Conflict(new
+                {
+                    error = "Produkten kan inte tas bort eftersom den används i en eller flera beställningar.",
+                    details = ex.InnerException?.Message ?? ex.Message
+                });
+            }
         }
 
         private static ProductDto MapToDto(Product p) => new ProductDto

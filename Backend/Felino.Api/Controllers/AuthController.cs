@@ -4,6 +4,7 @@ using System.Text;
 using Felino.Api.Data;
 using Felino.Api.Domain.Entities;
 using Felino.Api.Dtos.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Felino.Api.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -35,7 +37,9 @@ namespace Felino.Api.Controllers
         public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
         {
             if (!ModelState.IsValid)
+            {
                 return ValidationProblem(ModelState);
+            }
 
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Username == request.Username);
@@ -62,7 +66,10 @@ namespace Felino.Api.Controllers
             }
 
             var token = GenerateJwtToken(user);
-            var expiresInMinutes = int.Parse(_configuration["Jwt:ExpiresInMinutes"]!);
+            var expiresInMinutes = int.Parse(
+                _configuration["Jwt:ExpiresInMinutes"]
+                ?? throw new InvalidOperationException("JWT expiration is missing.")
+            );
 
             var response = new LoginResponseDto
             {
@@ -85,7 +92,10 @@ namespace Felino.Api.Controllers
             var audience = _configuration["Jwt:Audience"]
                 ?? throw new InvalidOperationException("JWT audience is missing.");
 
-            var expiresInMinutes = int.Parse(_configuration["Jwt:ExpiresInMinutes"]!);
+            var expiresInMinutes = int.Parse(
+                _configuration["Jwt:ExpiresInMinutes"]
+                ?? throw new InvalidOperationException("JWT expiration is missing.")
+            );
 
             var claims = new List<Claim>
             {
