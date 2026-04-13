@@ -56,12 +56,9 @@
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  padding: 18px;
-  border: 8px solid #386642;
-  background-image: url("/images/site/rutig.png");
-  background-size: 210px;
-  background-repeat: repeat;
-  background-position: center;
+  padding: 0;
+  border: none;
+  background: transparent;
   aspect-ratio: 1 / 1;
 }
 
@@ -70,8 +67,15 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border-radius: 6px;
-  background: #ffffff;
+  border-radius: 0;
+  background: transparent;
+  border: 10px solid #fef8f1;
+  box-sizing: border-box;
+
+  /* ✨ Ny skugga */
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .promoImage {
@@ -82,18 +86,17 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
+  z-index: 1;
 }
 
 .promoOverlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  display: none;
 }
 
 .promoContent {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -132,7 +135,11 @@
 
   .heroPromoBox {
     aspect-ratio: 1 / 0.82;
-    padding: 14px;
+    padding: 0;
+  }
+
+  .promoInner {
+    border-width: 9px;
   }
 
   .promoContent {
@@ -162,7 +169,11 @@
 
   .heroPromoBox {
     aspect-ratio: 1 / 0.78;
-    padding: 12px;
+    padding: 0;
+  }
+
+  .promoInner {
+    border-width: 8px;
   }
 
   .promoContent {
@@ -195,7 +206,11 @@
 
   .heroPromoBox {
     aspect-ratio: 1 / 0.72;
-    padding: 10px;
+    padding: 0;
+  }
+
+  .promoInner {
+    border-width: 7px;
   }
 
   .promoContent {
@@ -233,7 +248,11 @@
 
   .heroPromoBox {
     aspect-ratio: 16 / 9;
-    padding: 10px;
+    padding: 0;
+  }
+
+  .promoInner {
+    border-width: 7px;
   }
 
   .promoContent {
@@ -256,5 +275,9 @@
 @media (max-width: 520px) {
   .heroPromoBox {
     aspect-ratio: 15 / 10;
+  }
+
+  .promoInner {
+    border-width: 6px;
   }
 }
