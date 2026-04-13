@@ -8,6 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import { getAdminTables, type TableDto } from "../../../api/tableApi";
 import CreateTable from "./CreateTable";
+import EditTable from "./EditTable";
 
 export default function BookingTables() {
 
@@ -15,6 +16,7 @@ export default function BookingTables() {
     const [isLoadingTables, setIsLoadingTables] = useState(true);
     const [tablesError, setTablesError] = useState("");
     const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
+    const [editingTable, setEditingTable] = useState<TableDto | null>(null);
 
     useEffect(() => {
         const loadTables = async () => {
@@ -65,6 +67,21 @@ export default function BookingTables() {
             {isLoadingTables && <p>Laddar bord...</p>}
             {tablesError && <p className="field-error">{tablesError}</p>}
 
+            {editingTable && (
+                <EditTable
+                    table={editingTable}
+                    onClose={() => setEditingTable(null)}
+                    onUpdated={(updatedTable) => {
+                        setTables((prev) =>
+                            prev.map((table) =>
+                                table.id === updatedTable.id ? updatedTable : table
+                            )
+                        );
+                        setEditingTable(null);
+                    }}
+                />
+            )}
+
             <div className="tables-grid">
                 {tables.map((table) => (
                     <div className="table-card" key={table.id}>
@@ -89,6 +106,7 @@ export default function BookingTables() {
                             <button
                                 type="button"
                                 className="fpAdminBtn fpAdminBtn--primary fpAdminBtn--md"
+                                onClick={() => setEditingTable(table)}
                             >
                                 Redigera
                             </button>
