@@ -1,43 +1,36 @@
-import "./BookingCalendar.css";
+import { getAvailableTimesForDate } from "../../../utils/bookingTimeSlots";
 
 export default function BookingCalendar() {
-  const timeSlots = [
-    "16:00",
-    "16:30",
-    "17:00",
-    "17:30",
-    "18:00",
-    "18:30",
-    "19:00",
-    "19:30",
-    "20:00",
-    "20:30",
-    "21:00",
-    "21:30",
+  const today = new Date().toISOString().split("T")[0];
+  const timeSlots = getAvailableTimesForDate(today, 60);
+
+  const tables = [
+    { id: 1, name: "Bord 1", capacity: 2, placement: "Indoor" },
+    { id: 2, name: "Bord 2", capacity: 4, placement: "Outdoor" },
+    { id: 3, name: "Bord 3", capacity: 4, placement: "Indoor" },
+    { id: 4, name: "Bord 4", capacity: 6, placement: "Outdoor" },
   ];
 
-  const bookingRows = [
-    { id: 1, time: "17:00", name: "Nilsson" },
-    { id: 2, time: "18:00", name: "Andersson" },
-    { id: 3, time: "19:00", name: "Svensson" },
-    { id: 4, time: "20:00", name: "Lindstrand" },
-    { id: 5, time: "21:00", name: "Lindberg" },
-    { id: 6, time: "22:00", name: "Johansson" },
-    { id: 7, time: "23:00", name: "Karlsson" },
-    { id: 8, time: "24:00", name: "Persson" },
+  const bookings = [
+    { id: 1, tableId: 1, time: "17:00", customerName: "Nilsson", numberOfGuests: 2 },
+    { id: 2, tableId: 2, time: "18:00", customerName: "Andersson", numberOfGuests: 4 },
+    { id: 3, tableId: 3, time: "19:00", customerName: "Svensson", numberOfGuests: 3 },
+    { id: 4, tableId: 4, time: "20:00", customerName: "Lindstrand", numberOfGuests: 5 },
   ];
 
   return (
     <div className="calendar">
       <div className="calendar-layout">
         <aside className="calendar-sidebar">
-          <div className="calendar-sidebar-header">Bokningar</div>
+          <div className="calendar-sidebar-header">Bord</div>
 
           <div className="calendar-sidebar-body">
-            {bookingRows.map((booking) => (
-              <div key={booking.id} className="calendar-sidebar-row">
-                <span className="calendar-time-badge">{booking.time}</span>
-                <span className="calendar-booking-name">{booking.name}</span>
+            {tables.map((table) => (
+              <div key={table.id} className="calendar-sidebar-row">
+                <div className="calendar-table-name">{table.name}</div>
+                <div className="calendar-table-meta">
+                  {table.capacity} pers · {table.placement === "Outdoor" ? "Utomhus" : "Inomhus"}
+                </div>
               </div>
             ))}
           </div>
@@ -61,14 +54,34 @@ export default function BookingCalendar() {
             className="calendar-grid"
             style={{
               gridTemplateColumns: `repeat(${timeSlots.length}, minmax(90px, 1fr))`,
-              gridTemplateRows: `repeat(${bookingRows.length}, 64px)`,
+              gridTemplateRows: `repeat(${tables.length}, 64px)`,
             }}
           >
-            {Array.from({
-              length: bookingRows.length * timeSlots.length,
-            }).map((_, index) => (
-              <div key={index} className="calendar-grid-cell" />
-            ))}
+            {tables.flatMap((table) =>
+              timeSlots.map((slot) => {
+                const booking = bookings.find(
+                  (b) => b.tableId === table.id && b.time === slot
+                );
+
+                return (
+                  <div
+                    key={`${table.id}-${slot}`}
+                    className={`calendar-grid-cell ${booking ? "booked" : ""}`}
+                  >
+                    {booking && (
+                      <div className="calendar-booking-card">
+                        <div className="calendar-booking-name">
+                          {booking.customerName}
+                        </div>
+                        <div className="calendar-booking-meta">
+                          {booking.numberOfGuests} pers
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
           </div>
         </section>
       </div>
