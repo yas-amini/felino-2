@@ -1,5 +1,6 @@
 using Felino.Api.DTOs.Payments;
 using Felino.Api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Felino.Api.Controllers
@@ -16,6 +17,7 @@ namespace Felino.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> ProcessPayment(ProcessPaymentDto dto)
         {
             try
@@ -30,6 +32,7 @@ namespace Felino.Api.Controllers
         }
 
         [HttpGet("order/{orderId}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetStatus(int orderId)
         {
             var result = await _paymentService.GetPaymentByOrderIdAsync(orderId);
