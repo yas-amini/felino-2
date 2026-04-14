@@ -41,7 +41,8 @@ export default function ProductCarousel({
 
   const [products, setProducts] = useState<FeaturedProductDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState<ProductModalData | null>(null);
+  const [selectedProduct, setSelectedProduct] =
+    useState<ProductModalData | null>(null);
 
   useEffect(() => {
     async function loadProducts() {
@@ -75,14 +76,27 @@ export default function ProductCarousel({
   return (
     <>
       <div className="productCarouselWrapper">
-        <button
-          type="button"
-          className="productCarouselArrow productCarouselArrowLeft"
-          onClick={() => scrollCarousel("left")}
-          aria-label="Visa föregående produkter"
-        >
-          <FontAwesomeIcon icon={faChevronLeft} />
-        </button>
+        <div className="productCarouselToolbar">
+          <div className="productCarouselControls">
+            <button
+              type="button"
+              className="productCarouselArrow productCarouselArrowLeft"
+              onClick={() => scrollCarousel("left")}
+              aria-label="Visa föregående produkter"
+            >
+              <FontAwesomeIcon icon={faChevronLeft} />
+            </button>
+
+            <button
+              type="button"
+              className="productCarouselArrow productCarouselArrowRight"
+              onClick={() => scrollCarousel("right")}
+              aria-label="Visa fler produkter"
+            >
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+          </div>
+        </div>
 
         <div className="productCarousel" ref={carouselRef}>
           {isLoading
@@ -91,7 +105,7 @@ export default function ProductCarousel({
                   <div className="productPlaceholderMedia" />
                   <div className="productPlaceholderBody">
                     <div className="productPlaceholderLine productPlaceholderLineText" />
-                    <div className="productPlaceholderLine productPlaceholderLineText" />
+                    <div className="productPlaceholderLine productPlaceholderLineShort" />
                   </div>
                 </article>
               ))
@@ -100,7 +114,9 @@ export default function ProductCarousel({
                   type="button"
                   className="productCarouselCard"
                   key={product.id}
-                  onClick={() => setSelectedProduct(mapFeaturedProductToModalData(product))}
+                  onClick={() =>
+                    setSelectedProduct(mapFeaturedProductToModalData(product))
+                  }
                   aria-label={`Visa ${product.name}`}
                 >
                   <div className="productCarouselCardMedia">
@@ -115,24 +131,18 @@ export default function ProductCarousel({
                         <span>Ingen bild</span>
                       </div>
                     )}
+
+                    <span className="productCarouselCardPriceOverlay">
+                      {product.price} kr
+                    </span>
                   </div>
 
                   <div className="productCarouselCardBody">
                     <h3 className="productCarouselCardTitle">{product.name}</h3>
-                    <p className="productCarouselCardPrice">{product.price} kr</p>
                   </div>
                 </button>
               ))}
         </div>
-
-        <button
-          type="button"
-          className="productCarouselArrow productCarouselArrowRight"
-          onClick={() => scrollCarousel("right")}
-          aria-label="Visa fler produkter"
-        >
-          <FontAwesomeIcon icon={faChevronRight} />
-        </button>
       </div>
 
       <ProductModal

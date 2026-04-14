@@ -6,9 +6,15 @@
   min-width: 0;
   box-sizing: border-box;
   padding-top: 50px;
+  align-items: stretch;
 }
 
-.homeBox {
+.homeBox,
+.homeBoxHours,
+.homeBoxHero,
+.homeBoxFavorites,
+.homeBoxPromo,
+.homeBoxCollage {
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
@@ -19,12 +25,8 @@
   display: flex;
   align-items: stretch;
   justify-content: stretch;
-  width: 100%;
-  min-width: 0;
   background: #ffffff;
-  border: 4px solid #000;
   aspect-ratio: 1 / 1;
-  box-sizing: border-box;
 }
 
 .homeBoxHero {
@@ -32,69 +34,63 @@
   display: flex;
   align-items: stretch;
   justify-content: stretch;
-  width: 100%;
-  min-width: 0;
   background: #ffffff;
   aspect-ratio: 1.5 / 1;
   overflow: visible;
-  box-sizing: border-box;
 }
 
-.homeBoxFavorites {
-  grid-column: 1 / -1;
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-.homeBoxPromo {
-  grid-column: 1 / -1;
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
+.homeBoxFavorites,
+.homeBoxPromo,
 .homeBoxCollage {
   grid-column: 1 / -1;
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
 }
 
 .sectionCornerLabel {
   display: inline-block;
+  margin: 0 0 -8px 0;
   color: #000;
   white-space: nowrap;
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  margin: 0 0 -8px 0;
 }
 
 @media (max-width: 1024px) {
   .homePage {
     grid-template-columns: minmax(220px, 0.95fr) minmax(0, 1.05fr);
     gap: 24px;
-    align-items: stretch;
   }
 
   .homeBoxHours,
   .homeBoxHero {
     height: 100%;
-  }
-
-  .homeBoxHours {
     aspect-ratio: auto;
   }
 
   .homeBoxHero {
-    aspect-ratio: auto;
     min-height: 100%;
   }
+
+  .homeBoxCollage {
+  display: none;
+}
 }
 
 @media (max-width: 768px) {
+  .homePage {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .homeBoxHero,
+  .homeBoxHours,
+  .homeBoxCollage,
+  .homeBoxFavorites,
+  .homeBoxPromo {
+    grid-column: 1 / -1;
+  }
+
   .homeBoxHero {
     order: 1;
   }
@@ -103,23 +99,15 @@
     order: 2;
   }
 
-  .homeBoxCollage {
-    order: 3;
-  }
+.homeBoxCollage {
+  display: none;
+}
 
   .homeBoxFavorites {
-    order: 4;
-  }
-
-  .homeBoxPromo {
     order: 5;
   }
 
-  .homeBoxHours,
-  .homeBoxHero,
-  .homeBoxCollage,
-  .homeBoxFavorites,
   .homeBoxPromo {
-    grid-column: 1;
+    order: 4;
   }
 }
