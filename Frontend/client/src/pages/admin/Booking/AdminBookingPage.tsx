@@ -84,7 +84,9 @@ export default function AdminBookingPage() {
         </section>
 
         <section className="admin-booking-content">
-          {activeTab === "kalender" && <BookingCalendar />}
+          {activeTab === "kalender" && (
+            <BookingCalendar selectedDate={selectedDate} />
+          )}
 
           {activeTab === "lista" && (
             <section className="booking-section">
@@ -124,7 +126,7 @@ export default function AdminBookingPage() {
                     <p>
                       {booking.phone}
                     </p>
-                    <FontAwesomeIcon icon={faMailBulk} /> 
+                    <FontAwesomeIcon icon={faMailBulk} />
                     <p>{booking.email}
                     </p>
                   </div>

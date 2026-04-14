@@ -33,6 +33,17 @@ export type UpdateBookingRequest = {
   specialRequests?: string;
 };
 
+export type BookingOverviewDto = {
+  bookingId: number;
+  tableId: number;
+  tableName: string;
+  date: string;
+  time: string;
+  numberOfGuests: number;
+  customerName: string;
+  status: string;
+};
+
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const errorText = await response.text();
@@ -102,3 +113,17 @@ export async function getBookingsByDate(date: string): Promise<BookingResponse[]
   const response = await fetch(`/api/bookings/admin?date=${date}`);
   return handleResponse<BookingResponse[]>(response);
 }
+
+export async function getBookingsOverviewByDate(
+  date: string
+): Promise<BookingOverviewDto[]> {
+  const response = await fetch(`/api/admin/bookings/overview?date=${date}`);
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || "Kunde inte hämta bokningsöversikt.");
+  }
+
+  return response.json();
+}
+

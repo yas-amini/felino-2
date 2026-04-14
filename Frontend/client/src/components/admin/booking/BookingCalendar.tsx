@@ -1,35 +1,79 @@
+import { useEffect, useState } from "react";
+import "./BookingCalendar.css";
 import { getAvailableTimesForDate } from "../../../utils/bookingTimeSlots";
+import { getAdminTables, type TableDto } from "../../../api/tableApi";
+import {
+  getBookingsOverviewByDate,
+  type BookingOverviewDto,
+} from "../../../api/bookingApi";
+import AdminSectionHead from "../shared/AdminSectionHead";
 
-export default function BookingCalendar() {
-  const today = new Date().toISOString().split("T")[0];
-  const timeSlots = getAvailableTimesForDate(today, 60);
+type BookingCalendarProps = {
+  selectedDate: string;
+};
 
-  const tables = [
-    { id: 1, name: "Bord 1", capacity: 2, placement: "Indoor" },
-    { id: 2, name: "Bord 2", capacity: 4, placement: "Outdoor" },
-    { id: 3, name: "Bord 3", capacity: 4, placement: "Indoor" },
-    { id: 4, name: "Bord 4", capacity: 6, placement: "Outdoor" },
-  ];
+export default function BookingCalendar({
+  selectedDate,
+}: BookingCalendarProps) {
+  const timeSlots = getAvailableTimesForDate(selectedDate, 60);
 
-  const bookings = [
-    { id: 1, tableId: 1, time: "17:00", customerName: "Nilsson", numberOfGuests: 2 },
-    { id: 2, tableId: 2, time: "18:00", customerName: "Andersson", numberOfGuests: 4 },
-    { id: 3, tableId: 3, time: "19:00", customerName: "Svensson", numberOfGuests: 3 },
-    { id: 4, tableId: 4, time: "20:00", customerName: "Lindstrand", numberOfGuests: 5 },
-  ];
+  const [tables, setTables] = useState<TableDto[]>([]);
+  const [bookings, setBookings] = useState<BookingOverviewDto[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const loadCalendarData = async () => {
+      if (!selectedDate) return;
+
+      setIsLoading(true);
+      setError("");
+
+      try {
+        const [tablesResult, bookingsResult] = await Promise.all([
+          getAdminTables(),
+          getBookingsOverviewByDate(selectedDate),
+        ]);
+
+        setTables(tablesResult);
+        setBookings(bookingsResult);
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("Kunde inte hämta kalenderdata.");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCalendarData();
+  }, [selectedDate]);
+
+  if (isLoading) {
+    return <p>Laddar kalender...</p>;
+  }
+
+  if (error) {
+    return <p className="field-error">{error}</p>;
+  }
 
   return (
     <div className="calendar">
       <div className="calendar-layout">
         <aside className="calendar-sidebar">
-          <div className="calendar-sidebar-header">Bord</div>
+          <AdminSectionHead
+            level={2}
+            title="Kalender översikt" />
 
           <div className="calendar-sidebar-body">
             {tables.map((table) => (
               <div key={table.id} className="calendar-sidebar-row">
                 <div className="calendar-table-name">{table.name}</div>
                 <div className="calendar-table-meta">
-                  {table.capacity} pers · {table.placement === "Outdoor" ? "Utomhus" : "Inomhus"}
+                  {table.capacity} pers ·{" "}
+                  {table.placement === "Outdoor" ? "Utomhus" : "Inomhus"}
                 </div>
               </div>
             ))}
@@ -60,7 +104,10 @@ export default function BookingCalendar() {
             {tables.flatMap((table) =>
               timeSlots.map((slot) => {
                 const booking = bookings.find(
-                  (b) => b.tableId === table.id && b.time === slot
+                  (b) =>
+                    b.tableId === table.id &&
+                    b.time.slice(0, 5) === slot &&
+                    b.status === "Confirmed"
                 );
 
                 return (
