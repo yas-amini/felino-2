@@ -1,6 +1,11 @@
-﻿namespace Felino.Api.Services.Interfaces
+﻿using Felino.Api.DTOs.Tables;
+namespace Felino.Api.Services.Interfaces;
+
+public interface ITableService
 {
-    public class ITableService
-    {
-    }
+    Task<List<TableDto>> GetAllTablesAsync();
+    Task<TableDto> CreateTableAsync(CreateTableDto dto);
+    Task<TableDto> UpdateTableAsync(int id, UpdateTableDto dto);
+
+
 }

@@ -1,43 +1,77 @@
+import { useEffect, useState } from "react";
+import { getAvailableTimesForDate } from "../../../utils/bookingTimeSlots";
 import "./BookingCalendar.css";
+import { getAdminTables, type TableDto } from "../../../api/tableApi";
+import {
+  getBookingsOverviewByDate,
+  type BookingOverviewDto,
+} from "../../../api/bookingApi";
 
-export default function BookingCalendar() {
-  const timeSlots = [
-    "16:00",
-    "16:30",
-    "17:00",
-    "17:30",
-    "18:00",
-    "18:30",
-    "19:00",
-    "19:30",
-    "20:00",
-    "20:30",
-    "21:00",
-    "21:30",
-  ];
+type BookingCalendarProps = {
+  selectedDate: string;
+};
 
-  const bookingRows = [
-    { id: 1, time: "17:00", name: "Nilsson" },
-    { id: 2, time: "18:00", name: "Andersson" },
-    { id: 3, time: "19:00", name: "Svensson" },
-    { id: 4, time: "20:00", name: "Lindstrand" },
-    { id: 5, time: "21:00", name: "Lindberg" },
-    { id: 6, time: "22:00", name: "Johansson" },
-    { id: 7, time: "23:00", name: "Karlsson" },
-    { id: 8, time: "24:00", name: "Persson" },
-  ];
+export default function BookingCalendar({
+  selectedDate,
+}: BookingCalendarProps) {
+  const timeSlots = getAvailableTimesForDate(selectedDate, 60);
+
+  const [tables, setTables] = useState<TableDto[]>([]);
+  const [bookings, setBookings] = useState<BookingOverviewDto[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const loadCalendarData = async () => {
+      if (!selectedDate) return;
+
+      setIsLoading(true);
+      setError("");
+
+      try {
+        const [tablesResult, bookingsResult] = await Promise.all([
+          getAdminTables(),
+          getBookingsOverviewByDate(selectedDate),
+        ]);
+
+        setTables(tablesResult);
+        setBookings(bookingsResult);
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("Kunde inte hämta kalenderdata.");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCalendarData();
+  }, [selectedDate]);
+
+  if (isLoading) {
+    return <p>Laddar kalender...</p>;
+  }
+
+  if (error) {
+    return <p className="field-error">{error}</p>;
+  }
 
   return (
     <div className="calendar">
       <div className="calendar-layout">
         <aside className="calendar-sidebar">
-          <div className="calendar-sidebar-header">Bokningar</div>
+          <div className="calendar-sidebar-header">Kalender</div>
 
           <div className="calendar-sidebar-body">
-            {bookingRows.map((booking) => (
-              <div key={booking.id} className="calendar-sidebar-row">
-                <span className="calendar-time-badge">{booking.time}</span>
-                <span className="calendar-booking-name">{booking.name}</span>
+            {tables.map((table) => (
+              <div key={table.id} className="calendar-sidebar-row">
+                <div className="calendar-table-name">{table.name}</div>
+                <div className="calendar-table-meta">
+                  {table.capacity} pers ·{" "}
+                  {table.placement === "Outdoor" ? "Utomhus" : "Inomhus"}
+                </div>
               </div>
             ))}
           </div>
@@ -57,18 +91,41 @@ export default function BookingCalendar() {
             ))}
           </div>
 
+
           <div
             className="calendar-grid"
             style={{
               gridTemplateColumns: `repeat(${timeSlots.length}, minmax(90px, 1fr))`,
-              gridTemplateRows: `repeat(${bookingRows.length}, 64px)`,
             }}
           >
-            {Array.from({
-              length: bookingRows.length * timeSlots.length,
-            }).map((_, index) => (
-              <div key={index} className="calendar-grid-cell" />
-            ))}
+            {tables.flatMap((table) =>
+              timeSlots.map((slot) => {
+                const booking = bookings.find(
+                  (b) =>
+                    b.tableId === table.id &&
+                    b.time.slice(0, 5) === slot &&
+                    b.status === "Confirmed"
+                );
+
+                return (
+                  <div
+                    key={`${table.id}-${slot}`}
+                    className={`calendar-grid-cell ${booking ? "booked" : ""}`}
+                  >
+                    {booking && (
+                      <div className="calendar-booking-card">
+                        <div className="calendar-booking-name">
+                          {booking.customerName}
+                        </div>
+                        <div className="calendar-booking-meta">
+                          {booking.numberOfGuests} pers
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
           </div>
         </section>
       </div>

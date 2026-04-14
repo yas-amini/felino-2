@@ -22,6 +22,8 @@ import BookingResultCard from "../../components/booking/BookingResultCard";
 import EditBookingForm from "../../components/booking/EditBookingForm";
 
 export default function TableBooking() {
+  const normalizeTime = (time: string) => time.slice(0, 5);
+
   const initialCreateBookingForm: CreateBookingFormState = {
     date: "",
     time: "",
@@ -50,7 +52,8 @@ export default function TableBooking() {
     specialRequests: "",
   };
 
-  const [editBookingForm, setEditBookingForm] = useState<EditBookingFormState>(initialEditBookingForm);
+  const [editBookingForm, setEditBookingForm] =
+    useState<EditBookingFormState>(initialEditBookingForm);
   const [editErrors, setEditErrors] = useState<EditBookingErrors>({});
 
   const [step, setStep] = useState(1);
@@ -78,7 +81,10 @@ export default function TableBooking() {
   const [isEditingBooking, setIsEditingBooking] = useState(false);
   const [isUpdatingBooking, setIsUpdatingBooking] = useState(false);
 
-  const availableCreateBookingTimes = getAvailableTimesForDate(createBookingForm.date, 60);
+  const availableCreateBookingTimes = getAvailableTimesForDate(
+    createBookingForm.date,
+    60
+  );
 
   const handleCreateBookingChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -96,9 +102,7 @@ export default function TableBooking() {
     }));
   };
 
-  const handleManageBookingChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleManageBookingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     setManageBookingForm((prev) => ({
@@ -192,7 +196,7 @@ export default function TableBooking() {
         phone: createBookingForm.phone,
         email: createBookingForm.email,
         date: createBookingForm.date,
-        time: createBookingForm.time,
+        time: `${createBookingForm.time}:00`,
         numberOfGuests: Number(createBookingForm.numberOfGuests),
         outdoorSeating: createBookingForm.outdoorSeating === "true",
         specialRequests: createBookingForm.specialRequests || "",
@@ -236,7 +240,7 @@ export default function TableBooking() {
       setFoundBooking({
         bookingId: result.bookingId,
         date: result.date,
-        time: result.time,
+        time: normalizeTime(result.time),
         numberOfGuests: result.numberOfGuests,
         outdoorSeating: result.outdoorSeating,
         status: result.status,
@@ -268,7 +272,7 @@ export default function TableBooking() {
       phone: foundBooking.phone,
       email: foundBooking.email,
       date: foundBooking.date,
-      time: foundBooking.time,
+      time: normalizeTime(foundBooking.time),
       numberOfGuests: String(foundBooking.numberOfGuests),
       outdoorSeating: foundBooking.outdoorSeating ? "true" : "false",
       specialRequests: foundBooking.specialRequests || "",
@@ -333,7 +337,7 @@ export default function TableBooking() {
         name: editBookingForm.name,
         phone: editBookingForm.phone,
         date: editBookingForm.date,
-        time: editBookingForm.time,
+        time: `${editBookingForm.time}:00`,
         numberOfGuests: Number(editBookingForm.numberOfGuests),
         outdoorSeating: editBookingForm.outdoorSeating === "true",
         specialRequests: editBookingForm.specialRequests || "",
@@ -342,7 +346,7 @@ export default function TableBooking() {
       setFoundBooking({
         bookingId: result.bookingId,
         date: result.date,
-        time: result.time,
+        time: normalizeTime(result.time),
         numberOfGuests: result.numberOfGuests,
         outdoorSeating: result.outdoorSeating,
         status: result.status,
@@ -380,7 +384,7 @@ export default function TableBooking() {
       setFoundBooking({
         bookingId: result.bookingId,
         date: result.date,
-        time: result.time,
+        time: normalizeTime(result.time),
         numberOfGuests: result.numberOfGuests,
         outdoorSeating: result.outdoorSeating,
         status: result.status,
@@ -407,19 +411,14 @@ export default function TableBooking() {
     <Page>
       <div className="booking-page">
         <section className="booking-hero-section">
-          <h1>Välkommen till Felino Pizzeria</h1>
+          <h1>Boka bord</h1>
           <p className="booking-page-intro">
-            Nedan kan du boka en bordplats i vår restaurang
+            Nedan kan du boka en bordplats i vår restaurang. Välj datum och antal gäster för att boka bord hos oss.
           </p>
 
           <div className="booking-hero-card">
             <div className="booking-layout">
               <div>
-                <div className="booking-card-header">
-                  <h2>Boka bord</h2>
-                  <p>Välj datum och antal gäster för att boka bord hos oss.</p>
-                </div>
-
                 {createdBookingId && (
                   <div className="booking-success-message">
                     Din bokning är skapad. Ditt bokningsnummer är #{createdBookingId}.

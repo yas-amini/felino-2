@@ -324,5 +324,26 @@ public class BookingService : IBookingService
             Status = b.Status.ToString()
         }).ToList();
     }
+    public async Task<List<BookingOverviewDto>> GetBookingsOverviewByDateAsync(DateOnly date)
+    {
+        return await _context.Bookings
+            .Include(b => b.Customer)
+            .Include(b => b.Table)
+            .Where(b => b.Date == date && b.Status == BookingStatus.Confirmed)
+            .OrderBy(b => b.Time)
+            .Select(b => new BookingOverviewDto
+            {
+                BookingId = b.Id,
+                TableId = b.TableId,
+                TableName = b.Table.Name,
+                Date = b.Date,
+                Time = b.Time,
+                NumberOfGuests = b.NumberOfGuests,
+                CustomerName = b.Customer.Name,
+                Status = b.Status.ToString()
+            })
+            .ToListAsync();
+    }
+
 
 }
