@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import "./BookingCalendar.css";
 import { getAvailableTimesForDate } from "../../../utils/bookingTimeSlots";
+import "./BookingCalendar.css";
 import { getAdminTables, type TableDto } from "../../../api/tableApi";
 import {
   getBookingsOverviewByDate,
   type BookingOverviewDto,
 } from "../../../api/bookingApi";
-import AdminSectionHead from "../shared/AdminSectionHead";
 
 type BookingCalendarProps = {
   selectedDate: string;
@@ -63,9 +62,7 @@ export default function BookingCalendar({
     <div className="calendar">
       <div className="calendar-layout">
         <aside className="calendar-sidebar">
-          <AdminSectionHead
-            level={2}
-            title="Kalender översikt" />
+          <div className="calendar-sidebar-header">Kalender</div>
 
           <div className="calendar-sidebar-body">
             {tables.map((table) => (
@@ -94,11 +91,11 @@ export default function BookingCalendar({
             ))}
           </div>
 
+
           <div
             className="calendar-grid"
             style={{
               gridTemplateColumns: `repeat(${timeSlots.length}, minmax(90px, 1fr))`,
-              gridTemplateRows: `repeat(${tables.length}, 64px)`,
             }}
           >
             {tables.flatMap((table) =>

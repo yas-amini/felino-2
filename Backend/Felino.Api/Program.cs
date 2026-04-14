@@ -146,7 +146,10 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
     await context.Database.MigrateAsync();
+
     await DbSeeder.SeedTablesAsync(context);
+    await DbSeeder.SeedCustomersAsync(context);
+    await DbSeeder.SeedBookingsAsync(context);
 
     if (!context.Users.Any())
     {
