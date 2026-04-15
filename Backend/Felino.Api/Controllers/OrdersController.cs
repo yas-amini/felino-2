@@ -1,5 +1,6 @@
 using Felino.Api.DTOs.Orders;
 using Felino.Api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Felino.Api.Controllers
@@ -16,6 +17,7 @@ namespace Felino.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateOrder(CreateOrderDto dto)
         {
             try
@@ -30,6 +32,7 @@ namespace Felino.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllOrders()
         {
             var result = await _orderService.GetAllOrdersAsync();
@@ -37,6 +40,7 @@ namespace Felino.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetOrder(int id)
         {
             var result = await _orderService.GetOrderByIdAsync(id);
@@ -45,6 +49,7 @@ namespace Felino.Api.Controllers
         }
 
         [HttpPut("{id}/status")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateStatus(int id, [FromBody] string status)
         {
             var success = await _orderService.UpdateOrderStatusAsync(id, status);
@@ -53,6 +58,7 @@ namespace Felino.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             var success = await _orderService.DeleteOrderAsync(id);
