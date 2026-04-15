@@ -14,7 +14,7 @@ export async function fetchWithAuth(
   if (token) {
     headers.set("Authorization", `Bearer ${token}`);
   } else {
-    console.warn("⚠️ No auth token found for request:", path);
+    console.warn("No auth token found for request:", path);
   }
 
   const isFormData = options.body instanceof FormData;
@@ -31,11 +31,11 @@ export async function fetchWithAuth(
 
 
   if (response.status === 401) {
-    console.error("❌ 401 Unauthorized:", path);
+    console.error("401 Unauthorized:", path);
   }
 
   if (response.status === 403) {
-    console.error("❌ 403 Forbidden (saknar rätt roll?):", path);
+    console.error("403 Forbidden (saknar rätt roll?):", path);
   }
 
   return response;

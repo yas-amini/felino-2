@@ -3,6 +3,7 @@ import AdminPage from "../../../components/admin/layout/AdminPage";
 import { useAdminTopbar } from "../../../components/admin/useAdminTopbar";
 import AdminButton from "../../../components/admin/shared/AdminButton";
 import AdminModal from "../../../components/admin/shared/AdminModal";
+import { fetchWithAuth } from "../../../api/fetchWithAuth";
 import "./AdminOrdersPage.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
@@ -13,6 +14,7 @@ type OrderLine = {
   qty: number;
   name: string;
   price: number;
+  comment?: string;
 };
 
 type Order = {
@@ -53,8 +55,6 @@ const ANCHORS: Record<OrderStatus, string> = {
   canceled: "avbruten",
 };
 
-
-
 function formatPrice(value: number) {
   return `${value.toFixed(2)} kr`;
 }
@@ -72,21 +72,22 @@ export default function AdminOrdersPage() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch("/api/orders");
+      const res = await fetchWithAuth("/api/orders", {
+        method: "GET",
+      });
       if (!res.ok) throw new Error("Kunde inte hämta ordrar.");
       const data = await res.json();
-      
+
       const mappedOrders: Order[] = data.map((o: any) => {
-        // Handle backend OrderStatus enum (0-4 or strings)
         let status: OrderStatus = "new";
         const rawStatus = o.status.toString().toLowerCase();
-        
+
         if (rawStatus === "0" || rawStatus === "new") status = "new";
         else if (rawStatus === "1" || rawStatus === "preparing") status = "preparing";
         else if (rawStatus === "2" || rawStatus === "ready") status = "ready";
         else if (rawStatus === "3" || rawStatus === "completed") status = "completed";
         else if (rawStatus === "4" || rawStatus === "cancelled" || rawStatus === "canceled") status = "canceled";
-        
+
         return {
           id: o.id,
           status,
@@ -96,15 +97,17 @@ export default function AdminOrdersPage() {
           customerAddress: o.customerAddress,
           customerPhone: o.customerPhone,
           customerEmail: o.customerEmail,
+          delivery: o.delivery,
           comment: o.comment,
-          items: o.items.map((it: any) => ({
+          items: (o.items ?? []).map((it: any) => ({
             qty: it.quantity,
             name: it.productName,
-            price: it.price
-          }))
+            price: it.price,
+            comment: it.extras ?? "",
+          })),
         };
       });
-      
+
       setOrders(mappedOrders);
     } catch (err) {
       console.error(err);
@@ -149,22 +152,23 @@ export default function AdminOrdersPage() {
 
   async function updateOrderStatus(orderId: number, newStatus: OrderStatus) {
     try {
-      // Map back to backend naming for Cancelled
       const backendStatus = newStatus === "canceled" ? "Cancelled" : newStatus;
-      
-      const res = await fetch(`/api/orders/${orderId}/status`, {
+
+      const res = await fetchWithAuth(`/api/orders/${orderId}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(backendStatus)
+        body: JSON.stringify(backendStatus),
       });
 
       if (!res.ok) throw new Error("Kunde inte uppdatera status.");
-      
+
       setOrders((prev) =>
         prev.map((order) =>
           order.id === orderId ? { ...order, status: newStatus } : order
         )
       );
+
+      window.dispatchEvent(new Event("admin-notices-refresh"));
     } catch (err) {
       console.error(err);
     }
@@ -173,13 +177,15 @@ export default function AdminOrdersPage() {
   async function handleDeleteConfirm() {
     if (deleteId == null) return;
     try {
-      const res = await fetch(`/api/orders/${deleteId}`, {
-        method: "DELETE"
+      const res = await fetchWithAuth(`/api/orders/${deleteId}`, {
+        method: "DELETE",
       });
       if (!res.ok) throw new Error("Kunde inte ta bort order.");
 
       setOrders((prev) => prev.filter((o) => o.id !== deleteId));
       setDeleteId(null);
+
+      window.dispatchEvent(new Event("admin-notices-refresh"));
     } catch (err) {
       console.error(err);
     }
@@ -261,10 +267,16 @@ export default function AdminOrdersPage() {
                         <ul className="order-lines">
                           {order.items.map((item, idx) => (
                             <li key={idx}>
-                              {item.qty} × {item.name}{" "}
-                              <span className="muted">
-                                (à {formatPrice(item.price)})
-                              </span>
+                              <div>
+                                {item.qty} × {item.name}{" "}
+                                <span className="muted">
+                                  (à {formatPrice(item.price)})
+                                </span>
+                              </div>
+
+                              {item.comment ? (
+                                <div className="muted">OBS: {item.comment}</div>
+                              ) : null}
                             </li>
                           ))}
 
@@ -277,7 +289,9 @@ export default function AdminOrdersPage() {
                             </li>
                           ) : null}
 
-                          {order.comment ? <li>Kommentar: {order.comment}</li> : null}
+                          {order.comment ? (
+                            <li>Kommentar på order: {order.comment}</li>
+                          ) : null}
                         </ul>
 
                         <div className="order-customer-info">

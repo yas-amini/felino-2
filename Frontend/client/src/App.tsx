@@ -4,6 +4,7 @@ import { CartProvider } from "./context/CartContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import Notification from "./components/common/Notification";
 import RequireAuth from "./components/auth/RequireAuth";
+import ScrollToTop from "./components/common/ScrollToTop";
 
 // Layouts
 import SiteLayout from "./layouts/SiteLayout";
@@ -43,6 +44,7 @@ export default function App() {
     <NotificationProvider>
       <CartProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Notification />
           <Routes>
             {/* SITE */}
@@ -50,10 +52,7 @@ export default function App() {
               <Route path="/" element={<HomePage />} />
 
               <Route path="/meny" element={<Navigate to="/bestall" replace />} />
-              <Route
-                path="/bestall"
-                element={<BestallHem />}
-              />
+              <Route path="/bestall" element={<BestallHem />} />
 
               <Route path="/boka-bord" element={<TableBooking />} />
               <Route path="/varukorg" element={<CartPage />} />
