@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import AdminModal from "./AdminModal";
 import AdminButton from "./AdminButton";
 
@@ -10,6 +11,7 @@ type Props = {
   confirmText?: string;
   cancelText?: string;
   confirmVariant?: "danger" | "primary";
+  children?: ReactNode;
 };
 
 export default function AdminConfirmModal({
@@ -21,15 +23,20 @@ export default function AdminConfirmModal({
   confirmText = "Ja",
   cancelText = "Nej",
   confirmVariant = "danger",
+  children,
 }: Props) {
   return (
     <AdminModal isOpen={isOpen} onClose={onClose} title={title}>
       <p>{message}</p>
 
+      {children}
+
       <div style={{ display: "flex", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
-        <AdminButton variant="cancel" type="button" onClick={onClose}>
-          {cancelText}
-        </AdminButton>
+        {cancelText && (
+          <AdminButton variant="cancel" type="button" onClick={onClose}>
+            {cancelText}
+          </AdminButton>
+        )}
 
         <AdminButton variant={confirmVariant} type="button" onClick={onConfirm}>
           {confirmText}

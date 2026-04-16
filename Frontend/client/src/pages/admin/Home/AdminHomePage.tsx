@@ -8,6 +8,7 @@ import "./AdminHomePage.css";
 
 export default function AdminHomePage() {
   useAdminTopbar("Översikt");
+  
 
   return (
     <AdminPage>

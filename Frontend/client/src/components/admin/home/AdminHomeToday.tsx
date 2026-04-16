@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchWithAuth } from "../../../api/fetchWithAuth";
 import "./AdminHomeToday.css";
 
 type AdminTodayEvent = {
@@ -19,11 +20,8 @@ export default function AdminHomeToday() {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const response = await fetch("/api/admin/dashboard/today", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
+        const response = await fetchWithAuth("/api/admin/dashboard/today", {
+          method: "GET",
         });
 
         if (!response.ok) {

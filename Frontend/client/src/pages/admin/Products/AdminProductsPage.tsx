@@ -40,6 +40,7 @@ function ProductsPageContent() {
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   async function loadData() {
     try {
@@ -76,7 +77,8 @@ function ProductsPageContent() {
   const uncategorizedProducts = useMemo(
     () =>
       products.filter(
-        (product) => product.categoryId === null || product.categoryId === undefined
+        (product) =>
+          product.categoryId === null || product.categoryId === undefined
       ),
     [products]
   );
@@ -234,6 +236,7 @@ function ProductsPageContent() {
 
   function handleOpenDelete(product: ProductDto) {
     setSelectedProduct(product);
+    setDeleteError("");
     setOpenDelete(true);
   }
 
@@ -242,6 +245,7 @@ function ProductsPageContent() {
 
     try {
       setIsDeleting(true);
+      setDeleteError("");
 
       await deleteProduct(selectedProduct.id);
       await loadData();
@@ -250,7 +254,13 @@ function ProductsPageContent() {
       setSelectedProduct(null);
     } catch (error) {
       console.error("Kunde inte ta bort produkt:", error);
-      window.alert(getErrorMessage(error, "Det gick inte att ta bort produkten."));
+
+      const message = getErrorMessage(
+        error,
+        "Det gick inte att ta bort produkten."
+      );
+
+      setDeleteError(message);
     } finally {
       setIsDeleting(false);
     }
@@ -271,6 +281,7 @@ function ProductsPageContent() {
     if (isDeleting) return;
     setOpenDelete(false);
     setSelectedProduct(null);
+    setDeleteError("");
   }
 
   function mapAccordionProductToDto(product: {
@@ -294,8 +305,8 @@ function ProductsPageContent() {
       imageUrl: product.imageUrl ?? null,
       categoryId:
         product.categoryId !== null &&
-        product.categoryId !== undefined &&
-        product.categoryId !== ""
+          product.categoryId !== undefined &&
+          product.categoryId !== ""
           ? Number(product.categoryId)
           : null,
     };
@@ -443,7 +454,7 @@ function ProductsPageContent() {
                           imageUrl: product.imageUrl ?? "",
                           categoryId:
                             product.categoryId !== null &&
-                            product.categoryId !== undefined
+                              product.categoryId !== undefined
                               ? String(product.categoryId)
                               : null,
                         }))}
@@ -513,7 +524,9 @@ function ProductsPageContent() {
                             </td>
 
                             <td data-label="Namn">{product.name}</td>
-                            <td data-label="Ingredienser">{product.ingredients}</td>
+                            <td data-label="Ingredienser">
+                              {product.ingredients}
+                            </td>
                             <td data-label="Pris">{product.price} kr</td>
                             <td data-label="Sås">{product.sauce || "-"}</td>
                             <td data-label="Alt-text">{product.altText || "-"}</td>
@@ -587,19 +600,19 @@ function ProductsPageContent() {
         product={
           selectedProduct
             ? {
-                id: selectedProduct.id,
-                categoryId:
-                  selectedProduct.categoryId !== null &&
+              id: selectedProduct.id,
+              categoryId:
+                selectedProduct.categoryId !== null &&
                   selectedProduct.categoryId !== undefined
-                    ? String(selectedProduct.categoryId)
-                    : "",
-                name: selectedProduct.name,
-                ingredients: selectedProduct.ingredients,
-                price: String(selectedProduct.price),
-                sauce: selectedProduct.sauce ?? "",
-                altText: selectedProduct.altText ?? "",
-                imageUrl: selectedProduct.imageUrl ?? "",
-              }
+                  ? String(selectedProduct.categoryId)
+                  : "",
+              name: selectedProduct.name,
+              ingredients: selectedProduct.ingredients,
+              price: String(selectedProduct.price),
+              sauce: selectedProduct.sauce ?? "",
+              altText: selectedProduct.altText ?? "",
+              imageUrl: selectedProduct.imageUrl ?? "",
+            }
             : null
         }
       />
@@ -607,15 +620,33 @@ function ProductsPageContent() {
       <AdminConfirmModal
         isOpen={openDelete}
         onClose={closeDeleteModal}
-        onConfirm={confirmDelete}
+        onConfirm={deleteError ? closeDeleteModal : confirmDelete}
         title="Ta bort produkt"
-        message={`Är du säker på att du vill ta bort ${
-          selectedProduct?.name ?? "produkten"
-        }?`}
-        confirmText={isDeleting ? "Tar bort..." : "Ja, ta bort"}
-        cancelText="Nej"
+        message={`Är du säker på att du vill ta bort ${selectedProduct?.name ?? "produkten"
+          }?`}
+        confirmText={
+          deleteError
+            ? "Stäng"
+            : isDeleting
+              ? "Tar bort..."
+              : "Ja, ta bort"
+        }
+        cancelText={deleteError ? "" : "Nej"}
         confirmVariant="danger"
-      />
+      >
+        {deleteError ? (
+          <p
+            role="alert"
+            style={{
+              color: "#b00020",
+              marginTop: 8,
+              fontSize: "0.9rem",
+            }}
+          >
+            {deleteError}
+          </p>
+        ) : null}
+      </AdminConfirmModal>
     </section>
   );
 }

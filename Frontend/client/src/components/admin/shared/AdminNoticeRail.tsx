@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminNoticeRail.css";
+import { fetchWithAuth } from "../../../api/fetchWithAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
@@ -12,6 +13,7 @@ type AdminNotice = {
 };
 
 const MAX_VISIBLE_NOTICES = 6;
+const POLL_INTERVAL_MS = 5000;
 
 export default function AdminNoticeRail() {
   const navigate = useNavigate();
@@ -19,35 +21,68 @@ export default function AdminNoticeRail() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-  useEffect(() => {
-    const fetchNotices = async () => {
-      try {
-        const response = await fetch("/api/admin/dashboard/notices", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
+  const fetchNotices = useCallback(async (isInitialLoad = false) => {
+    try {
+      if (isInitialLoad) {
+        setLoading(true);
+      }
 
-        if (!response.ok) {
-          throw new Error("Kunde inte hämta notiser.");
-        }
+      const response = await fetchWithAuth("/api/admin/dashboard/notices", {
+        method: "GET",
+      });
 
-        const data: AdminNotice[] = await response.json();
-        setNotices(data);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("Något gick fel.");
-        }
-      } finally {
+      if (!response.ok) {
+        throw new Error("Kunde inte hämta notiser.");
+      }
+
+      const data: AdminNotice[] = await response.json();
+      setNotices(data);
+      setError("");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Något gick fel.");
+      }
+    } finally {
+      if (isInitialLoad) {
         setLoading(false);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchNotices(true);
+
+    const intervalId = window.setInterval(() => {
+      fetchNotices(false);
+    }, POLL_INTERVAL_MS);
+
+    const handleWindowFocus = () => {
+      fetchNotices(false);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        fetchNotices(false);
       }
     };
 
-    fetchNotices();
-  }, []);
+    const handleManualRefresh = () => {
+      fetchNotices(false);
+    };
+
+    window.addEventListener("focus", handleWindowFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("admin-notices-refresh", handleManualRefresh);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", handleWindowFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("admin-notices-refresh", handleManualRefresh);
+    };
+  }, [fetchNotices]);
 
   function dismissNotice(id: number) {
     setNotices((prev) => prev.filter((notice) => notice.id !== id));
@@ -95,6 +130,7 @@ export default function AdminNoticeRail() {
           <article
             key={notice.id}
             className={`admin-notice-chip admin-notice-chip--${notice.type}`}
+            title={notice.text} 
             role="button"
             tabIndex={0}
             onClick={() => navigate(notice.to)}
