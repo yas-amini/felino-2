@@ -17,7 +17,7 @@ namespace Felino.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> ProcessPayment(ProcessPaymentDto dto)
         {
             try
